@@ -19,8 +19,14 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const AUDITED_COMMIT = '25d5181fbd82abbd22aaea4b32f546e94f9c3602';
 // Production files intentionally changed since the audited commit (phase 2, CARGO_PHASE2_REMEDIATION_REPORT.md).
 // Any other difference fails the run. The RNG and the authoritative engine must remain byte-identical.
-const INTENDED_CHANGES = ['server/app.js', 'server/worker.js', 'server/protocol.js', 'public/math.js', 'public/fairness.js', 'docs/API.md', 'docs/FAIRNESS.md', 'README.md'];
-const MUST_BE_IDENTICAL = ['server/fairness.js', 'server/game.js', 'server/store.js', 'public/collision.js', 'db/schema.ts', '.openai/hosting.json'];
+const INTENDED_CHANGES = ['server/app.js', 'server/worker.js', 'server/protocol.js', 'public/math.js', 'public/fairness.js', 'docs/API.md', 'docs/FAIRNESS.md', 'README.md',
+  // Phase 4A (CARGO_PHASE4A_REMEDIATION_REPORT.md): F07 folder lock, P3-02 client recovery, documentation.
+  'server/lock.js', 'server/store.js', 'server/index.js', 'public/app.js', 'docs/INTEGRATION.md'];
+const MUST_BE_IDENTICAL = ['server/fairness.js', 'server/game.js', 'public/collision.js', 'db/schema.ts', '.openai/hosting.json'];
+// Payout tables, settlement engine, RNG, proof verifier and collision mapping must also be unchanged
+// since the Phase 4A base commit (they were last changed, deliberately, in phase 2).
+const PHASE_BASE = 'fca90c6b0da2ecabe3339db81c00fc3145dfbdcd';
+const UNCHANGED_SINCE_PHASE_BASE = ['public/math.js', 'public/fairness.js', 'server/game.js', 'server/fairness.js', 'public/collision.js'];
 const quick = process.argv.includes('--quick'), simulate = process.argv.includes('--simulate');
 const node = process.execPath, steps = [];
 function run(label, args, { optional = false } = {}) {
@@ -37,6 +43,7 @@ const git = (...a) => { try { return execFileSync('git', a, { cwd: root, encodin
 const tracked = git('ls-files').split('\n').filter(f => f && !f.startsWith('audit/') && !/^(CARGO_.*\.md|HANDOFF_TO_CODEX\.md)$/.test(f));
 const changed = tracked.filter(f => { const now = git('hash-object', f), then = git('rev-parse', '--verify', '--quiet', `${AUDITED_COMMIT}:${f}`); return now !== then; });
 const unexpected = changed.filter(f => !INTENDED_CHANGES.includes(f)), protectedChanged = MUST_BE_IDENTICAL.filter(f => changed.includes(f));
+const changedSincePhaseBase = UNCHANGED_SINCE_PHASE_BASE.filter(f => git('hash-object', f) !== git('rev-parse', '--verify', '--quiet', `${PHASE_BASE}:${f}`));
 
 if (simulate) run('Monte Carlo simulation (4×1,000,000 rounds)', ['audit/simulate.mjs', '--rounds', '1000000']);
 run('Exact mathematics', ['audit/validate-math.mjs']);
@@ -58,9 +65,9 @@ const sha = f => createHash('sha256').update(fs.readFileSync(path.join(root, f))
 const files = [...fs.readdirSync(path.join(root, 'audit'), { recursive: true })].map(f => 'audit/' + f.split(path.sep).join('/'))
   .filter(f => fs.statSync(path.join(root, f)).isFile() && !f.endsWith('manifest.json') && !f.includes('/.store-')).sort();
 const manifest = { generatedAt: new Date().toISOString(), node: process.version, platform: `${process.platform}-${process.arch}`, gitHead: git('rev-parse', 'HEAD'), gitBranch: git('rev-parse', '--abbrev-ref', 'HEAD'),
-  auditedCommit: AUDITED_COMMIT, productionIntegrity: { filesCompared: tracked.length, changedSinceAuditedCommit: changed, intendedChanges: INTENDED_CHANGES, unexpectedChanges: unexpected, mustBeIdentical: MUST_BE_IDENTICAL, protectedFilesChanged: protectedChanged },
+  auditedCommit: AUDITED_COMMIT, productionIntegrity: { filesCompared: tracked.length, changedSinceAuditedCommit: changed, intendedChanges: INTENDED_CHANGES, unexpectedChanges: unexpected, mustBeIdentical: MUST_BE_IDENTICAL, protectedFilesChanged: protectedChanged, phaseBase: PHASE_BASE, unchangedSincePhaseBase: UNCHANGED_SINCE_PHASE_BASE, changedSincePhaseBase },
   mode: simulate ? 'full+simulate' : quick ? 'quick' : 'full',
-  steps, allPassed: steps.every(s => s.exitCode === 0 || s.skipped) && unexpected.length === 0 && protectedChanged.length === 0, sha256: Object.fromEntries(files.map(f => [f, sha(f)])) };
+  steps, allPassed: steps.every(s => s.exitCode === 0 || s.skipped) && unexpected.length === 0 && protectedChanged.length === 0 && changedSincePhaseBase.length === 0, sha256: Object.fromEntries(files.map(f => [f, sha(f)])) };
 fs.writeFileSync(path.join(root, 'audit/results/manifest.json'), JSON.stringify(manifest, null, 1));
-console.error(`\n${manifest.allPassed ? 'ALL PASSED' : 'FAILURES PRESENT'} — production files changed since audited commit: ${changed.length} (${changed.join(', ') || 'none'}); unexpected: ${unexpected.length}; protected changed: ${protectedChanged.length}; manifest → audit/results/manifest.json`);
+console.error(`\n${manifest.allPassed ? 'ALL PASSED' : 'FAILURES PRESENT'} — production files changed since audited commit: ${changed.length} (${changed.join(', ') || 'none'}); unexpected: ${unexpected.length}; protected changed: ${protectedChanged.length}; payout/settlement/RNG changed since ${PHASE_BASE.slice(0, 7)}: ${changedSincePhaseBase.length}; manifest → audit/results/manifest.json`);
 process.exitCode = manifest.allPassed ? 0 : 1;

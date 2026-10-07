@@ -6,7 +6,7 @@ import { verifyRound } from './fairness.js';
 const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const PORTS=['Breakwater','Buoy One','Sheltered Cove','Sandbar','Beacon Port','Outer Reef','Blue Channel','Open Strait','Headland','Deep Bay','Crosswind','Reef Passage','High Seas','Storm Line','Darkwater','Maelstrom','Narrow Reach','Last Beacon','Final Port'];
 const colors=['#5ce6bb','#edc175','#a99be9'];
-let data=null,selectedMode='easy',busy=false,connected=true,hiddenRoundId=null,clientSeed='',toastTimer,eventTimer,modalRound=null;
+let data=null,selectedMode='easy',busy=false,connected=true,hiddenRoundId=null,clientSeed='',toastTimer,eventTimer,modalRound=null,sessionMissing=false;
 const scene=new OceanScene($('ocean'));
 let soundEnabled=localStorage.getItem('cargo-sound')==='on',audio=null;
 function sound(type){
@@ -80,8 +80,18 @@ async function api(path,options={}){
  const response=await fetch(path,{...options,signal:AbortSignal.timeout(7000)}),result=await response.json();
  if(!response.ok){const error=new Error(result.error||'The game could not complete this action.');error.code=result.code;throw error;}return result;
 }
-async function sync(){data=await api('/api/session');connected=true;if(!clientSeed)clientSeed=localStorage.getItem('cargo-client-seed')||data.session.clientSeed;const r=visibleRound();if(r)selectedMode=r.difficulty;render();}
-function offline(){connected=false;document.body.classList.remove('loading');$('save-status').textContent='Connection lost · refresh to reconnect';$('connection').style.background='var(--red)';$('sail-button').disabled=true;$('collect-all').disabled=true;document.querySelectorAll('[data-collect]').forEach(b=>b.disabled=true);}
+async function sync(){try{data=await api('/api/session');}catch(e){if(e.code==='SESSION_NOT_FOUND')sessionNotFound();throw e;}sessionMissing=false;connected=true;if(!clientSeed)clientSeed=localStorage.getItem('cargo-client-seed')||data.session.clientSeed;const r=visibleRound();if(r)selectedMode=r.difficulty;render();}
+// The saved session no longer exists on the server. Explain it and wait for an explicit choice:
+// nothing is created or funded automatically.
+function sessionNotFound(){
+ sessionMissing=true;$('balance').textContent='—'; // no wallet exists until the player starts one
+ openModal('Saved session not found',`<p>This browser has a saved Cargo demo session, but the server can no longer find it. It may have been removed from the server's storage.</p><p>Nothing has been changed and no new session has been created. A new demo session starts with a fresh play-money balance; earlier voyages cannot be restored.</p><div class="modal-actions"><button id="start-new-session" class="primary">Start a new demo session</button><button id="retry-session" class="secondary">Try again</button></div>`);
+ $('retry-session').addEventListener('click',async()=>{$('modal').close();try{await sync();}catch{offline();}});
+ $('start-new-session').addEventListener('click',async()=>{const b=$('start-new-session');b.disabled=true;b.textContent='Starting…';
+  try{await api('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});}catch(e){if(e.code!=='SESSION_EXISTS'){b.disabled=false;b.textContent='Start a new demo session';return toast(e.message,true);}}
+  $('modal').close();try{await sync();toast('New demo session started.');}catch{offline();}});
+}
+function offline(){connected=false;document.body.classList.remove('loading');$('save-status').textContent=sessionMissing?'Saved session not found · choose an option to continue':'Connection lost · refresh to reconnect';$('connection').style.background='var(--red)';$('sail-button').disabled=true;$('collect-all').disabled=true;document.querySelectorAll('[data-collect]').forEach(b=>b.disabled=true);}
 async function action(path,extra={},animation=null){
  if(busy||!data)return;busy=true;const old=visibleRound(),payload={...extra,actionId:crypto.randomUUID(),revision:data.session.revision};render();
  if(animation==='sail'){$('sail-button').textContent='Sailing…';$('stage-badge').textContent='VOYAGE UNDERWAY';document.querySelectorAll('[data-collect]').forEach(b=>b.textContent='Sailing…');}
@@ -145,8 +155,8 @@ $('refill-button').addEventListener('click',()=>{
 function downloadRound(round){if(!round||round.status!=='settled')return;const url=URL.createObjectURL(new Blob([JSON.stringify(round,null,2)],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='cargo-round-'+round.id+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 $('export-round').addEventListener('click',()=>downloadRound(visibleRound()));
 document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&!busy)try{await sync();}catch{offline();}});
-setInterval(async()=>{if(!busy&&!document.hidden&&data)try{const next=await api('/api/session');if(next.session.revision!==data.session.revision||!connected){data=next;connected=true;render();toast('Voyage synchronized.');}}catch{offline();}},12000);
-document.body.classList.add('loading');sync().catch(e=>{offline();toast('Could not connect. Please refresh the page in a moment.',true);});
+setInterval(async()=>{if(!busy&&!document.hidden&&data&&!sessionMissing)try{const next=await api('/api/session');if(next.session.revision!==data.session.revision||!connected){data=next;connected=true;render();toast('Voyage synchronized.');}}catch(e){if(e.code==='SESSION_NOT_FOUND')sessionNotFound();offline();}},12000);
+document.body.classList.add('loading');sync().catch(e=>{offline();if(e.code!=='SESSION_NOT_FOUND')toast('Could not connect. Please refresh the page in a moment.',true);});
 
 // Structured access uses the same visible, play-money actions.
 if (document.modelContext?.registerTool) {

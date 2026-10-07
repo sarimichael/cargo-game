@@ -37,7 +37,7 @@ export async function localAdapter() {
     fork() { return client(cookieJar()); }
   });
   return { kind: 'local', store, directory, url, app, client, sessionCount: () => Object.keys(store.state.sessions).length,
-    async close() { await new Promise(r => app.close(r)); fs.rmSync(directory, { recursive: true, force: true }); } };
+    async close() { await new Promise(r => app.close(r)); store.release(); fs.rmSync(directory, { recursive: true, force: true }); } };
 }
 
 export async function workerAdapter({ maxBodyBytes = null } = {}) {

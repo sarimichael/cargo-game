@@ -9,6 +9,25 @@ export const MAX_SESSION_BODY_BYTES = 2000000;
 // client seed and action IDs) adds well under a quarter of this; see audit/tests/remediation.test.js.
 export const SETTLEMENT_RESERVE_BYTES = 65536;
 export const MAX_REQUEST_BYTES = 16384;
+// Real requests nest at most two levels. The limit is checked iteratively before anything
+// recursive (JSON.parse, canonicalJSON, JSON.stringify) touches the body.
+export const MAX_JSON_DEPTH = 32;
+
+// Structural nesting depth of JSON text, counting only brackets outside strings.
+function exceedsDepth(text, limit) {
+  let depth = 0, inString = false, escaped = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text.charCodeAt(i);
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === 92) escaped = true;          // backslash
+      else if (ch === 34) inString = false;        // closing quote
+    } else if (ch === 34) inString = true;
+    else if (ch === 91 || ch === 123) { if (++depth > limit) return true; } // [ or {
+    else if (ch === 93 || ch === 125) depth--;     // ] or }
+  }
+  return false;
+}
 
 // Decode a complete request body. Decoding once, after all chunks have arrived, keeps
 // multi-byte characters intact across TCP chunk boundaries; malformed UTF-8 is refused.
@@ -16,6 +35,7 @@ export function parseJsonObject(bytes) {
   let text;
   try { text = new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
   catch { throw new GameError('Send valid UTF-8 text.'); }
+  if (exceedsDepth(text, MAX_JSON_DEPTH)) throw new GameError('The request is nested too deeply.', 400, 'JSON_TOO_DEEP');
   try { const value = JSON.parse(text || '{}'); if (!value || typeof value !== 'object' || Array.isArray(value)) throw 0; return value; }
   catch { throw new GameError('Send a JSON object.'); }
 }

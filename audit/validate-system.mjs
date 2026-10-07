@@ -320,16 +320,16 @@ await check('S16', 'defect', 'F05: survivors at the final port stay uncredited u
     return { ok: rows.every(r => r.status === 'active' && r.extraAdvance === 409 && r.credited === 0), rows };
   }));
 
-await check('S17', 'defect', 'F07: two Store instances on one directory lose an update', 'Reported in audit F07 (local store is documented as single-process).',
-  'Open two Store objects on one temp directory; debit 100 cents through the first, then write unrelated data through the stale second; reload from disk.', () => {
+await check('S17', 'remediated', 'F07 fixed: a second Store on the same directory cannot overwrite an acknowledged debit', 'Reported in audit F07; fixed in phase 4A (server/lock.js folder lock with fencing).',
+  'Open two Store objects on one temp directory; debit 100 cents through the first; attempt an unrelated write through the stale second (must be refused); reload from disk. Process-level coverage is in audit/tests/phase4a.test.js and restart.test.js.', () => {
     const dir = fs.mkdtempSync(fileURLToPath(new URL('./results/', import.meta.url)) + '.store-');
     try {
       const s1 = new Store(dir); s1.transaction(st => { st.sessions.x = createSession('x', derivedSeed('s17', 0)); });
       const s2 = new Store(dir);
       s1.transaction(st => { st.sessions.x.balanceCents -= 100; });
-      s2.transaction(st => { st.sessions.y = { note: 'unrelated write' }; });
-      const reloaded = new Store(dir).get('x').balanceCents;
-      return { pass: reloaded === 100000, balanceWrittenByFirst: 99900, balanceOnDiskAfterSecond: reloaded };
+      let refusedCode = null; try { s2.transaction(st => { st.sessions.y = { note: 'unrelated write' }; }); } catch (e) { refusedCode = e.code; }
+      const reloaded = new Store(dir).get('x').balanceCents; s1.release();
+      return { pass: refusedCode === 'DATA_DIRECTORY_LOCKED' && reloaded === 99900, secondWriterRefusedWith: refusedCode, balanceOnDiskAfterSecondAttempt: reloaded };
     } finally { fs.rmSync(dir, { recursive: true, force: true }); }
   });
 

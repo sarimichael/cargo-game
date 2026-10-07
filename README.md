@@ -16,6 +16,10 @@ Open **http://127.0.0.1:4173**. Keep the server running while you play. The loca
 
 The local server listens only on your computer. It creates `data/state.json` to save wallets, history, request receipts and unrevealed seeds. This directory is excluded from Git. `PORT` chooses a different port, and `CARGO_DATA_DIR` chooses a separate save directory.
 
+Only one Cargo server can use a save folder at a time. While running, it holds `state.lock` in that folder, and a second server started on the same folder exits with "Cargo is already running with this save folder". The lock is removed when the server stops. After a crash it is recovered automatically on the next start. If the message appears and you are certain no Cargo server is running, delete `state.lock`.
+
+If the browser's saved session is no longer on the server, the game says so and offers to start a new demo session. It never creates one automatically.
+
 ## How to play
 
 1. Choose a total bet and a difficulty: Easy, Medium, Hard or Expert.

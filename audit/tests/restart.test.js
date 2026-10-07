@@ -119,15 +119,18 @@ test('worker: a fresh isolate (restart) on the same database continues the voyag
   assert.ok(ledgerInvariant(c.raw()).ok);
 });
 
-test('KNOWN DEFECT F07: two server processes sharing a data directory erase an acknowledged wager', async t => {
+test('F07 fixed: a second server process on the same data directory is refused and the first keeps its wager', async t => {
+  // Was a KNOWN DEFECT in phase 3 (the second process erased the first's acknowledged wager); fixed in phase 4A.
   const dir = tempDir(); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
-  const A = await startServer(dir), B = await startServer(dir); // both start: no lock or detection
-  const a = httpClient().at(A.url), b = httpClient().at(B.url);
-  const s = (await a.get('/api/session')).body;
+  const A = await startServer(dir);
+  const a = httpClient().at(A.url), s = (await a.get('/api/session')).body;
   const placed = await a.post('/api/rounds', { difficulty: 'easy', stakeCents: 3000, clientSeed: 'f07', expectedSeedHash: s.session.nextSeedHash, revision: 0, actionId: aid('f07') });
   assert.equal(placed.status, 200); assert.equal(placed.body.session.balanceCents, 97000);
-  await b.get('/api/session'); // B persists its own in-memory state, which predates A's session
-  await A.kill(); await B.kill();
+  const B = spawn(process.execPath, ['server/index.js'], { cwd: root, env: { ...process.env, PORT: String(nextPort++), CARGO_DATA_DIR: dir }, stdio: ['ignore', 'pipe', 'pipe'] });
+  let err = ''; B.stderr.on('data', d => { err += d; }); B.stdout.on('data', d => { err += d; });
+  const code = await new Promise(r => B.on('exit', r));
+  assert.equal(code, 1); assert.match(err, /already running/i);
+  await A.kill();
   const aId = /cargo_session=([a-f0-9]{64})/.exec(a.cookie())[1];
-  assert.equal(aId in readState(dir).sessions, false); // the acknowledged debit and active voyage are gone
+  assert.equal(readState(dir).sessions[aId].balanceCents, 97000); // the acknowledged debit and active voyage are intact
 });

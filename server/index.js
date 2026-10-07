@@ -7,7 +7,13 @@ if(Number(process.versions.node.split('.')[0])<22)throw new Error('Cargo needs N
 const port = Number(process.env.PORT || 4173);
 if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('PORT must be between 1024 and 65535.');
 const directory = process.env.CARGO_DATA_DIR || fileURLToPath(new URL('../data/',import.meta.url));
-const app = createApp(new Store(directory));
+let store;
+try { store = new Store(directory).acquire(); }
+catch (error) { if (error.code !== 'DATA_DIRECTORY_LOCKED') throw error; console.error('\n' + error.message + '\n'); process.exit(1); }
+// Release the save-folder lock on every orderly exit. A crash leaves it behind; the next start recovers it.
+process.on('exit', () => store.release());
+for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.on(signal, () => process.exit(0));
+const app = createApp(store);
 app.on('error',error => { console.error(error.code === 'EADDRINUSE' ? 'Cargo is already running, or this port is in use. Try http://127.0.0.1:'+port : error.message); process.exitCode = 1; });
 app.listen(port,'127.0.0.1',() => {
   const address='http://127.0.0.1:'+port;

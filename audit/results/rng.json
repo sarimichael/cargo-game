@@ -2,8 +2,8 @@
  "meta": {
   "script": "audit/validate-rng.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-07T22:24:19.876Z",
-  "runtimeMs": 13945
+  "generatedAt": "2026-10-07T22:52:57.171Z",
+  "runtimeMs": 13807
  },
  "summary": {
   "checks": 8,
@@ -20,7 +20,7 @@
    "pass": true,
    "compared": 14400,
    "mismatches": [],
-   "ms": 10979
+   "ms": 10704
   },
   {
    "id": "R02",
@@ -30,7 +30,7 @@
    "pass": true,
    "verified": 192,
    "failures": [],
-   "ms": 878
+   "ms": 965
   },
   {
    "id": "R03",
@@ -221,7 +221,7 @@
    "prefixMultiplicity": [
     720
    ],
-   "ms": 49
+   "ms": 53
   },
   {
    "id": "R05",
@@ -255,7 +255,7 @@
    "tuples": 1000,
    "nested": 1000,
    "implication": "Safe only because each committed server seed is consumed by exactly one round with one locked difficulty (verified in validate-system S05/S06). Any future feature that lets the same seed/nonce be replayed under a different difficulty would leak information across difficulties.",
-   "ms": 1353
+   "ms": 1405
   },
   {
    "id": "R08",
@@ -266,7 +266,7 @@
    "activeSnapshots": 3369,
    "leaks": [],
    "settledRevealed": 400,
-   "ms": 589
+   "ms": 583
   }
  ]
 }

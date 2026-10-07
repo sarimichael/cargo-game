@@ -9,6 +9,7 @@
 // Phase 2 (CARGO_PHASE2_REMEDIATION_REPORT.md) fixed F08, F10, N01 and N02; their
 // characterisations were replaced by protective tests in remediation.test.js. F11 is
 // still open and is now reproduced the way it occurs in practice: a later deployment.
+// Phase 4A fixed F07; its test below now asserts the protective behaviour.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -59,14 +60,16 @@ test('KNOWN DEFECT F03: session state grows without bound (≈2.2 KB per short r
   assert.ok((sizes.at(-1) - sizes[0]) / 20 > 1500);
 });
 
-test('KNOWN DEFECT F07: two Store instances on one directory lose an acknowledged debit', () => {
+test('F07 fixed: a second Store on the same directory cannot overwrite an acknowledged debit', () => {
+  // Was a KNOWN DEFECT (lost update); fixed in phase 4A by the folder lock in server/lock.js.
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cargo-f07-'));
   try {
     const s1 = new Store(dir); s1.transaction(st => { st.sessions.x = createSession('x', derivedSeed('f07', 0)); });
     const s2 = new Store(dir);
     s1.transaction(st => { st.sessions.x.balanceCents -= 100; });
-    s2.transaction(st => { st.sessions.y = {}; });
-    assert.equal(new Store(dir).get('x').balanceCents, 100000);
+    assert.throws(() => s2.transaction(st => { st.sessions.y = {}; }), e => e.code === 'DATA_DIRECTORY_LOCKED');
+    assert.equal(new Store(dir).get('x').balanceCents, 99900);
+    s1.release();
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
 

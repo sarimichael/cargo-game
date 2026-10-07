@@ -2,14 +2,17 @@
 
 Base URL: `http://127.0.0.1:4173`. This API is for the included local play-money wallet. It is not an operator wallet protocol.
 
-`GET /api/session` creates or restores an anonymous browser session. The cookie is `HttpOnly` and `SameSite=Strict`. All amounts are integer USD cents. The response contains `config`, `session`, the current/latest `round`, and the last 20 settled history summaries.
+`GET /api/session` restores the browser's session, or creates one for a new visitor who has no session cookie. The cookie is `HttpOnly` and `SameSite=Strict`.
+
+If the browser presents a well-formed session cookie whose session no longer exists, every API route returns **404 `SESSION_NOT_FOUND`**. No replacement wallet is created and the cookie is left unchanged. The browser explains this and offers an explicit choice. `POST /api/session` (same-origin, `Content-Type: application/json`, body `{}`) then starts a new demo session and sets a new cookie. If the browser still has a live session, it returns **409 `SESSION_EXISTS`** and changes nothing. All amounts are integer USD cents. The response contains `config`, `session`, the current/latest `round`, and the last 20 settled history summaries.
 
 Every POST needs `Content-Type: application/json` with a UTF-8 body, the session cookie, a unique `actionId` (8–80 alphanumeric/hyphen characters), and the current session `revision`. Bodies containing invalid UTF-8 are refused with 400.
 
 | Method and path | Additional request fields | Result |
 |---|---|---|
 | GET `/api/health` | None | Service status and play-money mode |
-| GET `/api/session` | None | Wallet, seed commitment and current voyage |
+| GET `/api/session` | None | Wallet, seed commitment and current voyage (404 `SESSION_NOT_FOUND` for a missing saved session) |
+| POST `/api/session` | None (`{}`) | Explicitly starts a new demo session when the browser has none or its saved one is missing; 409 `SESSION_EXISTS` otherwise |
 | POST `/api/rounds` | `difficulty`, `stakeCents`, `clientSeed`, `expectedSeedHash` | Deducts one bet; creates an active round at step 0 |
 | POST `/api/rounds/{id}/advance` | None | Attempts exactly one more stop |
 | POST `/api/rounds/{id}/collect` | `containerId`: `A`, `B`, `C` or `all` | Credits and secures selected remaining cargo |
@@ -37,7 +40,7 @@ Public round fields include `id`, `difficulty`, `stakeCents`, `step`, `status`, 
 
 While active, `proof` contains the commitment hash, client seed and nonce. Only settled rounds reveal `serverSeed` and all three hazard decks.
 
-Errors return `{ "error": "readable message", "code": "ERROR_CODE" }`. Invalid fields or invalid UTF-8 are 400; expired session 401; forbidden origin/host 403; missing routes/rounds 404; invalid state or revision 409; oversized request 413; wrong content type 415. Unexpected save errors are 500 and leave the in-memory state unchanged.
+Errors return `{ "error": "readable message", "code": "ERROR_CODE" }`. Invalid fields or invalid UTF-8 are 400; JSON nested more than 32 levels deep is 400 `JSON_TOO_DEEP`; no session cookie 401 (`SESSION_EXPIRED`); forbidden origin/host 403; missing routes/rounds 404; a missing saved session 404 (`SESSION_NOT_FOUND`); invalid state or revision 409; oversized request 413; wrong content type 415. Unexpected save errors are 500 and leave the in-memory state unchanged.
 
 **Hosted only:** each session is stored as one database row with a 2,000,000-byte limit. When fewer than 64 KiB would remain, `POST /api/rounds` returns 409 with code `SESSION_STORAGE_FULL` and changes nothing. This guarantees that a voyage that was accepted can still be settled. Reads, collections on an active voyage, and replays keep working.
 

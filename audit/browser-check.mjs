@@ -54,6 +54,33 @@ try {
       ok: !uiVerify.error && /verified/i.test(uiVerify.text) && modules.genuine && !modules.extraField && !modules.duplicateContainer && !modules.multiplier && modules.payoutTableFrozen && layout.scrollWidth <= layout.innerWidth && problems.length === 0 });
     await context.close();
   }
+  // P3-02: a returning browser whose saved session no longer exists (phase 4A).
+  const sessionsOnDisk = () => Object.keys(JSON.parse(fs.readFileSync(path.join(dataDir, 'state.json'), 'utf8')).sessions).length;
+  for (const view of [{ name: 'desktop-missing-session', viewport: { width: 1440, height: 900 } }, { name: 'phone-missing-session', viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }]) {
+    const context = await browser.newContext({ viewport: view.viewport, isMobile: view.isMobile, hasTouch: view.hasTouch, reducedMotion: 'reduce' });
+    await context.addCookies([{ name: 'cargo_session', value: 'ab'.repeat(32), url }]);
+    const page = await context.newPage(), problems = [];
+    // The expected 404 for the missing session is logged by Chrome as a resource error; anything else is a problem.
+    page.on('console', m => { if (['error', 'warning'].includes(m.type()) && !/Failed to load resource: the server responded with a status of 404/.test(m.text())) problems.push(m.type() + ': ' + m.text()); });
+    page.on('pageerror', e => problems.push('pageerror: ' + e.message));
+    const before = sessionsOnDisk();
+    await page.goto(url); await page.waitForSelector('#start-new-session');
+    const dialog = { title: await page.textContent('#modal-title'), text: await page.textContent('#modal-content'), status: await page.textContent('#save-status'), balance: await page.textContent('#balance') };
+    await page.waitForTimeout(1500);
+    const afterLoad = sessionsOnDisk();
+    await page.click('#retry-session'); await page.waitForSelector('#start-new-session');
+    const afterRetry = sessionsOnDisk();
+    await page.click('#start-new-session'); await page.waitForFunction(() => !document.getElementById('modal').open);
+    await page.waitForFunction(() => /1,000\.00/.test(document.getElementById('balance').textContent));
+    const cookie = (await context.cookies()).find(c => c.name === 'cargo_session')?.value;
+    const layout = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth }));
+    await page.screenshot({ path: path.join(os.tmpdir(), `cargo-${view.name}.png`) });
+    const ok = dialog.title === 'Saved session not found' && /no new session has been created/i.test(dialog.text) && /not found/i.test(dialog.status) && dialog.balance === '—'
+      && afterLoad === before && afterRetry === before && sessionsOnDisk() === before + 1 && cookie && cookie !== 'ab'.repeat(32)
+      && layout.scrollWidth <= layout.innerWidth && problems.length === 0;
+    results.push({ view: view.name, dialog, sessionsBefore: before, afterLoad, afterRetry, afterExplicitStart: sessionsOnDisk(), cookieReplacedOnlyByExplicitStart: cookie !== 'ab'.repeat(32), layout, consoleProblems: problems, ok });
+    await context.close();
+  }
 } finally { await browser.close(); server.kill(); fs.rmSync(dataDir, { recursive: true, force: true }); }
 const out = { meta: { script: 'audit/browser-check.mjs', node: process.version, chromium: browser.version(), generatedAt: new Date().toISOString(), reducedMotion: true }, pass: results.every(r => r.ok), results };
 fs.writeFileSync(outFile, JSON.stringify(out, null, 1));

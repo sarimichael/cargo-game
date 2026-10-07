@@ -3,6 +3,7 @@ import { GameError, createSession, beginRound, advanceRound, collectRound, reset
 import { MAX_REQUEST_BYTES, MAX_SESSION_BODY_BYTES, SETTLEMENT_RESERVE_BYTES, parseJsonObject, actionFingerprint, findReceipt, receiptMatches, recordReceipt } from './protocol.js';
 
 const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'};
+const sessionNotFound=()=>new GameError('Your saved demo session could not be found. You can start a new demo session.',404,'SESSION_NOT_FOUND');
 const json=(status,data,extra={})=>new Response(JSON.stringify(data),{status,headers:{...headers,...extra}});
 async function readBody(request) {
   if(!request.headers.get('content-type')?.startsWith('application/json'))throw new GameError('Use application/json.',415);
@@ -24,15 +25,25 @@ export default {
       if(request.method==='POST'&&((request.headers.get('origin')&&request.headers.get('origin')!==url.origin)||request.headers.get('sec-fetch-site')==='cross-site'))throw new GameError('Cross-origin requests are not allowed.',403);
       const cookie=/(?:^|;\s*)cargo_session=([a-f0-9]{64})(?:;|$)/.exec(request.headers.get('cookie')||'');
       let id=cookie?.[1],record=id?await load(db,id):null;
+      // A well-formed cookie whose session no longer exists is reported, never silently replaced.
+      const missing=!!id&&!record;
+      const startSession=async()=>{
+        id=randomBytes(32).toString('hex');const session=createSession(id);
+        await db.prepare('INSERT INTO cargo_sessions (id,revision,body) VALUES (?,?,?)').bind(id,0,JSON.stringify(session)).run();
+        const secure=url.protocol==='https:'?'; Secure':'';
+        return json(200,snapshot(session),{'Set-Cookie':'cargo_session='+id+'; HttpOnly; SameSite=Strict; Path=/; Max-Age=2592000'+secure});
+      };
       if(url.pathname==='/api/session'&&request.method==='GET'){
-        if(!record){
-          id=randomBytes(32).toString('hex');const session=createSession(id);
-          await db.prepare('INSERT INTO cargo_sessions (id,revision,body) VALUES (?,?,?)').bind(id,0,JSON.stringify(session)).run();
-          const secure=url.protocol==='https:'?'; Secure':'';
-          return json(200,snapshot(session),{'Set-Cookie':'cargo_session='+id+'; HttpOnly; SameSite=Strict; Path=/; Max-Age=2592000'+secure});
-        }
+        if(missing)throw sessionNotFound();
+        if(!record)return await startSession(); // a genuinely new visitor (await keeps failures inside this try)
         return json(200,snapshot(record.session));
       }
+      if(url.pathname==='/api/session'&&request.method==='POST'){
+        await readBody(request); // explicit recovery action: same-origin JSON POST only
+        if(record)throw new GameError('A demo session is already active in this browser.',409,'SESSION_EXISTS');
+        return await startSession();
+      }
+      if(missing)throw sessionNotFound();
       if(!record)throw new GameError('Your session expired. Refresh the game.',401,'SESSION_EXPIRED');
       const route=/^\/api\/rounds\/([a-f0-9-]{36})(?:\/(advance|collect))?$/.exec(url.pathname);
       if(request.method==='GET'&&route&&!route[2]){

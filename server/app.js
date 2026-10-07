@@ -9,6 +9,7 @@ import { MAX_REQUEST_BYTES, parseJsonObject, actionFingerprint, findReceipt, rec
 const publicPath = fileURLToPath(new URL('../public/', import.meta.url));
 const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png' };
 const allowedFiles = new Set(['index.html','styles.css','app.js','scene.js','math.js','fairness.js','icon.svg','collision.js','iceberg.png','debris.png']);
+const sessionNotFound = () => new GameError('Your saved demo session could not be found. You can start a new demo session.',404,'SESSION_NOT_FOUND');
 function send(res, status, payload) { res.writeHead(status, { 'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store' }); res.end(JSON.stringify(payload)); }
 async function body(req) {
   // Collect raw bytes and decode once: decoding chunk by chunk corrupts characters split across chunks.
@@ -40,14 +41,25 @@ export function createApp(store) {
       }
       const match = /(?:^|;\s*)cargo_session=([a-f0-9]{64})(?:;|$)/.exec(req.headers.cookie || '');
       let id = match?.[1], session = id ? store.get(id) : null;
+      // A well-formed cookie whose session no longer exists is reported, never silently replaced.
+      const missing = !!id && !session;
+      const startSession = () => {
+        id = randomBytes(32).toString('hex');
+        store.transaction(state => { state.sessions[id] = createSession(id); }); session = store.get(id);
+        res.setHeader('Set-Cookie','cargo_session='+id+'; HttpOnly; SameSite=Strict; Path=/; Max-Age=2592000');
+      };
       if (address.pathname === '/api/session' && req.method === 'GET') {
-        if (!session) {
-          id = randomBytes(32).toString('hex');
-          store.transaction(state => { state.sessions[id] = createSession(id); }); session = store.get(id);
-          res.setHeader('Set-Cookie','cargo_session='+id+'; HttpOnly; SameSite=Strict; Path=/; Max-Age=2592000');
-        }
+        if (missing) throw sessionNotFound();
+        if (!session) startSession(); // a genuinely new visitor
         return send(res,200,snapshot(session));
       }
+      if (address.pathname === '/api/session' && req.method === 'POST') {
+        await body(req); // explicit recovery action: same-origin JSON POST only
+        if (session) throw new GameError('A demo session is already active in this browser.',409,'SESSION_EXISTS');
+        startSession();
+        return send(res,200,snapshot(session));
+      }
+      if (missing) throw sessionNotFound();
       if (!session) throw new GameError('Your session expired. Refresh the game.',401,'SESSION_EXPIRED');
       const roundRoute = /^\/api\/rounds\/([a-f0-9-]{36})(?:\/(advance|collect))?$/.exec(address.pathname);
       if (roundRoute && !roundRoute[2] && req.method === 'GET') {

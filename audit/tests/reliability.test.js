@@ -3,7 +3,7 @@
 //
 // Tests named "KNOWN DEFECT" characterise current, unfixed behaviour and will fail on purpose
 // once the defect is fixed (then move them to a protective test). All other tests assert
-// properties that must keep holding.
+// properties that must keep holding. Phase 4A converted the P3-01 and P3-02 characterisations.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -36,7 +36,7 @@ test('local restart: an active round, the wallet and idempotency receipts surviv
   const advBody = { revision: b.body.session.revision, actionId: aid('pre-restart') };
   assert.equal((await c.post(`/api/rounds/${b.body.round.id}/advance`, advBody)).status, 200);
   const before = structuredClone(c.raw());
-  await new Promise(r => a.app.close(r));
+  await new Promise(r => a.app.close(r)); a.store.release(); // the first "process" exits and releases the folder lock
   // Restart: a fresh Store and HTTP server over the same directory, same cookie.
   const store = new Store(a.directory), app = createApp(store); await new Promise(r => app.listen(0, '127.0.0.1', r));
   t.after(async () => { await new Promise(r => app.close(r)); fs.rmSync(a.directory, { recursive: true, force: true }); });
@@ -55,7 +55,7 @@ test('local restart: an active round, the wallet and idempotency receipts surviv
 test('local restart: a stale state.json.tmp left by an interrupted write is ignored and overwritten', async t => {
   const a = await localAdapter(); const c = a.client(); await bet(c);
   const committed = fs.readFileSync(path.join(a.directory, 'state.json'), 'utf8');
-  await new Promise(r => a.app.close(r));
+  await new Promise(r => a.app.close(r)); a.store.release();
   fs.writeFileSync(path.join(a.directory, 'state.json.tmp'), '{"version":1,"sessions":{"garbage');
   const store = new Store(a.directory); t.after(() => fs.rmSync(a.directory, { recursive: true, force: true }));
   assert.equal(JSON.stringify(store.state), committed);
@@ -65,7 +65,7 @@ test('local restart: a stale state.json.tmp left by an interrupted write is igno
 
 test('local restart: a truncated or empty state.json makes startup fail closed (no silent wallet reset)', async t => {
   const a = await localAdapter(); const c = a.client(); await bet(c);
-  await new Promise(r => a.app.close(r)); t.after(() => fs.rmSync(a.directory, { recursive: true, force: true }));
+  await new Promise(r => a.app.close(r)); a.store.release(); t.after(() => fs.rmSync(a.directory, { recursive: true, force: true }));
   const file = path.join(a.directory, 'state.json'), good = fs.readFileSync(file, 'utf8');
   for (const broken of [good.slice(0, Math.floor(good.length / 2)), '', '{"version":2,"sessions":{}}']) {
     fs.writeFileSync(file, broken);
@@ -171,13 +171,14 @@ for (const [kind, make] of Object.entries(ADAPTERS)) {
     assert.ok(ledgerInvariant(c.raw()).ok); roundInvariants(c.raw());
   });
 
-  test(`KNOWN DEFECT P3-01 (${kind}): a deeply nested body inside the size limit returns 500 instead of 400`, async t => {
+  test(`P3-01 fixed (${kind}): a deeply nested body inside the size limit is refused with 400, never 500`, async t => {
+    // Was a KNOWN DEFECT in phase 3 (500 SERVER_ERROR); fixed in phase 4A by MAX_JSON_DEPTH in server/protocol.js.
     const a = await make(); t.after(() => a.close()); const c = a.client(); const s = await startSession(c);
     const before = JSON.stringify(c.raw()), depth = 5000;
     const r = await c.post('/api/reset', null, {}, `{"revision":${s.session.revision},"actionId":"deep-nest-01","x":${'['.repeat(depth)}${']'.repeat(depth)}}`);
-    assert.equal(r.status, 500); assert.equal(r.body.code, 'SERVER_ERROR');
-    assert.equal(JSON.stringify(c.raw()), before); // contained: nothing is written
-    const shallow = await c.post('/api/reset', null, {}, `{"revision":${s.session.revision},"actionId":"deep-nest-02","x":${'['.repeat(64)}${']'.repeat(64)}}`);
+    assert.equal(r.status, 400); assert.equal(r.body.code, 'JSON_TOO_DEEP');
+    assert.equal(JSON.stringify(c.raw()), before);
+    const shallow = await c.post('/api/reset', null, {}, `{"revision":${s.session.revision},"actionId":"deep-nest-02","x":${'['.repeat(16)}${']'.repeat(16)}}`);
     assert.equal(shallow.status, 200); // ordinary nesting is unaffected
   });
 
@@ -190,22 +191,30 @@ for (const [kind, make] of Object.entries(ADAPTERS)) {
       assert.equal((await x.post('/api/reset', { revision: 0, actionId: aid('mc') })).status, 401, bad);
     }
     const dup = a.client(); dup.jar.set(`cargo_session=${'0'.repeat(64)}; cargo_session=${realId}`);
-    assert.equal((await dup.post('/api/reset', { revision: 0, actionId: aid('dc') })).status, 401); // first cookie wins; never falls through to the second
+    const dr = await dup.post('/api/reset', { revision: 0, actionId: aid('dc') });
+    assert.equal(dr.status, 404); assert.equal(dr.body.code, 'SESSION_NOT_FOUND'); // first cookie wins; never falls through to the second (phase 4A: reported as not found)
     assert.equal(a.sessionCount(), sessionsBefore);
   });
 
-  test(`KNOWN DEFECT F05/F09 (${kind}): a lost session is replaced silently by a new funded wallet; sessions carry no lifecycle timestamps`, async t => {
+  test(`P3-02 fixed (${kind}): a lost session is reported as SESSION_NOT_FOUND and never silently replaced`, async t => {
+    // Was a KNOWN DEFECT in phase 3 (a new funded wallet was issued silently); fixed in phase 4A.
     const a = await make(); t.after(() => a.close()); const c = a.client();
     const b = await bet(c); const lostId = c.jar.id();
-    assert.ok(!Object.keys(c.raw()).some(k => /created|seen|expire|updated/i.test(k)));
-    // Simulate loss of the stored session (storage cleanup, F07 overwrite, operator deletion).
+    // Simulate loss of the stored session (storage cleanup, operator deletion).
     if (kind === 'worker') a.sql.prepare('DELETE FROM cargo_sessions WHERE id = ?').run(lostId);
-    else delete a.store.state.sessions[lostId];
+    else a.store.transaction(st => { delete st.sessions[lostId]; });
     assert.equal(c.raw(), null);
-    assert.equal((await c.post(`/api/rounds/${b.body.round.id}/advance`, { revision: 1, actionId: aid('gone') })).status, 401);
-    const fresh = await c.get('/api/session');
-    assert.equal(fresh.status, 200); assert.notEqual(c.jar.id(), lostId);
-    assert.equal(fresh.body.session.balanceCents, 100000); assert.equal(fresh.body.round, null); // the debited wager is not surfaced
+    const count = a.sessionCount();
+    const post = await c.post(`/api/rounds/${b.body.round.id}/advance`, { revision: 1, actionId: aid('gone') });
+    assert.equal(post.status, 404); assert.equal(post.body.code, 'SESSION_NOT_FOUND');
+    const read = await c.get('/api/session');
+    assert.equal(read.status, 404); assert.equal(read.body.code, 'SESSION_NOT_FOUND');
+    assert.equal(c.jar.id(), lostId); assert.equal(a.sessionCount(), count); // no new wallet, cookie untouched
+  });
+
+  test(`KNOWN DEFECT F09 (${kind}): stored sessions carry no lifecycle timestamps (no server-side expiry possible)`, async t => {
+    const a = await make(); t.after(() => a.close()); const c = a.client(); await bet(c);
+    assert.ok(!Object.keys(c.raw()).some(k => /created|seen|expire|updated/i.test(k)));
   });
 }
 
