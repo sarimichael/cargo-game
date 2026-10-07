@@ -1,0 +1,96 @@
+{
+ "meta": {
+  "script": "audit/measure-storage.mjs",
+  "node": "v24.21.0",
+  "generatedAt": "2026-10-07T22:25:21.104Z",
+  "note": "Timings are medians of 15 requests on this machine and only indicative; the in-memory SQLite stand-in has no network latency."
+ },
+ "composition": {
+  "rounds": 200,
+  "totalBytes": 435288,
+  "bytesPerRound": 2176,
+  "shares": {
+   "rounds": {
+    "bytes": 210578,
+    "share": 0.484
+   },
+   "ledger": {
+    "bytes": 147201,
+    "share": 0.338
+   },
+   "receipts": {
+    "bytes": 77201,
+    "share": 0.177
+   },
+   "other": {
+    "bytes": 308,
+    "share": 0.001
+   }
+  },
+  "receiptsPerRound": 3,
+  "ledgerEntriesPerRound": 3.86,
+  "exampleRoundBytes": 1014,
+  "exampleRoundParts": {
+   "events": 253,
+   "hazards": 27,
+   "containers": 292,
+   "seedsAndProof": 143
+  },
+  "retainedForever": [
+   "every round including revealed seeds and full event logs",
+   "every ledger entry",
+   "every idempotency receipt"
+  ],
+  "snapshotResponseBytes": 5350
+ },
+ "latency": [
+  {
+   "adapter": "worker",
+   "sessionBytes": 19279,
+   "getSessionMs": 0.42,
+   "postActionMs": 0.61
+  },
+  {
+   "adapter": "worker",
+   "sessionBytes": 249051,
+   "getSessionMs": 1.78,
+   "postActionMs": 2.74
+  },
+  {
+   "adapter": "worker",
+   "sessionBytes": 999499,
+   "getSessionMs": 5.19,
+   "postActionMs": 9
+  },
+  {
+   "adapter": "worker",
+   "sessionBytes": 1899615,
+   "getSessionMs": 9.87,
+   "postActionMs": 18.14
+  },
+  {
+   "adapter": "local",
+   "sessionBytes": 19279,
+   "getSessionMs": 1.23,
+   "postActionMs": 2.57
+  },
+  {
+   "adapter": "local",
+   "sessionBytes": 249051,
+   "getSessionMs": 1.05,
+   "postActionMs": 5.55
+  },
+  {
+   "adapter": "local",
+   "sessionBytes": 999499,
+   "getSessionMs": 1.12,
+   "postActionMs": 17.01
+  },
+  {
+   "adapter": "local",
+   "sessionBytes": 1899615,
+   "getSessionMs": 1.73,
+   "postActionMs": 32.78
+  }
+ ]
+}

@@ -2,8 +2,8 @@
  "meta": {
   "script": "audit/validate-system.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-07T22:07:13.415Z",
-  "runtimeMs": 45352
+  "generatedAt": "2026-10-07T22:25:01.068Z",
+  "runtimeMs": 41051
  },
  "summary": {
   "checks": 21,
@@ -71,7 +71,7 @@
      "balance": 97000
     }
    },
-   "ms": 158
+   "ms": 166
   },
   {
    "id": "S02",
@@ -94,7 +94,7 @@
      "ledgerEntries": 1
     }
    },
-   "ms": 75
+   "ms": 67
   },
   {
    "id": "S03",
@@ -119,7 +119,7 @@
      ]
     }
    },
-   "ms": 54
+   "ms": 59
   },
   {
    "id": "S04",
@@ -142,7 +142,7 @@
      "expected": 3091
     }
    },
-   "ms": 128
+   "ms": 131
   },
   {
    "id": "S05",
@@ -165,7 +165,7 @@
      "bad": 0
     }
    },
-   "ms": 702
+   "ms": 653
   },
   {
    "id": "S06",
@@ -186,7 +186,7 @@
      "expected": 100090
     }
    },
-   "ms": 15
+   "ms": 17
   },
   {
    "id": "S07",
@@ -209,7 +209,7 @@
      "failures": []
     }
    },
-   "ms": 35
+   "ms": 32
   },
   {
    "id": "S08",
@@ -242,16 +242,16 @@
    "adapters": {
     "local": {
      "ok": true,
-     "inspectedActiveResponses": 1054,
+     "inspectedActiveResponses": 946,
      "leaks": []
     },
     "worker": {
      "ok": true,
-     "inspectedActiveResponses": 902,
+     "inspectedActiveResponses": 1070,
      "leaks": []
     }
    },
-   "ms": 2886
+   "ms": 2700
   },
   {
    "id": "S10",
@@ -264,16 +264,16 @@
     "local": {
      "ok": true,
      "rounds": 80,
-     "sails": 325,
-     "icebergs": 27,
-     "debris": 96,
+     "sails": 328,
+     "icebergs": 31,
+     "debris": 88,
      "proofsVerified": 80,
      "ledger": {
       "ok": true,
       "start": 100000,
-      "sum": -38001,
-      "balance": 61999,
-      "entries": 173,
+      "sum": -64538,
+      "balance": 35462,
+      "entries": 174,
       "refills": 0
      },
      "issues": []
@@ -281,22 +281,22 @@
     "worker": {
      "ok": true,
      "rounds": 80,
-     "sails": 401,
-     "icebergs": 34,
-     "debris": 84,
+     "sails": 366,
+     "icebergs": 31,
+     "debris": 101,
      "proofsVerified": 80,
      "ledger": {
       "ok": true,
       "start": 100000,
-      "sum": -60321,
-      "balance": 39679,
-      "entries": 169,
+      "sum": -83473,
+      "balance": 16527,
+      "entries": 160,
       "refills": 0
      },
      "issues": []
     }
    },
-   "ms": 3859
+   "ms": 3427
   },
   {
    "id": "S11",
@@ -367,7 +367,7 @@
      "betEntries": 1
     }
    ],
-   "ms": 295
+   "ms": 292
   },
   {
    "id": "S12",
@@ -398,7 +398,7 @@
      }
     }
    },
-   "ms": 14
+   "ms": 15
   },
   {
    "id": "S13",
@@ -425,7 +425,7 @@
      "creditsAfter": 3
     }
    },
-   "ms": 19
+   "ms": 22
   },
   {
    "id": "S14",
@@ -448,7 +448,7 @@
      "newSessionsFrom25Gets": 25
     }
    },
-   "ms": 47
+   "ms": 64
   },
   {
    "id": "S15",
@@ -462,14 +462,14 @@
    "refusal": {
     "status": 409,
     "code": "SESSION_STORAGE_FULL",
-    "bytes": 1942708,
-    "headroomBytes": 57292
+    "bytes": 1941824,
+    "headroomBytes": 58176
    },
    "serverErrors": [],
    "unsettledRounds": [],
-   "localStoreBytesPerRound": 2175.02,
+   "localStoreBytesPerRound": 2182.62,
    "stillOpen": "Once refused, the play session cannot start new voyages; normalised storage (F03 root fix) is deferred.",
-   "ms": 36690
+   "ms": 33040
   },
   {
    "id": "S16",
@@ -538,7 +538,7 @@
      ]
     }
    },
-   "ms": 212
+   "ms": 204
   },
   {
    "id": "S17",
@@ -570,7 +570,7 @@
     "unknownField": false
    },
    "remainingLimitation": "A different but well-formed round ID and plausible timestamps cannot be detected: they are not bound into the seed commitment.",
-   "ms": 19
+   "ms": 16
   },
   {
    "id": "S19",
@@ -583,7 +583,7 @@
    "expectedUnderAcceptedRules": 103,
    "inProcessMutationBlocked": true,
    "roundStoresMathVersion": [],
-   "ms": 7
+   "ms": 9
   },
   {
    "id": "S20",
@@ -606,7 +606,7 @@
      "invalidUtf8Status": 400
     }
    },
-   "ms": 76
+   "ms": 75
   },
   {
    "id": "S21",
@@ -633,7 +633,7 @@
      "zeroAmountEntry": true
     }
    },
-   "ms": 19
+   "ms": 21
   }
  ]
 }

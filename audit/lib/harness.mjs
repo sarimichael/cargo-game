@@ -43,11 +43,12 @@ export async function localAdapter() {
 export async function workerAdapter({ maxBodyBytes = null } = {}) {
   const { DatabaseSync } = await import('node:sqlite');
   const sql = new DatabaseSync(':memory:'); sql.exec(migration());
-  const faults = { beforeUpdate: 0, afterUpdate: 0, maxBodyBytes };
+  const faults = { beforeUpdate: 0, afterUpdate: 0, beforeRead: 0, beforeInsert: 0, maxBodyBytes };
   const DB = { prepare(query) { return { bind(...values) { return {
-    async first() { await tick(); return sql.prepare(query).get(...values) || null; },
+    async first() { await tick(); if (faults.beforeRead > 0) { faults.beforeRead--; throw new Error('injected read failure'); } return sql.prepare(query).get(...values) || null; },
     async run() {
       await tick();
+      if (query.startsWith('INSERT') && faults.beforeInsert > 0) { faults.beforeInsert--; throw new Error('injected failure before insert'); }
       if (query.startsWith('UPDATE') && faults.beforeUpdate > 0) { faults.beforeUpdate--; throw new Error('injected failure before update'); }
       // Emulates Cloudflare D1's documented 2,000,000-byte string/BLOB/row limit.
       if (faults.maxBodyBytes && values.some(v => typeof v === 'string' && Buffer.byteLength(v) > faults.maxBodyBytes)) throw new Error('D1_ERROR: string or blob too big: SQLITE_TOOBIG');
@@ -57,11 +58,13 @@ export async function workerAdapter({ maxBodyBytes = null } = {}) {
     } }; } }; } };
   const env = { DB, ASSETS: { fetch: () => new Response('asset') } };
   const origin = 'https://cargo.test';
+  // `impl` lets a test drive the same database with a different Worker build (a later deployment).
+  const state = { impl: worker };
   const client = (jar = cookieJar()) => ({
     jar, kind: 'worker', url: origin,
-    async get(p, headers = {}) { const r = await worker.fetch(new Request(origin + p, { headers: { Cookie: jar.header(), ...headers } }), env); jar.take(r.headers.get('set-cookie')); return { status: r.status, body: await r.json().catch(() => null) }; },
+    async get(p, headers = {}) { const r = await state.impl.fetch(new Request(origin + p, { headers: { Cookie: jar.header(), ...headers } }), env); jar.take(r.headers.get('set-cookie')); return { status: r.status, body: await r.json().catch(() => null) }; },
     async post(p, input, headers = {}, rawBody) {
-      const r = await worker.fetch(new Request(origin + p, { method: 'POST', headers: { 'Content-Type': 'application/json', Cookie: jar.header(), Origin: origin, ...headers }, body: rawBody ?? JSON.stringify(input) }), env);
+      const r = await state.impl.fetch(new Request(origin + p, { method: 'POST', headers: { 'Content-Type': 'application/json', Cookie: jar.header(), Origin: origin, ...headers }, body: rawBody ?? JSON.stringify(input) }), env);
       return { status: r.status, body: await r.json().catch(() => null) };
     },
     raw() { const row = sql.prepare('SELECT body FROM cargo_sessions WHERE id = ?').get(jar.id()); return row ? JSON.parse(row.body) : null; },
@@ -69,7 +72,7 @@ export async function workerAdapter({ maxBodyBytes = null } = {}) {
     async mutate(fn) { const s = this.raw(); fn(s); sql.prepare('UPDATE cargo_sessions SET body = ? WHERE id = ?').run(JSON.stringify(s), jar.id()); },
     fork() { return client(cookieJar()); }
   });
-  return { kind: 'worker', sql, faults, env, client, sessionCount: () => Number(sql.prepare('SELECT count(*) AS n FROM cargo_sessions').get().n), async close() { sql.close(); } };
+  return { kind: 'worker', sql, faults, env, client, useWorker(impl) { state.impl = impl; }, sessionCount: () => Number(sql.prepare('SELECT count(*) AS n FROM cargo_sessions').get().n), async close() { sql.close(); } };
 }
 
 export const ADAPTERS = { local: localAdapter, worker: workerAdapter };

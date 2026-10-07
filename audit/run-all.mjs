@@ -44,6 +44,7 @@ run('Audit claim cross-check', ['audit/validate-claims.mjs']);
 run('RNG structure', ['audit/validate-rng.mjs']);
 if (fs.existsSync(path.join(root, 'audit/results/simulation-raw.json'))) run('Simulation statistics', ['audit/analyze-simulation.mjs']);
 run('System / adversarial', ['audit/validate-system.mjs', ...(quick ? ['--skip-capacity'] : [])]);
+if (!quick) run('Storage growth and request cost (F03)', ['audit/measure-storage.mjs']);
 run('Audit regression tests', ['--test', ...fs.readdirSync(path.join(root, 'audit/tests')).filter(f => f.endsWith('.test.js')).map(f => 'audit/tests/' + f)]);
 // Optional real-browser check: runs only when Playwright can be resolved (PLAYWRIGHT_MODULE or a normal install).
 const playwright = process.env.PLAYWRIGHT_MODULE || (() => { try { return createRequire(import.meta.url).resolve('playwright'); } catch { return null; } })();

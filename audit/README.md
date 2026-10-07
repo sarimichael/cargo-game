@@ -22,6 +22,7 @@ Node.js 24 or newer, as declared in `package.json`. Node 22.22 also runs everyth
 | `node audit/simulate.mjs --rounds 1000000` | Deterministic Monte Carlo of the production `hazardDeck()` → `results/simulation-raw.json` | ~20 min |
 | `node audit/analyze-simulation.mjs` | Statistical screens on the simulation → `results/simulation.json` | <1 s |
 | `node audit/validate-system.mjs [--skip-capacity]` | Both real adapters: races, idempotency, validation, faults and defect reproductions (S01–S21) → `results/system.json` | ~1 min |
+| `node audit/measure-storage.mjs` | F03 evidence: session composition per round and request cost vs stored size, both adapters → `results/storage.json` (timings indicative) | ~20 s |
 | `PLAYWRIGHT_MODULE=… node audit/browser-check.mjs` | Real Chromium against the local server, desktop and 390 px phone: UI verification, browser-loaded verifier, frozen table, layout → `results/browser.json`. Optional; needs Playwright | ~30 s |
 
 \*Measured on a 4-vCPU container.
@@ -29,7 +30,7 @@ Node.js 24 or newer, as declared in `package.json`. Node 22.22 also runs everyth
 ## Determinism
 
 - **Outcome-deterministic:** `validate-math`, `validate-claims`, `validate-rng`, `simulate`/`analyze-simulation` and the engine-level tests. Server seeds are derived as `SHA-256("cargo-audit-v1|<label>|<index>")` (`lib/seeds.mjs`), so re-running produces identical outcomes. The simulation's `streamHash` per mode identifies the exact sample, and the result does not depend on thread count.
-- **Assertion-deterministic only:** `validate-system.mjs` and `tests/adapters.test.js` / `tests/known-defects.test.js`. These drive the real HTTP and Worker adapters, which create sessions with production `newSeed()`, and seeds cannot be injected without changing production code. Game outcomes, and therefore counts such as icebergs or rounds-to-limit, vary slightly between runs. Every assertion is written to hold for any outcome; where an outcome must be fixed, hazards are forced through a test-only write to stored state.
+- **Assertion-deterministic only:** `validate-system.mjs`, `measure-storage.mjs` and `tests/adapters.test.js` / `tests/known-defects.test.js` / `tests/reliability.test.js` / `tests/restart.test.js`. `restart.test.js` also depends on operating-system timing for where each SIGKILL lands. These drive the real HTTP and Worker adapters, which create sessions with production `newSeed()`, and seeds cannot be injected without changing production code. Game outcomes, and therefore counts such as icebergs or rounds-to-limit, vary slightly between runs. Every assertion is written to hold for any outcome; where an outcome must be fixed, hazards are forced through a test-only write to stored state.
 - Test-action choices use a seeded SplitMix64 generator, never `Math.random`.
 - **Non-deterministic by design:** R06 draws 10,000 values from production `newSeed()`, checking only their format and uniqueness. Timestamps, temporary directories and HTTP ports also vary.
 - **Assumption:** derived SHA-256 seeds stand in for the OS CSPRNG. The suite tests the seed → deck mapping, not the host's entropy source.
@@ -51,6 +52,9 @@ audit/
   tests/*.test.js         node:test regression tests:
                             remediation.test.js   protective tests for defects fixed in phase 2
                             known-defects.test.js characterises defects that are still open
+                            reliability.test.js   phase 3: persistence, concurrency, ordering, storage faults,
+                                                  input fuzz, session lifecycle, configuration versions
+                            restart.test.js       phase 3: real server processes killed with SIGKILL; F07
   results/                committed outputs of the run recorded in the reports
 ```
 

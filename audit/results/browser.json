@@ -3,7 +3,7 @@
   "script": "audit/browser-check.mjs",
   "node": "v24.21.0",
   "chromium": "141.0.7390.37",
-  "generatedAt": "2026-10-07T22:07:26.809Z",
+  "generatedAt": "2026-10-07T22:25:36.153Z",
   "reducedMotion": true
  },
  "pass": true,
