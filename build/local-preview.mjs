@@ -1,0 +1,10 @@
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
+import worker from '../server/worker.js';
+const sql=new DatabaseSync(':memory:');sql.exec(fs.readFileSync('drizzle/'+fs.readdirSync('drizzle').find(x=>x.endsWith('.sql')),'utf8'));
+const DB={prepare(query){return{bind(...values){return{async first(){return sql.prepare(query).get(...values)||null},async run(){const result=sql.prepare(query).run(...values);return{meta:{changes:result.changes}}}}}}}};
+const mime={'.html':'text/html','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml'};
+const ASSETS={async fetch(request){const url=new URL(request.url),name=url.pathname==='/'?'index.html':url.pathname.slice(1);if(!/^[a-zA-Z0-9.-]+$/.test(name))return new Response('Not found',{status:404});const file=path.resolve('public',name);if(!fs.existsSync(file))return new Response('Not found',{status:404});return new Response(fs.readFileSync(file),{headers:{'Content-Type':mime[path.extname(file)]||'text/plain'}})}};
+http.createServer(async(req,res)=>{try{const chunks=[];for await(const chunk of req)chunks.push(chunk);const request=new Request('http://127.0.0.1:4175'+req.url,{method:req.method,headers:req.headers,...(req.method==='POST'?{body:Buffer.concat(chunks)}:{})});const response=await worker.fetch(request,{DB,ASSETS});res.writeHead(response.status,Object.fromEntries(response.headers));res.end(Buffer.from(await response.arrayBuffer()));}catch(e){res.writeHead(500);res.end(e.message);}}).listen(4175,'127.0.0.1',()=>console.log('Mobile game preview ready at http://127.0.0.1:4175'));

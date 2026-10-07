@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#091721"><title>Cargo — Play the voyage</title><link rel="icon" href="/icon.svg"><link rel="stylesheet" href="/styles.css"></head>
+<body>
+ <div class="app">
+  <header class="topbar">
+   <a class="brand" href="/" aria-label="Cargo home"><img src="/icon.svg" width="43" height="43" alt=""><span>CARGO</span></a>
+   <span class="tagline">LONGER VOYAGES. BIGGER CHOICES.</span>
+   <nav aria-label="Game tools"><button id="history-button" class="quiet">History</button><button id="rules-button" class="quiet">How to play</button><button id="fairness-button" class="quiet">Fairness</button><button id="sound-button" class="icon-button" aria-label="Turn sound on" aria-pressed="false">♪</button></nav>
+   <div class="wallet"><span class="coin">$</span><div><span class="eyebrow">PLAY BALANCE</span><strong id="balance">$1,000.00</strong></div><span class="connection" id="connection" title="Local wallet"></span></div>
+  </header>
+  <main class="game-layout">
+   <aside class="panel bet-panel" aria-label="Bet controls">
+    <div class="panel-title"><span class="eyebrow">YOUR VOYAGE</span><span class="badge">PLAY MONEY</span></div>
+    <label for="bet-amount">Bet amount <span class="label-hint">USD</span></label>
+    <div class="amount-control"><span>$</span><input id="bet-amount" inputmode="decimal" type="text" value="30.00" autocomplete="off" aria-describedby="bet-help"><div><button id="half-bet" aria-label="Halve bet">½</button><button id="double-bet" aria-label="Double bet">2×</button></div></div>
+    <p id="bet-help" class="helper">3 containers · $10.00 each</p>
+    <div class="section-label"><span>Difficulty</span><span id="mode-hint">CHOOSE YOUR SEAS</span></div>
+    <div id="difficulty" class="difficulty-grid" role="group" aria-label="Difficulty"></div>
+    <div class="risk-card"><div class="eyebrow" id="risk-label">FIRST STOP RISK</div><div class="risk-line"><strong id="risk-percent">5.0%</strong><span id="risk-description">loss chance per cargo</span></div><div class="risk-meter"><span id="risk-fill"></span></div></div>
+    <div class="figures"><div><span>Secured payout</span><strong id="secured">$0.00</strong></div><div><span>On board value</span><strong id="onboard">$30.00</strong></div></div>
+    <button id="sail-button" class="primary">Set sail · $30.00</button>
+    <button id="collect-all" class="secondary" hidden>Collect all remaining cargo</button>
+    <p id="action-help" class="action-help">Choose your risk. Collect cargo separately.</p>
+    <div class="sidebar-bottom"><span>ONE BET · THREE CARGOES</span><button id="refill-button" class="text-button">Refill play balance</button></div>
+   </aside>
+   <section class="voyage" aria-label="Voyage and containers">
+    <div class="scene panel" id="scene">
+     <canvas id="ocean" aria-label="Animated cargo ship sailing between ports"></canvas>
+     <div class="scene-heading"><span class="scene-badge" id="stage-badge">READY AT THE HARBOR</span><h1 id="stage-title">Choose the seas you want to sail.</h1><p id="stage-description">Each stop brings more risk and a higher multiplier.</p></div>
+     <div class="current-multiplier" id="current-multiplier" hidden><span class="eyebrow">CURRENT MULTIPLIER</span><strong id="current-value">1.00×</strong><span id="current-stop">DEPARTURE</span></div>
+     <div class="next-stop"><div class="next-heading"><span id="next-title">EASY ROUTE</span><span id="stop-count">19 stops</span></div><strong id="next-value">19.60×</strong><span id="next-caption">Final stop multiplier</span></div>
+     <div class="result-overlay" id="result-overlay" hidden><span class="scene-badge" id="result-label">VOYAGE SETTLED</span><strong id="result-value">$0.00</strong><span class="eyebrow">TOTAL RETURNED</span><div id="result-net">Net result</div><button class="text-button" id="verify-result">Verify this round →</button></div>
+     <div class="scene-caption"><span></span><p id="scene-caption">Every cargo gets its own route. Collect one, keep the others sailing.</p></div>
+     <div class="scene-event" id="scene-event" role="status" aria-live="polite" hidden></div>
+    </div>
+    <div class="route panel"><div class="route-heading"><span class="eyebrow">STOP-BY-STOP MULTIPLIERS</span><span id="route-label">EASY · 19 STOPS</span></div><div class="route-track" id="route-track" aria-label="Stop multipliers"></div></div>
+    <div class="cargo-grid" id="cargo-grid" aria-label="Your cargo"></div>
+    <div class="voyage-footer"><span><span class="status-dot"></span> <span id="status-text">Ready to sail</span></span><span id="round-label">LOCAL PLAY-MONEY GAME</span><button class="text-button" id="export-round" hidden>Export round</button></div>
+   </section>
+  </main>
+  <footer class="page-footer"><span>CARGO / CONCEPT BUILD 1.0</span><span>Secure a container. Explore the next stop.</span><span id="save-status">Connecting to your local wallet…</span></footer>
+ </div>
+ <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+ <dialog id="modal"><div class="modal-header"><div><span class="eyebrow">CARGO</span><h2 id="modal-title">How to play</h2></div><button class="icon-button" id="close-modal" aria-label="Close dialog">×</button></div><div id="modal-content"></div></dialog>
+ <script type="module" src="/app.js"></script>
+</body></html>

@@ -1,0 +1,23 @@
+import { DatabaseSync } from 'node:sqlite';
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import worker from '../server/worker.js';
+import { verifyRound } from '../public/fairness.js';
+const sql=new DatabaseSync(':memory:');sql.exec(fs.readFileSync('drizzle/'+fs.readdirSync('drizzle').find(x=>x.endsWith('.sql')),'utf8'));
+const DB={prepare(query){return{bind(...values){return{async first(){return sql.prepare(query).get(...values)||null},async run(){const result=sql.prepare(query).run(...values);return{meta:{changes:result.changes}}}}}}}};
+let cookie='',revision=0;
+async function request(path,body){const response=await worker.fetch(new Request('https://cargo.test'+path,{method:body?'POST':'GET',headers:{Cookie:cookie,'Content-Type':'application/json',Origin:'https://cargo.test'},...(body?{body:JSON.stringify(body)}:{})}),{DB,ASSETS:{fetch:()=>new Response('asset')}});
+if(response.headers.get('set-cookie'))cookie=response.headers.get('set-cookie').split(';')[0];const result=await response.json();if(response.ok&&result.session)revision=result.session.revision;return {response,result}}
+const initial=await request('/api/session');assert.equal(initial.result.session.balanceCents,100000);
+const bet={difficulty:'easy',stakeCents:3001,clientSeed:'phone-check',expectedSeedHash:initial.result.session.nextSeedHash,revision,actionId:'phone-bet-001'};
+const start=await request('/api/rounds',bet);assert.equal(start.result.session.balanceCents,96999);assert.equal(start.result.round.proof.serverSeed,undefined);
+const repeated=await request('/api/rounds',bet);assert.equal(repeated.result.replayed,true);assert.equal(repeated.result.session.balanceCents,96999);
+const id=start.result.round.id,oldRevision=revision;
+const race=await Promise.all([request('/api/rounds/'+id+'/advance',{revision:oldRevision,actionId:'phone-sail-001'}),request('/api/rounds/'+id+'/advance',{revision:oldRevision,actionId:'phone-sail-002'})]);
+assert.deepEqual(race.map(x=>x.response.status).sort(),[200,409]);
+const saved=await request('/api/session');assert.equal(saved.result.round.step,1);
+let settled=saved;
+if(saved.result.round.status==='active')settled=await request('/api/rounds/'+id+'/collect',{revision,actionId:'phone-collect-001',containerId:'all'});
+assert.equal(settled.result.round.status,'settled');assert.equal((await verifyRound(settled.result.round)).valid,true);
+assert.equal(settled.result.session.balanceCents,100000-3001+settled.result.round.returnedCents);
+console.log('Hosted API check passed: bet, retry, competing advances, collection, saved state and independent proof.');sql.close();
