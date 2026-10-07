@@ -2,8 +2,8 @@
  "meta": {
   "script": "audit/validate-system.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-07T21:21:41.000Z",
-  "runtimeMs": 44584
+  "generatedAt": "2026-10-07T22:07:13.415Z",
+  "runtimeMs": 45352
  },
  "summary": {
   "checks": 21,
@@ -24,17 +24,21 @@
     "S11:pass",
     "S12:pass"
    ],
-   "defect": [
+   "remediated": [
     "S13:pass",
+    "S18:pass",
+    "S20:pass"
+   ],
+   "mitigated": [
+    "S15:pass"
+   ],
+   "defect": [
     "S14:pass",
-    "S15:pass",
     "S16:pass",
     "S17:pass",
-    "S18:pass",
     "S19:pass"
    ],
    "observation": [
-    "S20:pass",
     "S21:pass"
    ]
   }
@@ -67,7 +71,7 @@
      "balance": 97000
     }
    },
-   "ms": 154
+   "ms": 158
   },
   {
    "id": "S02",
@@ -115,7 +119,7 @@
      ]
     }
    },
-   "ms": 50
+   "ms": 54
   },
   {
    "id": "S04",
@@ -138,7 +142,7 @@
      "expected": 3091
     }
    },
-   "ms": 125
+   "ms": 128
   },
   {
    "id": "S05",
@@ -161,7 +165,7 @@
      "bad": 0
     }
    },
-   "ms": 665
+   "ms": 702
   },
   {
    "id": "S06",
@@ -182,7 +186,7 @@
      "expected": 100090
     }
    },
-   "ms": 14
+   "ms": 15
   },
   {
    "id": "S07",
@@ -205,7 +209,7 @@
      "failures": []
     }
    },
-   "ms": 49
+   "ms": 35
   },
   {
    "id": "S08",
@@ -226,7 +230,7 @@
      "mismatches": []
     }
    },
-   "ms": 40
+   "ms": 37
   },
   {
    "id": "S09",
@@ -238,16 +242,16 @@
    "adapters": {
     "local": {
      "ok": true,
-     "inspectedActiveResponses": 1066,
+     "inspectedActiveResponses": 1054,
      "leaks": []
     },
     "worker": {
      "ok": true,
-     "inspectedActiveResponses": 910,
+     "inspectedActiveResponses": 902,
      "leaks": []
     }
    },
-   "ms": 2844
+   "ms": 2886
   },
   {
    "id": "S10",
@@ -260,16 +264,16 @@
     "local": {
      "ok": true,
      "rounds": 80,
-     "sails": 326,
-     "icebergs": 24,
-     "debris": 90,
+     "sails": 325,
+     "icebergs": 27,
+     "debris": 96,
      "proofsVerified": 80,
      "ledger": {
       "ok": true,
       "start": 100000,
-      "sum": -53794,
-      "balance": 46206,
-      "entries": 179,
+      "sum": -38001,
+      "balance": 61999,
+      "entries": 173,
       "refills": 0
      },
      "issues": []
@@ -277,22 +281,22 @@
     "worker": {
      "ok": true,
      "rounds": 80,
-     "sails": 376,
-     "icebergs": 33,
-     "debris": 97,
+     "sails": 401,
+     "icebergs": 34,
+     "debris": 84,
      "proofsVerified": 80,
      "ledger": {
       "ok": true,
       "start": 100000,
-      "sum": -49764,
-      "balance": 50236,
-      "entries": 159,
+      "sum": -60321,
+      "balance": 39679,
+      "entries": 169,
       "refills": 0
      },
      "issues": []
     }
    },
-   "ms": 3629
+   "ms": 3859
   },
   {
    "id": "S11",
@@ -363,7 +367,7 @@
      "betEntries": 1
     }
    ],
-   "ms": 293
+   "ms": 295
   },
   {
    "id": "S12",
@@ -394,32 +398,34 @@
      }
     }
    },
-   "ms": 15
+   "ms": 14
   },
   {
    "id": "S13",
-   "type": "defect",
-   "title": "F10: idempotency-key edge cases cause false conflicts",
-   "assumption": "Reported in audit F10.",
-   "method": "Fresh session: POST /api/reset with actionId \"constructor\" (valid per regex). Then replay a completed collect with the same fields in a different key order.",
+   "type": "remediated",
+   "title": "F10 fixed: prototype-named action IDs and reordered JSON keys replay correctly",
+   "assumption": "Reported in audit F10; fixed in phase 2 (server/protocol.js).",
+   "method": "Fresh session: POST /api/reset with actionId \"constructor\" twice (must execute once, then replay). Replay a completed collect with its keys reordered (must replay), then reuse the ID with a different container (must still be refused).",
    "pass": true,
    "adapters": {
     "local": {
      "ok": true,
-     "constructorActionId": 409,
-     "hasOwnPropertyActionId": 409,
-     "reorderedReplay": 409,
+     "constructorFirst": 200,
+     "constructorReplay": true,
+     "reorderedReplay": 200,
+     "differentBodySameId": 409,
      "creditsAfter": 3
     },
     "worker": {
      "ok": true,
-     "constructorActionId": 409,
-     "hasOwnPropertyActionId": 409,
-     "reorderedReplay": 409,
+     "constructorFirst": 200,
+     "constructorReplay": true,
+     "reorderedReplay": 200,
+     "differentBodySameId": 409,
      "creditsAfter": 3
     }
    },
-   "ms": 17
+   "ms": 19
   },
   {
    "id": "S14",
@@ -442,33 +448,28 @@
      "newSessionsFrom25Gets": 25
     }
    },
-   "ms": 50
+   "ms": 47
   },
   {
    "id": "S15",
-   "type": "defect",
-   "title": "F03: session growth reaches the D1 2,000,000-byte row limit and blocks settlement",
-   "assumption": "Cloudflare D1 documents a 2,000,000-byte maximum string/BLOB/row; emulated in the SQLite stand-in.",
-   "method": "Natural run: play minimum-stake Easy rounds (bet, sail, collect) through the real Worker until a write is refused; record the round count, stored size and whether money was stranded. Boundary fixture: emulate a session whose bet was the last write that fit, then attempt to settle. Separately measure bytes per round on the local store.",
+   "type": "mitigated",
+   "title": "F03 mitigated: near the D1 row limit new bets are refused cleanly and every accepted round settles",
+   "assumption": "Cloudflare D1 documents a 2,000,000-byte maximum string/BLOB/row; emulated in the SQLite stand-in. Root cause (unbounded session growth) is still open.",
+   "method": "Play minimum-stake Easy rounds through the real Worker under the emulated limit. Once within two reserves of the limit, switch to worst-case rounds (19 stops, three separate collections, 80-character action IDs). Continue until a bet is refused; require that no request ever fails with 500, the refusal is 409 SESSION_STORAGE_FULL, and every accepted round settled. Separately measure bytes per round on the local store.",
    "pass": true,
-   "completedRoundsBeforeFailure": 921,
-   "failure": {
-    "action": "bet",
-    "status": 500,
-    "bytes": 1999705,
-    "balanceUnchanged": true
+   "completedRounds": 870,
+   "worstCaseRoundsNearLimit": 8,
+   "refusal": {
+    "status": 409,
+    "code": "SESSION_STORAGE_FULL",
+    "bytes": 1942708,
+    "headroomBytes": 57292
    },
-   "boundaryFixture": {
-    "advanceStatusAtLimit": 500,
-    "collectStatusAtLimit": 500,
-    "roundStatus": "active",
-    "stakeDebitedCents": 300,
-    "creditedCents": 0,
-    "sanityAdvanceWithoutLimit": 200
-   },
-   "localStoreBytesPerRound": 2183.54,
-   "interpretation": "The wallet became unusable; whether a wager is stranded depends on which write crosses the limit first.",
-   "ms": 36187
+   "serverErrors": [],
+   "unsettledRounds": [],
+   "localStoreBytesPerRound": 2175.02,
+   "stillOpen": "Once refused, the play session cannot start new voyages; normalised storage (F03 root fix) is deferred.",
+   "ms": 36690
   },
   {
    "id": "S16",
@@ -537,7 +538,7 @@
      ]
     }
    },
-   "ms": 242
+   "ms": 212
   },
   {
    "id": "S17",
@@ -552,75 +553,60 @@
   },
   {
    "id": "S18",
-   "type": "defect",
-   "title": "F08: verifyRound() accepts altered unvalidated metadata",
-   "assumption": "Reported in audit F08.",
-   "method": "Settle a natural (unforced) engine round, then alter proof.algorithm, multiplier100, id, a container valueCents, nextRisk, maxStops and timestamps, and append a duplicate container; run verifyRound() on each.",
+   "type": "remediated",
+   "title": "F08 fixed: verifyRound() rejects altered metadata and malformed structure",
+   "assumption": "Reported in audit F08; fixed in phase 2 (public/fairness.js strict cargo-v1 schema).",
+   "method": "Settle a natural (unforced) engine round, then alter proof.algorithm, multiplier100, id format, a container valueCents, nextRisk, maxStops and timestamps, append a duplicate container and add an unknown field; every variant must be rejected while the original verifies.",
    "pass": true,
    "acceptedAfterTampering": {
-    "algorithm": true,
-    "multiplier100": true,
-    "roundId": true,
-    "valueCents": true,
-    "nextRisk": true,
-    "maxStops": true,
-    "duplicateContainer": true,
-    "timestamps": true
+    "algorithm": false,
+    "multiplier100": false,
+    "roundIdFormat": false,
+    "valueCents": false,
+    "nextRisk": false,
+    "maxStops": false,
+    "duplicateContainer": false,
+    "timestamps": false,
+    "unknownField": false
    },
-   "coreTotalTamperRejected": true,
-   "ms": 29
+   "remainingLimitation": "A different but well-formed round ID and plausible timestamps cannot be detected: they are not bound into the seed commitment.",
+   "ms": 19
   },
   {
    "id": "S19",
    "type": "defect",
-   "title": "F11: changing the payout table mid-round changes the settlement of an accepted wager",
-   "assumption": "Reported in audit F11. MODES is frozen only at the top level.",
-   "method": "In this process only: accept an Easy round, sail to stop 1, change MODES.easy.payouts[0] from 103 to 104 (models a deployment), collect, restore the table.",
+   "title": "F11: a deployment that changes the payout table alters settlement of an accepted wager",
+   "assumption": "Reported in audit F11 (still open). The phase-2 deep freeze (N02) blocks in-process mutation, so a later deployment is modelled instead.",
+   "method": "Accept and advance an Easy round with the current engine and persist it as JSON; load an isolated engine copy whose Easy stop-1 multiplier is 1.04×; settle the persisted round with it.",
    "pass": true,
-   "tableMutableInProcess": true,
    "paidCents": 104,
    "expectedUnderAcceptedRules": 103,
+   "inProcessMutationBlocked": true,
    "roundStoresMathVersion": [],
-   "ms": 2
+   "ms": 7
   },
   {
    "id": "S20",
-   "type": "observation",
-   "title": "UTF-8 characters split across request body chunks",
+   "type": "remediated",
+   "title": "N01 fixed: UTF-8 characters split across request body chunks are decoded intact; invalid UTF-8 is refused",
    "assumption": "A client seed may contain multi-byte characters; TCP may split a body anywhere.",
-   "method": "Local: write the bet body in two socket writes 60 ms apart, splitting the 4-byte \"🚢\" between them; compare the stored clientSeed with the one sent. Worker: same split via a ReadableStream body.",
+   "method": "Local: write the bet body in two socket writes 60 ms apart, splitting the 4-byte \"🚢\"; Worker: same split via a ReadableStream body. Compare the stored clientSeed with the one sent. Then send a body containing an invalid UTF-8 sequence to both adapters (must be 400).",
    "pass": true,
    "adapters": {
     "local": {
      "status": 200,
-     "sent": "ship-🚢-cargo",
-     "stored": "ship-���-cargo",
-     "intact": false,
-     "storedCodePoints": [
-      "73",
-      "68",
-      "69",
-      "70",
-      "2d",
-      "fffd",
-      "fffd",
-      "fffd",
-      "2d",
-      "63",
-      "61",
-      "72",
-      "67",
-      "6f"
-     ]
+     "stored": "ship-🚢-cargo",
+     "intact": true,
+     "invalidUtf8Status": 400
     },
     "worker": {
      "status": 200,
      "stored": "ship-🚢-cargo",
-     "intact": true
+     "intact": true,
+     "invalidUtf8Status": 400
     }
    },
-   "defectObserved": true,
-   "ms": 73
+   "ms": 76
   },
   {
    "id": "S21",
@@ -647,7 +633,7 @@
      "zeroAmountEntry": true
     }
    },
-   "ms": 24
+   "ms": 19
   }
  ]
 }

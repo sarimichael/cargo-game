@@ -36,7 +36,7 @@ Cumulative survival through `s` stops is:
 
 `choose(20 − s, h) / choose(20, h)`
 
-The shared payout table matches the requested two-decimal Chicken ladder. It follows `round(0.98 / survival, 2)`; use the integer hundredths in `public/math.js` as the authoritative table.
+The shared payout table matches the requested two-decimal Chicken ladder. It follows `round(0.98 / survival, 2)` with **ties rounded half up**; use the integer hundredths in `public/math.js` as the authoritative table. Two stops are exact ties: Easy stop 4 (0.98 / 0.8 = 1.225 → **1.23×**) and Medium stop 4 (1.995 → **2.00×**). An independent implementation that rounds half to even, as Python, NumPy and .NET do by default, would produce 1.22× at Easy stop 4. Compute the ladder with exact rational arithmetic and half-up rounding. The table is deeply frozen at runtime.
 
 The 98% factor is nominal **before multiplier rounding and cent rounding**. The rounded table changes the return at particular stops; do not label every checkpoint as exactly 98%. For a container stake in cents `w` and a multiplier in hundredths `m`, its payout in cents is `floor((w × m + 50) / 100)` (nearest cent, half up). A payout includes its original stake.
 
@@ -45,5 +45,15 @@ A total bet splits evenly in cents; remainder cents are assigned to A, then B. T
 ## Verification
 
 `public/fairness.js` uses browser Web Crypto to independently reproduce the commitment and each shuffle. It then replays all sail and collection events, checks terminal container states and reconciles returned/net amounts. **Fairness → Verify round** runs this check. Exported JSON proofs contain the necessary inputs and event sequence.
+
+The verifier accepts only the exact `cargo-v1` proof format:
+
+- The algorithm must be `cargo-v1`.
+- The proof must contain exactly the documented fields; unknown fields are refused.
+- Containers A, B and C must each appear exactly once, in order, with exactly three hazard decks.
+- The difficulty, bet, client seed, nonce, commitment and timestamps must be well-formed.
+- Every displayed figure is recomputed: each container's value, the multiplier, the next-stop risk and the stop count.
+
+The proof cannot authenticate a round's identity. A different but well-formed round ID, or plausible timestamps, are not bound into the seed commitment, so a dispute should compare the proof with the operator's own records.
 
 Backend tests additionally check all 61 multipliers against the survival formula, cent conservation, rejected invalid actions, exact ledger reconciliation, retry idempotency, competing revisions, seed secrecy and tampered proofs.

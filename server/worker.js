@@ -1,17 +1,18 @@
-import { createHash, randomBytes } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 import { GameError, createSession, beginRound, advanceRound, collectRound, resetWallet, snapshot, publicRound } from './game.js';
+import { MAX_REQUEST_BYTES, MAX_SESSION_BODY_BYTES, SETTLEMENT_RESERVE_BYTES, parseJsonObject, actionFingerprint, findReceipt, receiptMatches, recordReceipt } from './protocol.js';
 
 const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'};
 const json=(status,data,extra={})=>new Response(JSON.stringify(data),{status,headers:{...headers,...extra}});
 async function readBody(request) {
   if(!request.headers.get('content-type')?.startsWith('application/json'))throw new GameError('Use application/json.',415);
-  if(Number(request.headers.get('content-length')||0)>16384)throw new GameError('Request is too large.',413);
-  let total=0,text='',decoder=new TextDecoder(),reader=request.body?.getReader();
-  if(reader)for(;;){const {value,done}=await reader.read();if(done)break;total+=value.byteLength;if(total>16384){await reader.cancel();throw new GameError('Request is too large.',413)}text+=decoder.decode(value,{stream:true})}
-  text+=decoder.decode();
-  try{const value=JSON.parse(text||'{}');if(!value||typeof value!=='object'||Array.isArray(value))throw 0;return value;}catch{throw new GameError('Send a JSON object.')}
+  if(Number(request.headers.get('content-length')||0)>MAX_REQUEST_BYTES)throw new GameError('Request is too large.',413);
+  let total=0;const chunks=[],reader=request.body?.getReader();
+  if(reader)for(;;){const {value,done}=await reader.read();if(done)break;total+=value.byteLength;if(total>MAX_REQUEST_BYTES){await reader.cancel();throw new GameError('Request is too large.',413)}chunks.push(value)}
+  const bytes=new Uint8Array(total);let offset=0;for(const c of chunks){bytes.set(c,offset);offset+=c.byteLength}
+  return parseJsonObject(bytes);
 }
-async function load(db,id){const row=await db.prepare('SELECT body, revision FROM cargo_sessions WHERE id = ?').bind(id).first();return row?{session:JSON.parse(row.body),revision:row.revision}:null;}
+async function load(db,id){const row=await db.prepare('SELECT body, revision FROM cargo_sessions WHERE id = ?').bind(id).first();return row?{session:JSON.parse(row.body),revision:row.revision,body:row.body}:null;}
 export default {
   async fetch(request,env) {
     const url=new URL(request.url);
@@ -41,19 +42,23 @@ export default {
       if(request.method!=='POST')throw new GameError('Endpoint not found.',404);
       const input=await readBody(request);
       if(typeof input.actionId!=='string'||!/^[a-zA-Z0-9-]{8,80}$/.test(input.actionId)||!Number.isSafeInteger(input.revision))throw new GameError('Supply an action ID and current revision.');
-      const fingerprint=createHash('sha256').update(JSON.stringify([url.pathname,input])).digest('hex'),s=record.session,prior=s.receipts[input.actionId];
-      if(prior){if(prior.fingerprint!==fingerprint)throw new GameError('Action ID was reused.',409);return json(200,{...snapshot(s),replayed:true})}
+      const fingerprint=actionFingerprint(url.pathname,input),s=record.session,prior=findReceipt(s,input.actionId);
+      if(prior){if(!receiptMatches(prior,fingerprint))throw new GameError('Action ID was reused.',409);return json(200,{...snapshot(s),replayed:true})}
       if(s.revision!==input.revision)throw new GameError('Another action changed your voyage. The latest state has been restored.',409,'STALE_REVISION');
-      if(url.pathname==='/api/rounds')beginRound(s,input);
+      if(url.pathname==='/api/rounds'){
+        // Refuse a new wager unless the stored session can still absorb its complete settlement.
+        if(new TextEncoder().encode(record.body).byteLength+SETTLEMENT_RESERVE_BYTES>MAX_SESSION_BODY_BYTES)throw new GameError('This play session has reached its storage limit, so a new voyage cannot start.',409,'SESSION_STORAGE_FULL');
+        beginRound(s,input);
+      }
       else if(route?.[2]==='advance')advanceRound(s,route[1]);
       else if(route?.[2]==='collect')collectRound(s,route[1],input.containerId);
       else if(url.pathname==='/api/reset')resetWallet(s);
       else throw new GameError('Endpoint not found.',404);
-      s.revision++;s.receipts[input.actionId]={fingerprint,at:new Date().toISOString()};
+      s.revision++;recordReceipt(s,input.actionId,fingerprint);
       const result=await db.prepare('UPDATE cargo_sessions SET revision = ?, body = ? WHERE id = ? AND revision = ?').bind(s.revision,JSON.stringify(s),id,record.revision).run();
       if(result.meta.changes!==1){
-        const latest=await load(db,id),receipt=latest?.session.receipts[input.actionId];
-        if(receipt?.fingerprint===fingerprint)return json(200,{...snapshot(latest.session),replayed:true});
+        const latest=await load(db,id),receipt=latest&&findReceipt(latest.session,input.actionId);
+        if(receipt&&receiptMatches(receipt,fingerprint))return json(200,{...snapshot(latest.session),replayed:true});
         throw new GameError('Another action changed your voyage. The latest state has been restored.',409,'STALE_REVISION');
       }
       return json(200,snapshot(s));

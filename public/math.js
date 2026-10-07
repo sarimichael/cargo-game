@@ -1,9 +1,11 @@
 // Published payout ladder. Integer hundredths keep money calculations exact.
+// Deeply frozen: no code in the process can alter a mode, its hazard count or its payouts.
+const mode = (name, color, hazards, payouts) => Object.freeze({ name, color, hazards, payouts: Object.freeze(payouts) });
 export const MODES = Object.freeze({
-  easy: { name: 'Easy', color: '#69d9f1', hazards: 1, payouts: [103,109,115,123,131,140,151,163,178,196,218,245,280,327,392,490,653,980,1960] },
-  medium: { name: 'Medium', color: '#5ce6bb', hazards: 3, payouts: [115,137,164,200,246,307,391,508,677,931,1330,1995,3192,5586,11172,27930,111720] },
-  hard: { name: 'Hard', color: '#f0c374', hazards: 5, payouts: [131,177,246,348,506,759,1181,1918,3289,6029,12059,27132,72352,253232,1519392] },
-  expert: { name: 'Expert', color: '#f58396', hazards: 10, payouts: [196,414,931,2261,6029,18088,63308,274335,1646008,18106088] }
+  easy: mode('Easy', '#69d9f1', 1, [103,109,115,123,131,140,151,163,178,196,218,245,280,327,392,490,653,980,1960]),
+  medium: mode('Medium', '#5ce6bb', 3, [115,137,164,200,246,307,391,508,677,931,1330,1995,3192,5586,11172,27930,111720]),
+  hard: mode('Hard', '#f0c374', 5, [131,177,246,348,506,759,1181,1918,3289,6029,12059,27132,72352,253232,1519392]),
+  expert: mode('Expert', '#f58396', 10, [196,414,931,2261,6029,18088,63308,274335,1646008,18106088])
 });
 export const CONTAINERS = ['A', 'B', 'C'];
 export const RULES = { minBetCents: 300, maxBetCents: 300000, startingBalanceCents: 100000, currency: 'USD', algorithm: 'cargo-v1' };

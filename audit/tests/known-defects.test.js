@@ -2,21 +2,24 @@
 //
 // Each test asserts the CURRENT (defective) behaviour so that the suite stays
 // green while documenting it precisely. When a defect is fixed, the matching test
-// WILL FAIL: invert its assertions into a protective regression test and update
-// CARGO_VALIDATION_REPORT.md. Finding IDs refer to CARGO_SAYCOVE_AUDIT.md (F01–F11)
-// and CARGO_VALIDATION_REPORT.md (N01–N04).
+// WILL FAIL: move it into a protective regression test (see remediation.test.js)
+// and update the reports. Finding IDs refer to CARGO_SAYCOVE_AUDIT.md (F01–F11) and
+// CARGO_VALIDATION_REPORT.md (N01–N04).
+//
+// Phase 2 (CARGO_PHASE2_REMEDIATION_REPORT.md) fixed F08, F10, N01 and N02; their
+// characterisations were replaced by protective tests in remediation.test.js. F11 is
+// still open and is now reproduced the way it occurs in practice: a later deployment.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import http from 'node:http';
-import { ADAPTERS, localAdapter, aid, startSession, bet, act } from '../lib/harness.mjs';
+import { ADAPTERS, localAdapter, startSession, bet, act } from '../lib/harness.mjs';
+import { loadEngineVariant } from '../lib/engine-variant.mjs';
 import { Store } from '../../server/store.js';
 import { MODES } from '../../public/math.js';
-import { createSession, beginRound, advanceRound, collectRound, publicRound } from '../../server/game.js';
+import { createSession, beginRound, advanceRound } from '../../server/game.js';
 import { seedHash } from '../../server/fairness.js';
-import { verifyRound } from '../../public/fairness.js';
 import { derivedSeed } from '../lib/seeds.mjs';
 
 const safe = { A: [20], B: [20], C: [20] };
@@ -45,16 +48,6 @@ for (const [kind, make] of Object.entries(ADAPTERS)) {
     const before = a.sessionCount(); for (let i = 0; i < 5; i++) await a.client().get('/api/session');
     assert.equal(a.sessionCount() - before, 5);
   });
-
-  test(`KNOWN DEFECT F10 (${kind}): actionId "constructor" and reordered JSON keys produce false 409 conflicts`, async t => {
-    const a = await make(); t.after(() => a.close()); const c = a.client(); const s = await startSession(c);
-    assert.equal((await c.post('/api/reset', { revision: s.session.revision, actionId: 'constructor' })).status, 409);
-    const b = await bet(c); await force(c, safe); const adv = await act(c, `/api/rounds/${b.body.round.id}/advance`);
-    const id = aid('k'), rev = adv.body.session.revision;
-    assert.equal((await c.post(`/api/rounds/${b.body.round.id}/collect`, { revision: rev, actionId: id, containerId: 'all' })).status, 200);
-    assert.equal((await c.post(`/api/rounds/${b.body.round.id}/collect`, { containerId: 'all', actionId: id, revision: rev })).status, 409);
-    assert.equal(c.raw().ledger.filter(e => e.kind === 'collect').length, 3); // no duplicate credit
-  });
 }
 
 test('KNOWN DEFECT F03: session state grows without bound (≈2.2 KB per short round on the local store)', async t => {
@@ -77,41 +70,17 @@ test('KNOWN DEFECT F07: two Store instances on one directory lose an acknowledge
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
 
-test('KNOWN DEFECT F08: verifyRound() accepts altered algorithm, multiplier, id, valueCents and duplicate containers', async () => {
-  let s, r;
-  for (let k = 0; ; k++) { const seed = derivedSeed('f08', k); s = createSession('f08', seed); r = beginRound(s, { difficulty: 'easy', stakeCents: 3000, clientSeed: 'p', expectedSeedHash: seedHash(seed) }, derivedSeed('f08n', k)); advanceRound(s, r.id); if (r.containers.every(c => c.status === 'onboard')) break; }
-  collectRound(s, r.id, 'all');
-  const base = publicRound(r); assert.equal((await verifyRound(base)).valid, true);
-  for (const tamper of [p => { p.proof.algorithm = 'other'; }, p => { p.multiplier100 = 1; }, p => { p.id = 'forged'; }, p => { p.containers[0].valueCents = 1e9; }, p => { p.containers.push(structuredClone(p.containers[0])); }]) {
-    const p = structuredClone(base); tamper(p); assert.equal((await verifyRound(p)).valid, true);
-  }
-});
-
-test('KNOWN DEFECT F11: an in-process payout-table change alters settlement of an already-accepted round', () => {
-  assert.equal(Object.isFrozen(MODES.easy.payouts), false);
+test('KNOWN DEFECT F11: a deployment that changes the payout table alters settlement of an already-accepted round', async () => {
+  // Accept and advance a round with the current engine, persist it as JSON (as both stores do),
+  // then settle it with a freshly loaded engine whose Easy stop-1 multiplier is 1.04× instead of 1.03×.
   const seed = derivedSeed('f11', 0), s = createSession('f11', seed);
   const r = beginRound(s, { difficulty: 'easy', stakeCents: 300, clientSeed: 'v', expectedSeedHash: seedHash(seed) }, derivedSeed('f11', 1));
   r.hazards = safe; advanceRound(s, r.id);
-  assert.equal(Object.keys(r).some(k => /version|table/i.test(k)), false); // no math version pinned to the round
-  const original = MODES.easy.payouts[0];
-  try { MODES.easy.payouts[0] = 104; collectRound(s, r.id, 'A'); } finally { MODES.easy.payouts[0] = original; }
-  assert.equal(r.containers[0].payoutCents, 104); // accepted at 1.03×, paid at 1.04×
-});
-
-test('KNOWN DEFECT N01: local server corrupts a UTF-8 client seed split across TCP chunks', async t => {
-  const a = await localAdapter(); t.after(() => a.close()); const c = a.client(); const s = await startSession(c);
-  const bytes = Buffer.from(JSON.stringify({ difficulty: 'easy', stakeCents: 300, clientSeed: 'ship-🚢', expectedSeedHash: s.session.nextSeedHash, revision: 0, actionId: aid('u') }));
-  const cut = bytes.indexOf(Buffer.from('🚢')) + 2;
-  const status = await new Promise((resolve, reject) => {
-    const req = http.request(a.url + '/api/rounds', { method: 'POST', headers: { 'Content-Type': 'application/json', Cookie: c.jar.header(), Origin: a.url, 'Content-Length': bytes.length } }, res => { res.resume(); res.on('end', () => resolve(res.statusCode)); });
-    req.on('error', reject); req.write(bytes.subarray(0, cut)); setTimeout(() => req.end(bytes.subarray(cut)), 60);
-  });
-  assert.equal(status, 200);
-  assert.notEqual(Object.values(c.raw().rounds)[0].clientSeed, 'ship-🚢'); // stored with U+FFFD replacement characters
-});
-
-test('KNOWN DEFECT N02: payout tables are mutable at runtime (MODES is only shallow-frozen)', () => {
-  assert.equal(Object.isFrozen(MODES), true);
-  assert.equal(Object.isFrozen(MODES.expert), false);
-  assert.equal(Object.isFrozen(MODES.expert.payouts), false);
+  assert.equal(Object.keys(r).some(k => /version|table|payouts|multipliers/i.test(k)), false); // nothing pins the accepted rules
+  const persisted = JSON.parse(JSON.stringify(s));
+  const next = await loadEngineVariant(text => text.replace("1, [103,109,", "1, [104,109,"));
+  assert.equal(next.math.MODES.easy.payouts[0], 104);
+  next.game.collectRound(persisted, r.id, 'A');
+  assert.equal(persisted.rounds[r.id].containers[0].payoutCents, 104); // accepted at 1.03×, paid at 1.04×
+  assert.equal(MODES.easy.payouts[0], 103); // the running engine itself is unaffected (N02 fix)
 });

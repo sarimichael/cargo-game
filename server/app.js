@@ -2,17 +2,19 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createHash, randomBytes } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 import { GameError, createSession, beginRound, advanceRound, collectRound, resetWallet, snapshot, publicRound } from './game.js';
+import { MAX_REQUEST_BYTES, parseJsonObject, actionFingerprint, findReceipt, receiptMatches, recordReceipt } from './protocol.js';
 
 const publicPath = fileURLToPath(new URL('../public/', import.meta.url));
 const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png' };
 const allowedFiles = new Set(['index.html','styles.css','app.js','scene.js','math.js','fairness.js','icon.svg','collision.js','iceberg.png','debris.png']);
 function send(res, status, payload) { res.writeHead(status, { 'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store' }); res.end(JSON.stringify(payload)); }
 async function body(req) {
-  let text = ''; for await (const chunk of req) { text += chunk; if (Buffer.byteLength(text) > 16384) throw new GameError('Request is too large.',413); }
-  try { const value = JSON.parse(text || '{}'); if (!value || typeof value !== 'object' || Array.isArray(value)) throw 0; return value; }
-  catch { throw new GameError('Send a JSON object.'); }
+  // Collect raw bytes and decode once: decoding chunk by chunk corrupts characters split across chunks.
+  const chunks = []; let size = 0;
+  for await (const chunk of req) { size += chunk.length; if (size > MAX_REQUEST_BYTES) throw new GameError('Request is too large.',413); chunks.push(chunk); }
+  return parseJsonObject(Buffer.concat(chunks));
 }
 export function createApp(store) {
   return http.createServer(async (req, res) => {
@@ -56,11 +58,11 @@ export function createApp(store) {
       const input = await body(req);
       if (typeof input.actionId !== 'string' || !/^[a-zA-Z0-9-]{8,80}$/.test(input.actionId)) throw new GameError('Supply a unique action ID.');
       if (!Number.isSafeInteger(input.revision)) throw new GameError('Supply the current session revision.');
-      const fingerprint = createHash('sha256').update(JSON.stringify([address.pathname,input])).digest('hex');
+      const fingerprint = actionFingerprint(address.pathname,input);
       const result = store.transaction(state => {
-        const s = state.sessions[id], receipt = s.receipts[input.actionId];
+        const s = state.sessions[id], receipt = findReceipt(s,input.actionId);
         if (receipt) {
-          if (receipt.fingerprint !== fingerprint) throw new GameError('Action ID was reused for a different request.',409);
+          if (!receiptMatches(receipt,fingerprint)) throw new GameError('Action ID was reused for a different request.',409);
           return { ...snapshot(s), replayed:true };
         }
         if (s.revision !== input.revision) throw new GameError('Another action changed your voyage. The latest state has been restored.',409,'STALE_REVISION');
@@ -69,7 +71,7 @@ export function createApp(store) {
         else if (roundRoute?.[2] === 'collect') collectRound(s,roundRoute[1],input.containerId);
         else if (address.pathname === '/api/reset') resetWallet(s);
         else throw new GameError('Endpoint not found.',404);
-        s.revision++; s.receipts[input.actionId] = { fingerprint, at:new Date().toISOString() };
+        s.revision++; recordReceipt(s,input.actionId,fingerprint);
         return snapshot(s);
       });
       send(res,200,result);

@@ -4,9 +4,12 @@
 // Usage: node audit/validate-system.mjs [--out audit/results/system.json] [--skip-capacity]
 //
 // Result semantics:
-//   type "safety"  – pass means the protective property HELD.
-//   type "defect"  – pass means the previously reported defect still REPRODUCES
-//                    exactly as described (a reproduction is not a safety pass).
+//   type "safety"     – pass means the protective property HELD.
+//   type "remediated" – a previously reported defect that phase 2 fixed; pass means the
+//                       corrected behaviour HELD (the defect no longer reproduces).
+//   type "mitigated"  – the harmful consequence is prevented but the root cause is open.
+//   type "defect"     – pass means the previously reported defect still REPRODUCES
+//                       exactly as described (a reproduction is not a safety pass).
 //   type "observation" – recorded behaviour with no pass/fail judgement implied.
 import fs from 'node:fs';
 import http from 'node:http';
@@ -238,17 +241,19 @@ await check('S12', 'safety', 'Storage failures before/after commit: no partial e
     return { pass: out.local.ok && out.worker.ok, adapters: out };
   });
 
-await check('S13', 'defect', 'F10: idempotency-key edge cases cause false conflicts', 'Reported in audit F10.',
-  'Fresh session: POST /api/reset with actionId "constructor" (valid per regex). Then replay a completed collect with the same fields in a different key order.', () => perAdapter(async (a, c) => {
+await check('S13', 'remediated', 'F10 fixed: prototype-named action IDs and reordered JSON keys replay correctly', 'Reported in audit F10; fixed in phase 2 (server/protocol.js).',
+  'Fresh session: POST /api/reset with actionId "constructor" twice (must execute once, then replay). Replay a completed collect with its keys reordered (must replay), then reuse the ID with a different container (must still be refused).', () => perAdapter(async (a, c) => {
     const s = await startSession(c);
     const ctor = await c.post('/api/reset', { revision: s.session.revision, actionId: 'constructor' });
-    const proto = await c.post('/api/reset', { revision: s.session.revision, actionId: 'hasOwnProperty' });
+    const ctorAgain = await c.post('/api/reset', { revision: s.session.revision, actionId: 'constructor' });
     const b = await bet(c); await forceHazards(c, safeHazards); const adv = await act(c, `/api/rounds/${b.body.round.id}/advance`);
     const id = aid('ord'), rev = adv.body.session.revision;
     const first = await c.post(`/api/rounds/${b.body.round.id}/collect`, { revision: rev, actionId: id, containerId: 'all' });
     const reordered = await c.post(`/api/rounds/${b.body.round.id}/collect`, { containerId: 'all', actionId: id, revision: rev });
+    const different = await c.post(`/api/rounds/${b.body.round.id}/collect`, { revision: rev, actionId: id, containerId: 'A' });
     const credits = c.raw().ledger.filter(e => e.kind === 'collect').length;
-    return { ok: ctor.status === 409 && reordered.status === 409 && first.status === 200 && credits === 3, constructorActionId: ctor.status, hasOwnPropertyActionId: proto.status, reorderedReplay: reordered.status, creditsAfter: credits };
+    return { ok: ctor.status === 200 && ctorAgain.body?.replayed === true && first.status === 200 && reordered.status === 200 && reordered.body.replayed === true && different.status === 409 && credits === 3,
+      constructorFirst: ctor.status, constructorReplay: ctorAgain.body?.replayed, reorderedReplay: reordered.status, differentBodySameId: different.status, creditsAfter: credits };
   }));
 
 await check('S14', 'defect', 'F01/F09: free funding — reset restores $1,000 after a loss; every cookieless GET creates a funded session', 'Reported in audit F01 and F09.',
@@ -259,47 +264,46 @@ await check('S14', 'defect', 'F01/F09: free funding — reset restores $1,000 af
     return { ok: lost === 99699 && reset.status === 200 && after === 100000 && a.sessionCount() - before === 25, balanceAfterLoss: lost, balanceAfterReset: after, newSessionsFrom25Gets: a.sessionCount() - before };
   }));
 
-await check('S15', 'defect', 'F03: session growth reaches the D1 2,000,000-byte row limit and blocks settlement', 'Cloudflare D1 documents a 2,000,000-byte maximum string/BLOB/row; emulated in the SQLite stand-in.',
-  'Natural run: play minimum-stake Easy rounds (bet, sail, collect) through the real Worker until a write is refused; record the round count, stored size and whether money was stranded. Boundary fixture: emulate a session whose bet was the last write that fit, then attempt to settle. Separately measure bytes per round on the local store.', async () => {
+await check('S15', 'mitigated', 'F03 mitigated: near the D1 row limit new bets are refused cleanly and every accepted round settles', 'Cloudflare D1 documents a 2,000,000-byte maximum string/BLOB/row; emulated in the SQLite stand-in. Root cause (unbounded session growth) is still open.',
+  'Play minimum-stake Easy rounds through the real Worker under the emulated limit. Once within two reserves of the limit, switch to worst-case rounds (19 stops, three separate collections, 80-character action IDs). Continue until a bet is refused; require that no request ever fails with 500, the refusal is 409 SESSION_STORAGE_FULL, and every accepted round settled. Separately measure bytes per round on the local store.', async () => {
     if (process.argv.includes('--skip-capacity')) return { pass: true, skipped: true, note: 'Run without --skip-capacity for the full measurement.' };
-    const a = await workerAdapter({ maxBodyBytes: 2000000 }), c = a.client(); let rounds = 0, failure = null;
+    const { MAX_SESSION_BODY_BYTES, SETTLEMENT_RESERVE_BYTES } = await import('../server/protocol.js');
+    const a = await workerAdapter({ maxBodyBytes: MAX_SESSION_BODY_BYTES }), c = a.client();
+    let rounds = 0, worstCaseRounds = 0, refusal = null; const errors = [], unsettled = [];
+    const longId = p => (p + '-' + aid('w')).padEnd(80, 'x').slice(0, 80);
     try {
       await startSession(c);
-      outer: for (;;) {
+      for (;;) {
         let st = (await c.get('/api/session')).body;
-        if (st.session.balanceCents < 300) { const r = await c.post('/api/reset', { revision: st.session.revision, actionId: aid('cr') }); if (r.status !== 200) { failure = { action: 'reset', status: r.status, bytes: c.rawBytes() }; break; } st = r.body; }
-        const before = c.raw();
-        const b = await c.post('/api/rounds', { difficulty: 'easy', stakeCents: 300, clientSeed: 'cap', expectedSeedHash: st.session.nextSeedHash, revision: st.session.revision, actionId: aid('cb') });
-        if (b.status !== 200) { failure = { action: 'bet', status: b.status, bytes: c.rawBytes(), balanceUnchanged: c.raw().balanceCents === before.balanceCents }; break; }
-        st = b.body;
+        if (st.session.balanceCents < 300) { const r = await c.post('/api/reset', { revision: st.session.revision, actionId: aid('cr') }); if (r.status !== 200) { errors.push({ action: 'reset', status: r.status }); break; } st = r.body; }
+        const worst = c.rawBytes() > MAX_SESSION_BODY_BYTES - 2 * SETTLEMENT_RESERVE_BYTES;
+        const b = await c.post('/api/rounds', { difficulty: 'easy', stakeCents: 300, clientSeed: worst ? '\u0001'.repeat(128) : 'cap', expectedSeedHash: st.session.nextSeedHash, revision: st.session.revision, actionId: worst ? longId('b') : aid('cb') });
+        if (b.status !== 200) { refusal = { status: b.status, code: b.body?.code, bytes: c.rawBytes(), headroomBytes: MAX_SESSION_BODY_BYTES - c.rawBytes() }; if (b.status === 500) errors.push({ action: 'bet', status: 500 }); break; }
+        st = b.body; const id = st.round.id;
+        if (worst) { await forceHazards(c, safeHazards); worstCaseRounds++; }
+        let step = 0; const collectedAt = new Set();
         while (st.round.status === 'active') {
-          const route = st.round.step >= 1 ? 'collect' : 'advance';
-          const r = await c.post(`/api/rounds/${st.round.id}/${route}`, { revision: st.session.revision, actionId: aid('cx'), ...(route === 'collect' ? { containerId: 'all' } : {}) });
-          if (r.status !== 200) { const raw = c.raw(); failure = { action: route, status: r.status, bytes: c.rawBytes(), roundStillActive: raw.rounds[st.round.id].status === 'active', creditedThisRound: raw.ledger.filter(e => e.roundId === st.round.id && e.kind === 'collect').length, stakeAtRiskCents: 300 }; break outer; }
+          step++;
+          const collect = worst ? [6, 12, 19].includes(st.round.step) && !collectedAt.has(st.round.step) : st.round.step >= 1;
+          if (collect) collectedAt.add(st.round.step);
+          const target = worst ? ({ 6: 'A', 12: 'B', 19: 'C' })[st.round.step] : 'all';
+          const route = collect ? 'collect' : 'advance';
+          const r = await c.post(`/api/rounds/${id}/${route}`, { revision: st.session.revision, actionId: worst ? longId(route[0] + step) : aid('cx'), ...(collect ? { containerId: target } : {}) });
+          if (r.status !== 200) { errors.push({ action: route, status: r.status, bytes: c.rawBytes() }); break; }
           st = r.body;
         }
+        if (c.raw().rounds[id].status !== 'settled') { unsettled.push(id); break; }
         rounds++;
         if (rounds > 5000) break;
       }
     } finally { await a.close(); }
-    // Local store growth per round for comparison.
     const l = await localAdapter(); let perRound;
     try { const c2 = l.client(); await startSession(c2); const size = () => fs.statSync(l.directory + '/state.json').size; const s0 = size();
       for (let i = 0; i < 50; i++) { const b = await bet(c2, { stakeCents: 300 }); await act(c2, `/api/rounds/${b.body.round.id}/advance`); if (c2.raw().rounds[b.body.round.id].status === 'active') await act(c2, `/api/rounds/${b.body.round.id}/collect`, { containerId: 'all' }); }
       perRound = (size() - s0) / 50; } finally { await l.close(); }
-    // Boundary fixture (as in the original audit): the bet is the last write that fits.
-    // Set the emulated limit just above the post-bet size, then try to settle the round.
-    const bnd = await workerAdapter(); let boundary;
-    try { const c3 = bnd.client(); await startSession(c3); const b = await bet(c3, { stakeCents: 300 }); await forceHazards(c3, safeHazards);
-      bnd.faults.maxBodyBytes = c3.rawBytes() + 100;
-      const adv = await act(c3, `/api/rounds/${b.body.round.id}/advance`);
-      bnd.faults.maxBodyBytes = null; const adv2 = await act(c3, `/api/rounds/${b.body.round.id}/advance`);
-      bnd.faults.maxBodyBytes = c3.rawBytes() + 100;
-      const col = await act(c3, `/api/rounds/${b.body.round.id}/collect`, { containerId: 'all' }); const raw = c3.raw();
-      boundary = { advanceStatusAtLimit: adv.status, collectStatusAtLimit: col.status, roundStatus: raw.rounds[b.body.round.id].status, stakeDebitedCents: 300, creditedCents: raw.ledger.filter(e => e.kind === 'collect').reduce((a, e) => a + e.amountCents, 0), sanityAdvanceWithoutLimit: adv2.status };
-    } finally { await bnd.close(); }
-    return { pass: !!failure && failure.status === 500 && boundary.collectStatusAtLimit === 500 && boundary.roundStatus === 'active' && boundary.creditedCents === 0, completedRoundsBeforeFailure: rounds, failure, boundaryFixture: boundary, localStoreBytesPerRound: perRound,
-      interpretation: failure?.roundStillActive ? 'A paid wager was left active and could not be settled.' : 'The wallet became unusable; whether a wager is stranded depends on which write crosses the limit first.' };
+    return { pass: errors.length === 0 && unsettled.length === 0 && refusal?.status === 409 && refusal.code === 'SESSION_STORAGE_FULL' && worstCaseRounds > 0,
+      completedRounds: rounds, worstCaseRoundsNearLimit: worstCaseRounds, refusal, serverErrors: errors, unsettledRounds: unsettled, localStoreBytesPerRound: perRound,
+      stillOpen: 'Once refused, the play session cannot start new voyages; normalised storage (F03 root fix) is deferred.' };
   });
 
 await check('S16', 'defect', 'F05: survivors at the final port stay uncredited until an explicit collect', 'Reported in audit F05.',
@@ -329,9 +333,8 @@ await check('S17', 'defect', 'F07: two Store instances on one directory lose an 
     } finally { fs.rmSync(dir, { recursive: true, force: true }); }
   });
 
-await check('S18', 'defect', 'F08: verifyRound() accepts altered unvalidated metadata', 'Reported in audit F08.',
-  'Settle a natural (unforced) engine round, then alter proof.algorithm, multiplier100, id, a container valueCents, nextRisk, maxStops and timestamps, and append a duplicate container; run verifyRound() on each.', async () => {
-    // Use the first derived seed whose natural Easy decks survive stop 1 (proofs must not be forced).
+await check('S18', 'remediated', 'F08 fixed: verifyRound() rejects altered metadata and malformed structure', 'Reported in audit F08; fixed in phase 2 (public/fairness.js strict cargo-v1 schema).',
+  'Settle a natural (unforced) engine round, then alter proof.algorithm, multiplier100, id format, a container valueCents, nextRisk, maxStops and timestamps, append a duplicate container and add an unknown field; every variant must be rejected while the original verifies.', async () => {
     let s, r;
     for (let k = 0; ; k++) {
       const seed = derivedSeed('s18', k); s = createSession('s18', seed);
@@ -340,30 +343,31 @@ await check('S18', 'defect', 'F08: verifyRound() accepts altered unvalidated met
     }
     collectRound(s, r.id, 'all');
     const base = publicRound(r), variants = {
-      algorithm: p => { p.proof.algorithm = 'not-cargo'; }, multiplier100: p => { p.multiplier100 = 999999; }, roundId: p => { p.id = 'forged-id'; },
+      algorithm: p => { p.proof.algorithm = 'not-cargo'; }, multiplier100: p => { p.multiplier100 = 999999; }, roundIdFormat: p => { p.id = 'forged-id'; },
       valueCents: p => { p.containers[0].valueCents = 123456789; }, nextRisk: p => { p.nextRisk = 0.99; }, maxStops: p => { p.maxStops = 1; },
-      duplicateContainer: p => { p.containers.push(structuredClone(p.containers[0])); }, timestamps: p => { p.startedAt = '1970-01-01T00:00:00.000Z'; p.finishedAt = '1970-01-01T00:00:00.000Z'; }
+      duplicateContainer: p => { p.containers.push(structuredClone(p.containers[0])); }, timestamps: p => { p.startedAt = 'not-a-time'; }, unknownField: p => { p.bonusCents = 1; }
     };
     const accepted = {};
     for (const [k, f] of Object.entries(variants)) { const p = structuredClone(base); f(p); accepted[k] = (await verifyRound(p)).valid; }
-    const coreRejected = !(await verifyRound({ ...structuredClone(base), returnedCents: base.returnedCents + 1 })).valid;
-    return { pass: (await verifyRound(base)).valid && accepted.algorithm && accepted.multiplier100 && accepted.roundId && accepted.valueCents && coreRejected, acceptedAfterTampering: accepted, coreTotalTamperRejected: coreRejected };
+    return { pass: (await verifyRound(base)).valid && Object.values(accepted).every(v => v === false), acceptedAfterTampering: accepted,
+      remainingLimitation: 'A different but well-formed round ID and plausible timestamps cannot be detected: they are not bound into the seed commitment.' };
   });
 
-await check('S19', 'defect', 'F11: changing the payout table mid-round changes the settlement of an accepted wager', 'Reported in audit F11. MODES is frozen only at the top level.',
-  'In this process only: accept an Easy round, sail to stop 1, change MODES.easy.payouts[0] from 103 to 104 (models a deployment), collect, restore the table.', () => {
+await check('S19', 'defect', 'F11: a deployment that changes the payout table alters settlement of an accepted wager', 'Reported in audit F11 (still open). The phase-2 deep freeze (N02) blocks in-process mutation, so a later deployment is modelled instead.',
+  'Accept and advance an Easy round with the current engine and persist it as JSON; load an isolated engine copy whose Easy stop-1 multiplier is 1.04×; settle the persisted round with it.', async () => {
+    const { loadEngineVariant } = await import('./lib/engine-variant.mjs');
     const seed = derivedSeed('s19', 0), s = createSession('s19', seed);
     const r = beginRound(s, { difficulty: 'easy', stakeCents: 300, clientSeed: 'v', expectedSeedHash: seedHash(seed) }, derivedSeed('s19', 1));
     r.hazards = safeHazards; advanceRound(s, r.id);
-    const original = MODES.easy.payouts[0];
-    let paid, mutable;
-    try { MODES.easy.payouts[0] = 104; mutable = MODES.easy.payouts[0] === 104; collectRound(s, r.id, 'A'); paid = r.containers[0].payoutCents; }
-    finally { MODES.easy.payouts[0] = original; }
-    return { pass: mutable && paid === 104 && MODES.easy.payouts[0] === 103, tableMutableInProcess: mutable, paidCents: paid, expectedUnderAcceptedRules: 103, roundStoresMathVersion: Object.keys(r).filter(k => /version|table|payouts/i.test(k)) };
+    const persisted = JSON.parse(JSON.stringify(s)), next = await loadEngineVariant(t => t.replace('1, [103,109,', '1, [104,109,'));
+    next.game.collectRound(persisted, r.id, 'A');
+    let inProcessMutationBlocked = false; try { MODES.easy.payouts[0] = 104; } catch { inProcessMutationBlocked = true; }
+    const paid = persisted.rounds[r.id].containers[0].payoutCents;
+    return { pass: paid === 104 && inProcessMutationBlocked && MODES.easy.payouts[0] === 103, paidCents: paid, expectedUnderAcceptedRules: 103, inProcessMutationBlocked, roundStoresMathVersion: Object.keys(r).filter(k => /version|table|payouts/i.test(k)) };
   });
 
-await check('S20', 'observation', 'UTF-8 characters split across request body chunks', 'A client seed may contain multi-byte characters; TCP may split a body anywhere.',
-  'Local: write the bet body in two socket writes 60 ms apart, splitting the 4-byte "🚢" between them; compare the stored clientSeed with the one sent. Worker: same split via a ReadableStream body.', async () => {
+await check('S20', 'remediated', 'N01 fixed: UTF-8 characters split across request body chunks are decoded intact; invalid UTF-8 is refused', 'A client seed may contain multi-byte characters; TCP may split a body anywhere.',
+  'Local: write the bet body in two socket writes 60 ms apart, splitting the 4-byte "🚢"; Worker: same split via a ReadableStream body. Compare the stored clientSeed with the one sent. Then send a body containing an invalid UTF-8 sequence to both adapters (must be 400).', async () => {
     const seedText = 'ship-🚢-cargo', out = {};
     { const a = await localAdapter(); try {
       const c = a.client(), s = await startSession(c);
@@ -374,7 +378,8 @@ await check('S20', 'observation', 'UTF-8 characters split across request body ch
         req.on('error', reject); req.write(bytes.subarray(0, cut)); setTimeout(() => req.end(bytes.subarray(cut)), 60);
       });
       const stored = Object.values(c.raw().rounds)[0]?.clientSeed;
-      out.local = { status, sent: seedText, stored, intact: stored === seedText, storedCodePoints: stored ? [...stored].map(ch => ch.codePointAt(0).toString(16)) : null };
+      const invalid = await c.post('/api/reset', null, {}, Buffer.concat([Buffer.from('{"revision":1,"actionId":"bad-utf8-1","x":"'), Buffer.from([0xC3, 0x28]), Buffer.from('"}')]));
+      out.local = { status, stored, intact: stored === seedText, invalidUtf8Status: invalid.status };
     } finally { await a.close(); } }
     { const a = await workerAdapter(); try {
       const c = a.client(), s = await startSession(c);
@@ -384,9 +389,10 @@ await check('S20', 'observation', 'UTF-8 characters split across request body ch
       const { default: worker } = await import('../server/worker.js');
       const res = await worker.fetch(new Request('https://cargo.test/api/rounds', { method: 'POST', duplex: 'half', body: stream, headers: { 'Content-Type': 'application/json', Cookie: c.jar.header(), Origin: 'https://cargo.test' } }), a.env);
       const stored = Object.values(c.raw().rounds)[0]?.clientSeed;
-      out.worker = { status: res.status, stored, intact: stored === seedText };
+      const invalid = await c.post('/api/reset', null, {}, Buffer.concat([Buffer.from('{"revision":1,"actionId":"bad-utf8-1","x":"'), Buffer.from([0xC3, 0x28]), Buffer.from('"}')]));
+      out.worker = { status: res.status, stored, intact: stored === seedText, invalidUtf8Status: invalid.status };
     } finally { await a.close(); } }
-    return { pass: true, adapters: out, defectObserved: !out.local.intact || !out.worker.intact };
+    return { pass: out.local.intact && out.worker.intact && out.local.invalidUtf8Status === 400 && out.worker.invalidUtf8Status === 400, adapters: out };
   });
 
 await check('S21', 'observation', '"Refill" sets the balance to $1,000 even when the balance is higher', 'UI text says "Set your play balance to $1,000.00".',
@@ -399,7 +405,7 @@ await check('S21', 'observation', '"Refill" sets the balance to $1,000 even when
 
 const failed = checks.filter(c => !c.pass);
 fs.writeFileSync(outFile, JSON.stringify({ meta: { script: 'audit/validate-system.mjs', node: process.version, generatedAt: new Date().toISOString(), runtimeMs: Date.now() - t0 },
-  summary: { checks: checks.length, passed: checks.length - failed.length, failed: failed.map(c => c.id), byType: Object.fromEntries(['safety', 'defect', 'observation'].map(t => [t, checks.filter(c => c.type === t).map(c => `${c.id}:${c.pass ? 'pass' : 'FAIL'}`)])) },
+  summary: { checks: checks.length, passed: checks.length - failed.length, failed: failed.map(c => c.id), byType: Object.fromEntries(['safety', 'remediated', 'mitigated', 'defect', 'observation'].map(t => [t, checks.filter(c => c.type === t).map(c => `${c.id}:${c.pass ? 'pass' : 'FAIL'}`)])) },
   checks }, null, 1));
 console.error(`${checks.length - failed.length}/${checks.length} system checks passed → ${outFile}`);
 process.exitCode = failed.length ? 1 : 0;

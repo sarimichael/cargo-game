@@ -22,6 +22,7 @@ Node.js 24 or newer, as declared in `package.json`. Node 22.22 also runs everyth
 | `node audit/simulate.mjs --rounds 1000000` | Deterministic Monte Carlo of the production `hazardDeck()` → `results/simulation-raw.json` | ~20 min |
 | `node audit/analyze-simulation.mjs` | Statistical screens on the simulation → `results/simulation.json` | <1 s |
 | `node audit/validate-system.mjs [--skip-capacity]` | Both real adapters: races, idempotency, validation, faults and defect reproductions (S01–S21) → `results/system.json` | ~1 min |
+| `PLAYWRIGHT_MODULE=… node audit/browser-check.mjs` | Real Chromium against the local server, desktop and 390 px phone: UI verification, browser-loaded verifier, frozen table, layout → `results/browser.json`. Optional; needs Playwright | ~30 s |
 
 \*Measured on a 4-vCPU container.
 
@@ -44,8 +45,12 @@ audit/
   lib/harness.mjs         drives server/app.js over HTTP and server/worker.js on node:sqlite
   validate-*.mjs          validators that write results/*.json
   simulate.mjs, analyze-simulation.mjs
-  run-all.mjs             one-command reproduction plus manifest
-  tests/*.test.js         node:test regression tests (known-defects.test.js characterises unfixed defects)
+  lib/engine-variant.mjs  isolated engine copy with a modified table (models a later deployment, F11)
+  browser-check.mjs       optional real-browser check (Playwright)
+  run-all.mjs             one-command reproduction plus manifest and production-change allowlist
+  tests/*.test.js         node:test regression tests:
+                            remediation.test.js   protective tests for defects fixed in phase 2
+                            known-defects.test.js characterises defects that are still open
   results/                committed outputs of the run recorded in the reports
 ```
 
@@ -54,7 +59,11 @@ audit/
 Each validator check records `assumption`, `method` and its measured fields. In `system.json` the `type` field matters:
 
 - `safety`: `pass` means the protective property held.
+- `remediated`: a defect fixed in phase 2; `pass` means the corrected behaviour held.
+- `mitigated`: the harmful consequence is prevented, but the root cause is still open.
 - `defect`: `pass` means the previously reported defect still reproduces. This is not a safety pass.
 - `observation`: recorded behaviour with no judgement.
 
-The tests in `tests/known-defects.test.js` assert the current defective behaviour. When a defect is fixed, its test will fail on purpose. Invert it into a protective test at that point.
+The tests in `tests/known-defects.test.js` assert the current defective behaviour. When a defect is fixed, its test will fail on purpose. Move it into `tests/remediation.test.js` as a protective test at that point.
+
+`run-all.mjs` compares every production file with the audited commit `25d5181`. Files may differ only if they appear in its `INTENDED_CHANGES` list, and the RNG and engine files in `MUST_BE_IDENTICAL` must stay byte-identical.

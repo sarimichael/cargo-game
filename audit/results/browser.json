@@ -1,0 +1,58 @@
+{
+ "meta": {
+  "script": "audit/browser-check.mjs",
+  "node": "v24.21.0",
+  "chromium": "141.0.7390.37",
+  "generatedAt": "2026-10-07T22:07:26.809Z",
+  "reducedMotion": true
+ },
+ "pass": true,
+ "results": [
+  {
+   "view": "desktop",
+   "actions": 3,
+   "uiVerify": {
+    "text": "Seed commitment, all three hazard decks, every stop, and all payouts verified.",
+    "error": false
+   },
+   "modules": {
+    "roundStatus": "settled",
+    "genuine": true,
+    "extraField": false,
+    "duplicateContainer": false,
+    "multiplier": false,
+    "payoutTableFrozen": true
+   },
+   "layout": {
+    "scrollWidth": 1440,
+    "innerWidth": 1440
+   },
+   "noHorizontalOverflow": true,
+   "consoleProblems": [],
+   "ok": true
+  },
+  {
+   "view": "phone",
+   "actions": 3,
+   "uiVerify": {
+    "text": "Seed commitment, all three hazard decks, every stop, and all payouts verified.",
+    "error": false
+   },
+   "modules": {
+    "roundStatus": "settled",
+    "genuine": true,
+    "extraField": false,
+    "duplicateContainer": false,
+    "multiplier": false,
+    "payoutTableFrozen": true
+   },
+   "layout": {
+    "scrollWidth": 390,
+    "innerWidth": 390
+   },
+   "noHorizontalOverflow": true,
+   "consoleProblems": [],
+   "ok": true
+  }
+ ]
+}

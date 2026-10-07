@@ -6,7 +6,7 @@ This repository contains the latest game, including the iceberg collision when a
 
 ## Run on your computer
 
-Install [Node.js 24 or newer](https://nodejs.org/en/download). On Windows, double-click **START-CARGO.cmd**. Alternatively, run this command from the project folder:
+Install [Node.js 24 or newer](https://nodejs.org/en/download). Node.js 24 is the supported version for the project's checks and hosted build (`package.json` engines). The local server itself refuses to start below Node.js 22. On Windows, double-click **START-CARGO.cmd**. Alternatively, run this command from the project folder:
 
 ```sh
 npm start
