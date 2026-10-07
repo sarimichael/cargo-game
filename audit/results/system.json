@@ -1,0 +1,653 @@
+{
+ "meta": {
+  "script": "audit/validate-system.mjs",
+  "node": "v24.21.0",
+  "generatedAt": "2026-10-07T21:21:41.000Z",
+  "runtimeMs": 44584
+ },
+ "summary": {
+  "checks": 21,
+  "passed": 21,
+  "failed": [],
+  "byType": {
+   "safety": [
+    "S01:pass",
+    "S02:pass",
+    "S03:pass",
+    "S04:pass",
+    "S05:pass",
+    "S06:pass",
+    "S07:pass",
+    "S08:pass",
+    "S09:pass",
+    "S10:pass",
+    "S11:pass",
+    "S12:pass"
+   ],
+   "defect": [
+    "S13:pass",
+    "S14:pass",
+    "S15:pass",
+    "S16:pass",
+    "S17:pass",
+    "S18:pass",
+    "S19:pass"
+   ],
+   "observation": [
+    "S20:pass",
+    "S21:pass"
+   ]
+  }
+ },
+ "checks": [
+  {
+   "id": "S01",
+   "type": "safety",
+   "title": "20 concurrent identical bet requests debit once",
+   "assumption": "Clients retry with the exact same actionId and body.",
+   "method": "Fire 20 identical POST /api/rounds in parallel; count successful responses, replays, ledger bet entries and balance.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "statuses": [
+      200
+     ],
+     "replayed": 19,
+     "betEntries": 1,
+     "balance": 97000
+    },
+    "worker": {
+     "ok": true,
+     "statuses": [
+      200
+     ],
+     "replayed": 19,
+     "betEntries": 1,
+     "balance": 97000
+    }
+   },
+   "ms": 154
+  },
+  {
+   "id": "S02",
+   "type": "safety",
+   "title": "20 concurrent bets with distinct actionIds and the same revision: exactly one succeeds",
+   "assumption": "Revision compare-and-swap serialises competing actions.",
+   "method": "Fire 20 different-ID bets at revision 0 in parallel.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "successes": 1,
+     "conflicts": 19,
+     "ledgerEntries": 1
+    },
+    "worker": {
+     "ok": true,
+     "successes": 1,
+     "conflicts": 19,
+     "ledgerEntries": 1
+    }
+   },
+   "ms": 75
+  },
+  {
+   "id": "S03",
+   "type": "safety",
+   "title": "20 concurrent identical advance requests advance one stop",
+   "assumption": "As S01.",
+   "method": "Bet with hazards forced safe; fire 20 identical advances.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "step": 1,
+     "statuses": [
+      200
+     ]
+    },
+    "worker": {
+     "ok": true,
+     "step": 1,
+     "statuses": [
+      200
+     ]
+    }
+   },
+   "ms": 50
+  },
+  {
+   "id": "S04",
+   "type": "safety",
+   "title": "50 concurrent identical collect-all requests credit each container once",
+   "assumption": "As S01.",
+   "method": "Bet $30.01, force safe stop 1, advance, then 50 identical collect-all.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "creditEntries": 3,
+     "credited": 3091,
+     "expected": 3091
+    },
+    "worker": {
+     "ok": true,
+     "creditEntries": 3,
+     "credited": 3091,
+     "expected": 3091
+    }
+   },
+   "ms": 125
+  },
+  {
+   "id": "S05",
+   "type": "safety",
+   "title": "Cash-out racing an eliminating advance: exactly one wins, no double outcome",
+   "assumption": "The next stop is forced (test fixture) to eliminate all onboard cargo.",
+   "method": "40 trials per adapter: after stop 1, force stop 2 to hit every container, then send collect-all and advance concurrently with the same revision.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "collectWon": 20,
+     "advanceWon": 20,
+     "bad": 0
+    },
+    "worker": {
+     "ok": true,
+     "collectWon": 20,
+     "advanceWon": 20,
+     "bad": 0
+    }
+   },
+   "ms": 665
+  },
+  {
+   "id": "S06",
+   "type": "safety",
+   "title": "Forged financial fields in requests are ignored",
+   "assumption": "The server must not trust client-supplied outcomes.",
+   "method": "Add multiplier100, payoutCents, balanceCents, hazards, step, status, serverSeed and a different difficulty to bet/advance/collect bodies; compare credited amounts with the server formula.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "balance": 100090,
+     "expected": 100090
+    },
+    "worker": {
+     "ok": true,
+     "balance": 100090,
+     "expected": 100090
+    }
+   },
+   "ms": 14
+  },
+  {
+   "id": "S07",
+   "type": "safety",
+   "title": "Invalid wagers, difficulties and client seeds are rejected without persisted change",
+   "assumption": "Server-side validation is authoritative.",
+   "method": "Submit 28 malformed bets; compare the stored session JSON before and after each.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "cases": 28,
+     "rejected": 28,
+     "failures": []
+    },
+    "worker": {
+     "ok": true,
+     "cases": 28,
+     "rejected": 28,
+     "failures": []
+    }
+   },
+   "ms": 49
+  },
+  {
+   "id": "S08",
+   "type": "safety",
+   "title": "Protocol validation: action IDs, revisions, body shape, size, content type, origin and routes",
+   "assumption": "docs/API.md error contract.",
+   "method": "Send each malformed request and compare the HTTP status with the documented code.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "cases": 24,
+     "mismatches": []
+    },
+    "worker": {
+     "ok": true,
+     "cases": 24,
+     "mismatches": []
+    }
+   },
+   "ms": 40
+  },
+  {
+   "id": "S09",
+   "type": "safety",
+   "title": "No active-round HTTP response contains the server seed or hazards",
+   "assumption": "publicRound()/snapshot() are the only projections.",
+   "method": "30 rounds per adapter; after each action capture session GET, round GET, POST response and an exact replay; search each whole response for the stored seed string and the round proof for serverSeed/hazards keys.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "inspectedActiveResponses": 1066,
+     "leaks": []
+    },
+    "worker": {
+     "ok": true,
+     "inspectedActiveResponses": 910,
+     "leaks": []
+    }
+   },
+   "ms": 2844
+  },
+  {
+   "id": "S10",
+   "type": "safety",
+   "title": "Mixed-strategy campaign: ledger, settlement formula, proofs and collision mapping reconcile",
+   "assumption": "Server outcomes are authoritative; animation follows them.",
+   "method": "80 rounds per adapter with a deterministic action policy (random collections of individual containers, collect-all, sail). After every sail compare collisionFor(previous, next) with the server statuses. After settlement verify each credit equals payout(stake, multiplier at collectedAt), run verifyRound(), and check start + Σledger = balance.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "rounds": 80,
+     "sails": 326,
+     "icebergs": 24,
+     "debris": 90,
+     "proofsVerified": 80,
+     "ledger": {
+      "ok": true,
+      "start": 100000,
+      "sum": -53794,
+      "balance": 46206,
+      "entries": 179,
+      "refills": 0
+     },
+     "issues": []
+    },
+    "worker": {
+     "ok": true,
+     "rounds": 80,
+     "sails": 376,
+     "icebergs": 33,
+     "debris": 97,
+     "proofsVerified": 80,
+     "ledger": {
+      "ok": true,
+      "start": 100000,
+      "sum": -49764,
+      "balance": 50236,
+      "entries": 159,
+      "refills": 0
+     },
+     "issues": []
+    }
+   },
+   "ms": 3629
+  },
+  {
+   "id": "S11",
+   "type": "safety",
+   "title": "Client disconnect immediately after sending a bet, then exact retry: one debit (local HTTP)",
+   "assumption": "Clients retry uncertain requests with the same body and actionId.",
+   "method": "10 trials: write the request over a raw socket and destroy it straight away; then retry the identical request via fetch and inspect the ledger.",
+   "pass": true,
+   "trials": [
+    {
+     "committedBeforeRetry": true,
+     "retryStatus": 200,
+     "replayed": true,
+     "betEntries": 1
+    },
+    {
+     "committedBeforeRetry": true,
+     "retryStatus": 200,
+     "replayed": true,
+     "betEntries": 1
+    },
+    {
+     "committedBeforeRetry": true,
+     "retryStatus": 200,
+     "replayed": true,
+     "betEntries": 1
+    },
+    {
+     "committedBeforeRetry": true,
+     "retryStatus": 200,
+     "replayed": true,
+     "betEntries": 1
+    },
+    {
+     "committedBeforeRetry": true,
+     "retryStatus": 200,
+     "replayed": true,
+     "betEntries": 1
+    },
+    {
+     "committedBeforeRetry": true,
+     "retryStatus": 200,
+     "replayed": true,
+     "betEntries": 1
+    },
+    {
+     "committedBeforeRetry": true,
+     "retryStatus": 200,
+     "replayed": true,
+     "betEntries": 1
+    },
+    {
+     "committedBeforeRetry": true,
+     "retryStatus": 200,
+     "replayed": true,
+     "betEntries": 1
+    },
+    {
+     "committedBeforeRetry": true,
+     "retryStatus": 200,
+     "replayed": true,
+     "betEntries": 1
+    },
+    {
+     "committedBeforeRetry": true,
+     "retryStatus": 200,
+     "replayed": true,
+     "betEntries": 1
+    }
+   ],
+   "ms": 293
+  },
+  {
+   "id": "S12",
+   "type": "safety",
+   "title": "Storage failures before/after commit: no partial effect; exact retry is safe",
+   "assumption": "Fault injected in fs.writeFileSync (local) or the SQLite stand-in (worker); production code unchanged.",
+   "method": "Local: throw once from writeFileSync during a bet. Worker: throw once before UPDATE, and once after UPDATE has committed. Then retry the identical request.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "firstStatus": 500,
+     "stateUnchanged": true,
+     "retryStatus": 200
+    },
+    "worker": {
+     "ok": true,
+     "beforeUpdate": {
+      "status": 500,
+      "unchanged": true,
+      "retry": 200
+     },
+     "afterUpdate": {
+      "status": 500,
+      "retry": 200,
+      "replayed": true,
+      "step": 1
+     }
+    }
+   },
+   "ms": 15
+  },
+  {
+   "id": "S13",
+   "type": "defect",
+   "title": "F10: idempotency-key edge cases cause false conflicts",
+   "assumption": "Reported in audit F10.",
+   "method": "Fresh session: POST /api/reset with actionId \"constructor\" (valid per regex). Then replay a completed collect with the same fields in a different key order.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "constructorActionId": 409,
+     "hasOwnPropertyActionId": 409,
+     "reorderedReplay": 409,
+     "creditsAfter": 3
+    },
+    "worker": {
+     "ok": true,
+     "constructorActionId": 409,
+     "hasOwnPropertyActionId": 409,
+     "reorderedReplay": 409,
+     "creditsAfter": 3
+    }
+   },
+   "ms": 17
+  },
+  {
+   "id": "S14",
+   "type": "defect",
+   "title": "F01/F09: free funding — reset restores $1,000 after a loss; every cookieless GET creates a funded session",
+   "assumption": "Reported in audit F01 and F09.",
+   "method": "Lose a $3.01 round (forced), POST /api/reset; then issue 25 cookieless GET /api/session and count stored sessions.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "balanceAfterLoss": 99699,
+     "balanceAfterReset": 100000,
+     "newSessionsFrom25Gets": 25
+    },
+    "worker": {
+     "ok": true,
+     "balanceAfterLoss": 99699,
+     "balanceAfterReset": 100000,
+     "newSessionsFrom25Gets": 25
+    }
+   },
+   "ms": 50
+  },
+  {
+   "id": "S15",
+   "type": "defect",
+   "title": "F03: session growth reaches the D1 2,000,000-byte row limit and blocks settlement",
+   "assumption": "Cloudflare D1 documents a 2,000,000-byte maximum string/BLOB/row; emulated in the SQLite stand-in.",
+   "method": "Natural run: play minimum-stake Easy rounds (bet, sail, collect) through the real Worker until a write is refused; record the round count, stored size and whether money was stranded. Boundary fixture: emulate a session whose bet was the last write that fit, then attempt to settle. Separately measure bytes per round on the local store.",
+   "pass": true,
+   "completedRoundsBeforeFailure": 921,
+   "failure": {
+    "action": "bet",
+    "status": 500,
+    "bytes": 1999705,
+    "balanceUnchanged": true
+   },
+   "boundaryFixture": {
+    "advanceStatusAtLimit": 500,
+    "collectStatusAtLimit": 500,
+    "roundStatus": "active",
+    "stakeDebitedCents": 300,
+    "creditedCents": 0,
+    "sanityAdvanceWithoutLimit": 200
+   },
+   "localStoreBytesPerRound": 2183.54,
+   "interpretation": "The wallet became unusable; whether a wager is stranded depends on which write crosses the limit first.",
+   "ms": 36187
+  },
+  {
+   "id": "S16",
+   "type": "defect",
+   "title": "F05: survivors at the final port stay uncredited until an explicit collect",
+   "assumption": "Reported in audit F05.",
+   "method": "Force all containers safe, sail to the final stop of each mode, attempt another advance, inspect status and ledger; then collect.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "rows": [
+      {
+       "mode": "easy",
+       "status": "active",
+       "extraAdvance": 409,
+       "credited": 0
+      },
+      {
+       "mode": "medium",
+       "status": "active",
+       "extraAdvance": 409,
+       "credited": 0
+      },
+      {
+       "mode": "hard",
+       "status": "active",
+       "extraAdvance": 409,
+       "credited": 0
+      },
+      {
+       "mode": "expert",
+       "status": "active",
+       "extraAdvance": 409,
+       "credited": 0
+      }
+     ]
+    },
+    "worker": {
+     "ok": true,
+     "rows": [
+      {
+       "mode": "easy",
+       "status": "active",
+       "extraAdvance": 409,
+       "credited": 0
+      },
+      {
+       "mode": "medium",
+       "status": "active",
+       "extraAdvance": 409,
+       "credited": 0
+      },
+      {
+       "mode": "hard",
+       "status": "active",
+       "extraAdvance": 409,
+       "credited": 0
+      },
+      {
+       "mode": "expert",
+       "status": "active",
+       "extraAdvance": 409,
+       "credited": 0
+      }
+     ]
+    }
+   },
+   "ms": 242
+  },
+  {
+   "id": "S17",
+   "type": "defect",
+   "title": "F07: two Store instances on one directory lose an update",
+   "assumption": "Reported in audit F07 (local store is documented as single-process).",
+   "method": "Open two Store objects on one temp directory; debit 100 cents through the first, then write unrelated data through the stale second; reload from disk.",
+   "pass": true,
+   "balanceWrittenByFirst": 99900,
+   "balanceOnDiskAfterSecond": 100000,
+   "ms": 2
+  },
+  {
+   "id": "S18",
+   "type": "defect",
+   "title": "F08: verifyRound() accepts altered unvalidated metadata",
+   "assumption": "Reported in audit F08.",
+   "method": "Settle a natural (unforced) engine round, then alter proof.algorithm, multiplier100, id, a container valueCents, nextRisk, maxStops and timestamps, and append a duplicate container; run verifyRound() on each.",
+   "pass": true,
+   "acceptedAfterTampering": {
+    "algorithm": true,
+    "multiplier100": true,
+    "roundId": true,
+    "valueCents": true,
+    "nextRisk": true,
+    "maxStops": true,
+    "duplicateContainer": true,
+    "timestamps": true
+   },
+   "coreTotalTamperRejected": true,
+   "ms": 29
+  },
+  {
+   "id": "S19",
+   "type": "defect",
+   "title": "F11: changing the payout table mid-round changes the settlement of an accepted wager",
+   "assumption": "Reported in audit F11. MODES is frozen only at the top level.",
+   "method": "In this process only: accept an Easy round, sail to stop 1, change MODES.easy.payouts[0] from 103 to 104 (models a deployment), collect, restore the table.",
+   "pass": true,
+   "tableMutableInProcess": true,
+   "paidCents": 104,
+   "expectedUnderAcceptedRules": 103,
+   "roundStoresMathVersion": [],
+   "ms": 2
+  },
+  {
+   "id": "S20",
+   "type": "observation",
+   "title": "UTF-8 characters split across request body chunks",
+   "assumption": "A client seed may contain multi-byte characters; TCP may split a body anywhere.",
+   "method": "Local: write the bet body in two socket writes 60 ms apart, splitting the 4-byte \"🚢\" between them; compare the stored clientSeed with the one sent. Worker: same split via a ReadableStream body.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "status": 200,
+     "sent": "ship-🚢-cargo",
+     "stored": "ship-���-cargo",
+     "intact": false,
+     "storedCodePoints": [
+      "73",
+      "68",
+      "69",
+      "70",
+      "2d",
+      "fffd",
+      "fffd",
+      "fffd",
+      "2d",
+      "63",
+      "61",
+      "72",
+      "67",
+      "6f"
+     ]
+    },
+    "worker": {
+     "status": 200,
+     "stored": "ship-🚢-cargo",
+     "intact": true
+    }
+   },
+   "defectObserved": true,
+   "ms": 73
+  },
+  {
+   "id": "S21",
+   "type": "observation",
+   "title": "\"Refill\" sets the balance to $1,000 even when the balance is higher",
+   "assumption": "UI text says \"Set your play balance to $1,000.00\".",
+   "method": "Win a forced round so the balance exceeds $1,000, then POST /api/reset; inspect the ledger entry.",
+   "pass": true,
+   "adapters": {
+    "local": {
+     "ok": true,
+     "balanceBefore": 100090,
+     "refillEntryCents": -90,
+     "balanceAfter": 100000,
+     "refillAtExactly100000Status": 200,
+     "zeroAmountEntry": true
+    },
+    "worker": {
+     "ok": true,
+     "balanceBefore": 100090,
+     "refillEntryCents": -90,
+     "balanceAfter": 100000,
+     "refillAtExactly100000Status": 200,
+     "zeroAmountEntry": true
+    }
+   },
+   "ms": 24
+  }
+ ]
+}

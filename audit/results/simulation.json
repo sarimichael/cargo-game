@@ -1,0 +1,1891 @@
+{
+ "meta": {
+  "script": "audit/analyze-simulation.mjs",
+  "input": {
+   "script": "audit/simulate.mjs",
+   "node": "v24.21.0",
+   "roundsPerMode": 1000000,
+   "chunk": 50000,
+   "threads": 4,
+   "startedAt": "2026-10-07T20:48:52.846Z",
+   "finishedAt": "2026-10-07T21:10:10.333Z",
+   "seedDerivation": "serverSeed=SHA256(\"cargo-audit-v1|sim|<mode>|<i>\") hex; clientSeed=\"audit-sim-<mode>\"; nonce=i",
+   "note": "Lag-1 statistics and adjacent repeats are computed within chunks only; chunk boundaries are excluded."
+  },
+  "generatedAt": "2026-10-07T21:20:56.341Z",
+  "caveats": [
+   "Stops within a mode reuse the same sampled routes, so per-stop statistics are correlated, not independent tests.",
+   "Rare final-stop tails are under-powered; analytical results (validate-math.mjs) govern them.",
+   "Derived SHA-256 seeds stand in for newSeed(); OS entropy is not tested."
+  ]
+ },
+ "summary": {
+  "tests": 107,
+  "minP": 0.00531996638868204,
+  "minPTest": {
+   "mode": "hard",
+   "test": "survival stop 1",
+   "p": 0.00531996638868204
+  },
+  "belowP01": 1,
+  "belowP001": 0,
+  "expectedBelowP01ByChance": 1.07,
+  "bonferroniThreshold": 0.00046728971962616824,
+  "bonferroniRejections": [],
+  "invalidDecks": 0,
+  "referenceMismatches": 0
+ },
+ "modes": {
+  "easy": {
+   "rounds": 1000000,
+   "routes": 3000000,
+   "invalidDecks": 0,
+   "referenceCrossCheck": {
+    "decksCompared": 30000,
+    "mismatches": 0
+   },
+   "streamHash": "604fe8d44eafe336a2fa016fa0929d905d14e09f8fa25966b20078b049d7ee7a",
+   "maxAbsSurvivalZ": 1.666,
+   "maxAbsRtpZ": 1.666,
+   "positions": [
+    {
+     "stat": 13.5783,
+     "df": 19,
+     "p": 0.8076972312027515,
+     "minExpected": 50000
+    },
+    {
+     "stat": 22.9093,
+     "df": 19,
+     "p": 0.24136125954623622,
+     "minExpected": 50000
+    },
+    {
+     "stat": 18.8629,
+     "df": 19,
+     "p": 0.4656612242448086,
+     "minExpected": 50000
+    }
+   ],
+   "firstHazard": [
+    {
+     "stat": 13.5783,
+     "df": 19,
+     "p": 0.8076972312027515,
+     "minExpected": 50000
+    },
+    {
+     "stat": 22.9093,
+     "df": 19,
+     "p": 0.24136125954623622,
+     "minExpected": 50000
+    },
+    {
+     "stat": 18.8629,
+     "df": 19,
+     "p": 0.4656612242448086,
+     "minExpected": 50000
+    }
+   ],
+   "firstHazardBins": [
+    [
+     1
+    ],
+    [
+     2
+    ],
+    [
+     3
+    ],
+    [
+     4
+    ],
+    [
+     5
+    ],
+    [
+     6
+    ],
+    [
+     7
+    ],
+    [
+     8
+    ],
+    [
+     9
+    ],
+    [
+     10
+    ],
+    [
+     11
+    ],
+    [
+     12
+    ],
+    [
+     13
+    ],
+    [
+     14
+    ],
+    [
+     15
+    ],
+    [
+     16
+    ],
+    [
+     17
+    ],
+    [
+     18
+    ],
+    [
+     19
+    ],
+    [
+     20
+    ]
+   ],
+   "pairIndependence": {
+    "AB": {
+     "stat": 407.5973,
+     "df": 361,
+     "p": 0.04558355453110446,
+     "minExpected": 2454.6
+    },
+    "AC": {
+     "stat": 317.9167,
+     "df": 361,
+     "p": 0.9502162424778334,
+     "minExpected": 2454.16
+    },
+    "BC": {
+     "stat": 309.1311,
+     "df": 361,
+     "p": 0.9775881965988993,
+     "minExpected": 2461.6
+    }
+   },
+   "wholeDeck": {
+    "cells": 20,
+    "unexpectedKeys": 0,
+    "stat": 17.1538,
+    "df": 19,
+    "p": 0.5794489434380217,
+    "minExpected": 150000
+   },
+   "lag1": {
+    "pairs": 999980,
+    "r": -0.0002869,
+    "z": -0.287
+   },
+   "adjacentRepeatsA": {
+    "observed": 50344,
+    "expected": 49999,
+    "z": 1.583
+   },
+   "stops": [
+    {
+     "stop": 1,
+     "countsK": [
+      125,
+      7035,
+      135447,
+      857393
+     ],
+     "survivors": 2850108,
+     "expectedSurvivors": 2850000,
+     "survivalZ": 0.286,
+     "sampleRTP": 97.85371,
+     "theoryRTP": 97.85,
+     "rtpZ": 0.286,
+     "hitRate": 99.9875,
+     "zeroReturn": 0.0125,
+     "wilsonRTP95": [
+      97.828,
+      97.879
+     ]
+    },
+    {
+     "stop": 2,
+     "countsK": [
+      938,
+      27120,
+      242610,
+      729332
+     ],
+     "survivors": 2700336,
+     "expectedSurvivors": 2700000,
+     "survivalZ": 0.647,
+     "sampleRTP": 98.11221,
+     "theoryRTP": 98.1,
+     "rtpZ": 0.647,
+     "hitRate": 99.9062,
+     "zeroReturn": 0.0938,
+     "wilsonRTP95": [
+      98.075,
+      98.149
+     ]
+    },
+    {
+     "stop": 3,
+     "countsK": [
+      3307,
+      57591,
+      324163,
+      614939
+     ],
+     "survivors": 2550734,
+     "expectedSurvivors": 2550000,
+     "survivalZ": 1.187,
+     "sampleRTP": 97.77814,
+     "theoryRTP": 97.75,
+     "rtpZ": 1.187,
+     "hitRate": 99.6693,
+     "zeroReturn": 0.3307,
+     "wilsonRTP95": [
+      97.732,
+      97.825
+     ]
+    },
+    {
+     "stop": 4,
+     "countsK": [
+      7903,
+      96135,
+      383278,
+      512684
+     ],
+     "survivors": 2400743,
+     "expectedSurvivors": 2400000,
+     "survivalZ": 1.072,
+     "sampleRTP": 98.43046,
+     "theoryRTP": 98.4,
+     "rtpZ": 1.072,
+     "hitRate": 99.2097,
+     "zeroReturn": 0.7903,
+     "wilsonRTP95": [
+      98.375,
+      98.486
+     ]
+    },
+    {
+     "stop": 5,
+     "countsK": [
+      15577,
+      140760,
+      420851,
+      422812
+     ],
+     "survivors": 2250898,
+     "expectedSurvivors": 2250000,
+     "survivalZ": 1.197,
+     "sampleRTP": 98.28921,
+     "theoryRTP": 98.25,
+     "rtpZ": 1.197,
+     "hitRate": 98.4423,
+     "zeroReturn": 1.5577,
+     "wilsonRTP95": [
+      98.225,
+      98.353
+     ]
+    },
+    {
+     "stop": 6,
+     "countsK": [
+      26830,
+      188974,
+      440240,
+      343956
+     ],
+     "survivors": 2101322,
+     "expectedSurvivors": 2100000,
+     "survivalZ": 1.666,
+     "sampleRTP": 98.06169,
+     "theoryRTP": 98,
+     "rtpZ": 1.666,
+     "hitRate": 97.317,
+     "zeroReturn": 2.683,
+     "wilsonRTP95": [
+      97.989,
+      98.134
+     ]
+    },
+    {
+     "stop": 7,
+     "countsK": [
+      42738,
+      238983,
+      442939,
+      275340
+     ],
+     "survivors": 1950881,
+     "expectedSurvivors": 1950000,
+     "survivalZ": 1.066,
+     "sampleRTP": 98.19434,
+     "theoryRTP": 98.15,
+     "rtpZ": 1.066,
+     "hitRate": 95.7262,
+     "zeroReturn": 4.2738,
+     "wilsonRTP95": [
+      98.113,
+      98.276
+     ]
+    },
+    {
+     "stop": 8,
+     "countsK": [
+      63984,
+      288052,
+      431332,
+      216632
+     ],
+     "survivors": 1800612,
+     "expectedSurvivors": 1800000,
+     "survivalZ": 0.721,
+     "sampleRTP": 97.83325,
+     "theoryRTP": 97.8,
+     "rtpZ": 0.721,
+     "hitRate": 93.6016,
+     "zeroReturn": 6.3984,
+     "wilsonRTP95": [
+      97.743,
+      97.924
+     ]
+    },
+    {
+     "stop": 9,
+     "countsK": [
+      90993,
+      334196,
+      408147,
+      166664
+     ],
+     "survivors": 1650482,
+     "expectedSurvivors": 1650000,
+     "survivalZ": 0.559,
+     "sampleRTP": 97.9286,
+     "theoryRTP": 97.9,
+     "rtpZ": 0.559,
+     "hitRate": 90.9007,
+     "zeroReturn": 9.0993,
+     "wilsonRTP95": [
+      97.828,
+      98.029
+     ]
+    },
+    {
+     "stop": 10,
+     "countsK": [
+      125180,
+      374686,
+      375133,
+      125001
+     ],
+     "survivors": 1499955,
+     "expectedSurvivors": 1500000,
+     "survivalZ": -0.052,
+     "sampleRTP": 97.99706,
+     "theoryRTP": 98,
+     "rtpZ": -0.052,
+     "hitRate": 87.482,
+     "zeroReturn": 12.518,
+     "wilsonRTP95": [
+      97.886,
+      98.108
+     ]
+    },
+    {
+     "stop": 11,
+     "countsK": [
+      166730,
+      407899,
+      334184,
+      91187
+     ],
+     "survivors": 1349828,
+     "expectedSurvivors": 1350000,
+     "survivalZ": -0.2,
+     "sampleRTP": 98.0875,
+     "theoryRTP": 98.1,
+     "rtpZ": -0.2,
+     "hitRate": 83.327,
+     "zeroReturn": 16.673,
+     "wilsonRTP95": [
+      97.965,
+      98.21
+     ]
+    },
+    {
+     "stop": 12,
+     "countsK": [
+      216323,
+      431065,
+      288549,
+      64063
+     ],
+     "survivors": 1200352,
+     "expectedSurvivors": 1200000,
+     "survivalZ": 0.415,
+     "sampleRTP": 98.02875,
+     "theoryRTP": 98,
+     "rtpZ": 0.415,
+     "hitRate": 78.3677,
+     "zeroReturn": 21.6323,
+     "wilsonRTP95": [
+      97.893,
+      98.165
+     ]
+    },
+    {
+     "stop": 13,
+     "countsK": [
+      274569,
+      443376,
+      239238,
+      42817
+     ],
+     "survivors": 1050303,
+     "expectedSurvivors": 1050000,
+     "survivalZ": 0.367,
+     "sampleRTP": 98.02828,
+     "theoryRTP": 98,
+     "rtpZ": 0.367,
+     "hitRate": 72.5431,
+     "zeroReturn": 27.4569,
+     "wilsonRTP95": [
+      97.877,
+      98.179
+     ]
+    },
+    {
+     "stop": 14,
+     "countsK": [
+      342918,
+      441045,
+      189051,
+      26986
+     ],
+     "survivors": 900105,
+     "expectedSurvivors": 900000,
+     "survivalZ": 0.132,
+     "sampleRTP": 98.11145,
+     "theoryRTP": 98.1,
+     "rtpZ": 0.132,
+     "hitRate": 65.7082,
+     "zeroReturn": 34.2918,
+     "wilsonRTP95": [
+      97.942,
+      98.281
+     ]
+    },
+    {
+     "stop": 15,
+     "countsK": [
+      421611,
+      421853,
+      140806,
+      15730
+     ],
+     "survivors": 750655,
+     "expectedSurvivors": 750000,
+     "survivalZ": 0.873,
+     "sampleRTP": 98.08559,
+     "theoryRTP": 98,
+     "rtpZ": 0.873,
+     "hitRate": 57.8389,
+     "zeroReturn": 42.1611,
+     "wilsonRTP95": [
+      97.894,
+      98.278
+     ]
+    },
+    {
+     "stop": 16,
+     "countsK": [
+      511235,
+      384575,
+      96186,
+      8004
+     ],
+     "survivors": 600959,
+     "expectedSurvivors": 600000,
+     "survivalZ": 1.384,
+     "sampleRTP": 98.15664,
+     "theoryRTP": 98,
+     "rtpZ": 1.384,
+     "hitRate": 48.8765,
+     "zeroReturn": 51.1235,
+     "wilsonRTP95": [
+      97.935,
+      98.379
+     ]
+    },
+    {
+     "stop": 17,
+     "countsK": [
+      613451,
+      325524,
+      57763,
+      3262
+     ],
+     "survivors": 450836,
+     "expectedSurvivors": 450000,
+     "survivalZ": 1.352,
+     "sampleRTP": 98.13197,
+     "theoryRTP": 97.95,
+     "rtpZ": 1.352,
+     "hitRate": 38.6549,
+     "zeroReturn": 61.3451,
+     "wilsonRTP95": [
+      97.868,
+      98.396
+     ]
+    },
+    {
+     "stop": 18,
+     "countsK": [
+      728615,
+      243305,
+      27111,
+      969
+     ],
+     "survivors": 300434,
+     "expectedSurvivors": 300000,
+     "survivalZ": 0.835,
+     "sampleRTP": 98.14177,
+     "theoryRTP": 98,
+     "rtpZ": 0.835,
+     "hitRate": 27.1385,
+     "zeroReturn": 72.8615,
+     "wilsonRTP95": [
+      97.809,
+      98.475
+     ]
+    },
+    {
+     "stop": 19,
+     "countsK": [
+      857641,
+      135149,
+      7104,
+      106
+     ],
+     "survivors": 149675,
+     "expectedSurvivors": 150000,
+     "survivalZ": -0.861,
+     "sampleRTP": 97.78767,
+     "theoryRTP": 98,
+     "rtpZ": -0.861,
+     "hitRate": 14.2359,
+     "zeroReturn": 85.7641,
+     "wilsonRTP95": [
+      97.306,
+      98.272
+     ]
+    }
+   ]
+  },
+  "medium": {
+   "rounds": 1000000,
+   "routes": 3000000,
+   "invalidDecks": 0,
+   "referenceCrossCheck": {
+    "decksCompared": 30000,
+    "mismatches": 0
+   },
+   "streamHash": "5142c905181c171f87152ed646d142b3d0662eea69bc2b99768b0ce99309fd00",
+   "maxAbsSurvivalZ": 2.485,
+   "maxAbsRtpZ": 2.485,
+   "positions": [
+    {
+     "stat": 17.2353,
+     "df": 19,
+     "p": 0.5739307933503118,
+     "minExpected": 150000
+    },
+    {
+     "stat": 10.338,
+     "df": 19,
+     "p": 0.944109368145753,
+     "minExpected": 150000
+    },
+    {
+     "stat": 15.3823,
+     "df": 19,
+     "p": 0.698006330442047,
+     "minExpected": 150000
+    }
+   ],
+   "firstHazard": [
+    {
+     "stat": 13.1806,
+     "df": 17,
+     "p": 0.7240116660425742,
+     "minExpected": 877.19
+    },
+    {
+     "stat": 21.0299,
+     "df": 17,
+     "p": 0.22495696254557218,
+     "minExpected": 877.19
+    },
+    {
+     "stat": 15.5016,
+     "df": 17,
+     "p": 0.5594002442588863,
+     "minExpected": 877.19
+    }
+   ],
+   "firstHazardBins": [
+    [
+     1
+    ],
+    [
+     2
+    ],
+    [
+     3
+    ],
+    [
+     4
+    ],
+    [
+     5
+    ],
+    [
+     6
+    ],
+    [
+     7
+    ],
+    [
+     8
+    ],
+    [
+     9
+    ],
+    [
+     10
+    ],
+    [
+     11
+    ],
+    [
+     12
+    ],
+    [
+     13
+    ],
+    [
+     14
+    ],
+    [
+     15
+    ],
+    [
+     16
+    ],
+    [
+     17
+    ],
+    [
+     18,
+     19,
+     20
+    ]
+   ],
+   "pairIndependence": {
+    "AB": {
+     "stat": 270.7548,
+     "df": 256,
+     "p": 0.2516581474796395,
+     "minExpected": 12.61
+    },
+    "AC": {
+     "stat": 235.5796,
+     "df": 256,
+     "p": 0.8153999369696827,
+     "minExpected": 12.21
+    },
+    "BC": {
+     "stat": 223.6834,
+     "df": 256,
+     "p": 0.9283166661427479,
+     "minExpected": 12.46
+    }
+   },
+   "wholeDeck": {
+    "cells": 1140,
+    "unexpectedKeys": 0,
+    "stat": 1164.7615,
+    "df": 1139,
+    "p": 0.2912699961738276,
+    "minExpected": 2631.58
+   },
+   "lag1": {
+    "pairs": 999980,
+    "r": 0.0001263,
+    "z": 0.126
+   },
+   "adjacentRepeatsA": {
+    "observed": 897,
+    "expected": 877.175,
+    "z": 0.67
+   },
+   "stops": [
+    {
+     "stop": 1,
+     "countsK": [
+      3387,
+      57177,
+      325061,
+      614375
+     ],
+     "survivors": 2550424,
+     "expectedSurvivors": 2550000,
+     "survivalZ": 0.686,
+     "sampleRTP": 97.76625,
+     "theoryRTP": 97.75,
+     "rtpZ": 0.686,
+     "hitRate": 99.6613,
+     "zeroReturn": 0.3387,
+     "wilsonRTP95": [
+      97.72,
+      97.813
+     ]
+    },
+    {
+     "stop": 2,
+     "countsK": [
+      23137,
+      173796,
+      436554,
+      366513
+     ],
+     "survivors": 2146443,
+     "expectedSurvivors": 2147368.421,
+     "survivalZ": -1.185,
+     "sampleRTP": 98.0209,
+     "theoryRTP": 98.063158,
+     "rtpZ": -1.185,
+     "hitRate": 97.6863,
+     "zeroReturn": 2.3137,
+     "wilsonRTP95": [
+      97.951,
+      98.091
+     ]
+    },
+    {
+     "stop": 3,
+     "countsK": [
+      65939,
+      292042,
+      429830,
+      212189
+     ],
+     "survivors": 1788269,
+     "expectedSurvivors": 1789473.684,
+     "survivalZ": -1.418,
+     "sampleRTP": 97.75871,
+     "theoryRTP": 97.824561,
+     "rtpZ": -1.418,
+     "hitRate": 93.4061,
+     "zeroReturn": 6.5939,
+     "wilsonRTP95": [
+      97.668,
+      97.85
+     ]
+    },
+    {
+     "stop": 4,
+     "countsK": [
+      131738,
+      381870,
+      367620,
+      118772
+     ],
+     "survivors": 1473426,
+     "expectedSurvivors": 1473684.211,
+     "survivalZ": -0.298,
+     "sampleRTP": 98.2284,
+     "theoryRTP": 98.245614,
+     "rtpZ": -0.298,
+     "hitRate": 86.8262,
+     "zeroReturn": 13.1738,
+     "wilsonRTP95": [
+      98.115,
+      98.342
+     ]
+    },
+    {
+     "stop": 5,
+     "countsK": [
+      217072,
+      432505,
+      286744,
+      63679
+     ],
+     "survivors": 1197030,
+     "expectedSurvivors": 1197368.421,
+     "survivalZ": -0.399,
+     "sampleRTP": 98.15646,
+     "theoryRTP": 98.184211,
+     "rtpZ": -0.399,
+     "hitRate": 78.2928,
+     "zeroReturn": 21.7072,
+     "wilsonRTP95": [
+      98.02,
+      98.293
+     ]
+    },
+    {
+     "stop": 6,
+     "countsK": [
+      315555,
+      443857,
+      208078,
+      32510
+     ],
+     "survivors": 957543,
+     "expectedSurvivors": 957894.737,
+     "survivalZ": -0.436,
+     "sampleRTP": 97.98857,
+     "theoryRTP": 98.024561,
+     "rtpZ": -0.436,
+     "hitRate": 68.4445,
+     "zeroReturn": 31.5555,
+     "wilsonRTP95": [
+      97.827,
+      98.151
+     ]
+    },
+    {
+     "stop": 7,
+     "countsK": [
+      420699,
+      422420,
+      140961,
+      15920
+     ],
+     "survivors": 752102,
+     "expectedSurvivors": 752631.579,
+     "survivalZ": -0.705,
+     "sampleRTP": 98.02396,
+     "theoryRTP": 98.092982,
+     "rtpZ": -0.705,
+     "hitRate": 57.9301,
+     "zeroReturn": 42.0699,
+     "wilsonRTP95": [
+      97.832,
+      98.216
+     ]
+    },
+    {
+     "stop": 8,
+     "countsK": [
+      525636,
+      377200,
+      89802,
+      7362
+     ],
+     "survivors": 578890,
+     "expectedSurvivors": 578947.368,
+     "survivalZ": -0.084,
+     "sampleRTP": 98.02537,
+     "theoryRTP": 98.035088,
+     "rtpZ": -0.084,
+     "hitRate": 47.4364,
+     "zeroReturn": 52.5636,
+     "wilsonRTP95": [
+      97.799,
+      98.252
+     ]
+    },
+    {
+     "stop": 9,
+     "countsK": [
+      626016,
+      317259,
+      53607,
+      3118
+     ],
+     "survivors": 433827,
+     "expectedSurvivors": 434210.526,
+     "survivalZ": -0.629,
+     "sampleRTP": 97.90029,
+     "theoryRTP": 97.986842,
+     "rtpZ": -0.629,
+     "hitRate": 37.3984,
+     "zeroReturn": 62.6016,
+     "wilsonRTP95": [
+      97.631,
+      98.17
+     ]
+    },
+    {
+     "stop": 10,
+     "countsK": [
+      716663,
+      252413,
+      29728,
+      1196
+     ],
+     "survivors": 315457,
+     "expectedSurvivors": 315789.474,
+     "survivalZ": -0.625,
+     "sampleRTP": 97.89682,
+     "theoryRTP": 98,
+     "rtpZ": -0.625,
+     "hitRate": 28.3337,
+     "zeroReturn": 71.6663,
+     "wilsonRTP95": [
+      97.574,
+      98.22
+     ]
+    },
+    {
+     "stop": 11,
+     "countsK": [
+      795174,
+      189403,
+      15010,
+      413
+     ],
+     "survivors": 220662,
+     "expectedSurvivors": 221052.632,
+     "survivalZ": -0.863,
+     "sampleRTP": 97.82682,
+     "theoryRTP": 98,
+     "rtpZ": -0.863,
+     "hitRate": 20.4826,
+     "zeroReturn": 79.5174,
+     "wilsonRTP95": [
+      97.435,
+      98.22
+     ]
+    },
+    {
+     "stop": 12,
+     "countsK": [
+      860326,
+      132694,
+      6858,
+      122
+     ],
+     "survivors": 146776,
+     "expectedSurvivors": 147368.421,
+     "survivalZ": -1.583,
+     "sampleRTP": 97.60604,
+     "theoryRTP": 98,
+     "rtpZ": -1.583,
+     "hitRate": 13.9674,
+     "zeroReturn": 86.0326,
+     "wilsonRTP95": [
+      97.12,
+      98.094
+     ]
+    },
+    {
+     "stop": 13,
+     "countsK": [
+      911129,
+      86099,
+      2746,
+      26
+     ],
+     "survivors": 91669,
+     "expectedSurvivors": 92105.263,
+     "survivalZ": -1.46,
+     "sampleRTP": 97.53582,
+     "theoryRTP": 98,
+     "rtpZ": -1.46,
+     "hitRate": 8.8871,
+     "zeroReturn": 91.1129,
+     "wilsonRTP95": [
+      96.916,
+      98.159
+     ]
+    },
+    {
+     "stop": 14,
+     "countsK": [
+      948587,
+      50519,
+      890,
+      4
+     ],
+     "survivors": 52311,
+     "expectedSurvivors": 52631.579,
+     "survivalZ": -1.41,
+     "sampleRTP": 97.40308,
+     "theoryRTP": 98,
+     "rtpZ": -1.41,
+     "hitRate": 5.1413,
+     "zeroReturn": 94.8587,
+     "wilsonRTP95": [
+      96.579,
+      98.234
+     ]
+    },
+    {
+     "stop": 15,
+     "countsK": [
+      974090,
+      25693,
+      217,
+      0
+     ],
+     "survivors": 26127,
+     "expectedSurvivors": 26315.789,
+     "survivalZ": -1.169,
+     "sampleRTP": 97.29695,
+     "theoryRTP": 98,
+     "rtpZ": -1.169,
+     "hitRate": 2.591,
+     "zeroReturn": 97.409,
+     "wilsonRTP95": [
+      96.129,
+      98.479
+     ]
+    },
+    {
+     "stop": 16,
+     "countsK": [
+      989453,
+      10518,
+      29,
+      0
+     ],
+     "survivors": 10576,
+     "expectedSurvivors": 10526.316,
+     "survivalZ": 0.485,
+     "sampleRTP": 98.46256,
+     "theoryRTP": 98,
+     "rtpZ": 0.485,
+     "hitRate": 1.0547,
+     "zeroReturn": 98.9453,
+     "wilsonRTP95": [
+      96.607,
+      100.354
+     ]
+    },
+    {
+     "stop": 17,
+     "countsK": [
+      997244,
+      2753,
+      3,
+      0
+     ],
+     "survivors": 2759,
+     "expectedSurvivors": 2631.579,
+     "survivalZ": 2.485,
+     "sampleRTP": 102.74516,
+     "theoryRTP": 98,
+     "rtpZ": 2.485,
+     "hitRate": 0.2756,
+     "zeroReturn": 99.7244,
+     "wilsonRTP95": [
+      98.984,
+      106.649
+     ]
+    }
+   ]
+  },
+  "hard": {
+   "rounds": 1000000,
+   "routes": 3000000,
+   "invalidDecks": 0,
+   "referenceCrossCheck": {
+    "decksCompared": 30000,
+    "mismatches": 0
+   },
+   "streamHash": "c405951acf9a887ba701337b74c144ad9ff394478f055180807ee883d194928b",
+   "maxAbsSurvivalZ": 2.787,
+   "maxAbsRtpZ": 2.787,
+   "positions": [
+    {
+     "stat": 13.0839,
+     "df": 19,
+     "p": 0.8342494516648872,
+     "minExpected": 250000
+    },
+    {
+     "stat": 17.9494,
+     "df": 19,
+     "p": 0.525823837411725,
+     "minExpected": 250000
+    },
+    {
+     "stat": 15.9145,
+     "df": 19,
+     "p": 0.6629724490155839,
+     "minExpected": 250000
+    }
+   ],
+   "firstHazard": [
+    {
+     "stat": 15.1421,
+     "df": 15,
+     "p": 0.44122998047084216,
+     "minExpected": 64.5
+    },
+    {
+     "stat": 15.2264,
+     "df": 15,
+     "p": 0.4352360168571294,
+     "minExpected": 64.5
+    },
+    {
+     "stat": 12.594,
+     "df": 15,
+     "p": 0.6336245734183488,
+     "minExpected": 64.5
+    }
+   ],
+   "firstHazardBins": [
+    [
+     1
+    ],
+    [
+     2
+    ],
+    [
+     3
+    ],
+    [
+     4
+    ],
+    [
+     5
+    ],
+    [
+     6
+    ],
+    [
+     7
+    ],
+    [
+     8
+    ],
+    [
+     9
+    ],
+    [
+     10
+    ],
+    [
+     11
+    ],
+    [
+     12
+    ],
+    [
+     13
+    ],
+    [
+     14
+    ],
+    [
+     15
+    ],
+    [
+     16,
+     17,
+     18,
+     19,
+     20
+    ]
+   ],
+   "pairIndependence": {
+    "AB": {
+     "stat": 143.1782,
+     "df": 144,
+     "p": 0.5036703543273053,
+     "minExpected": 12.83
+    },
+    "AC": {
+     "stat": 101.8226,
+     "df": 144,
+     "p": 0.9969278990010291,
+     "minExpected": 13.25
+    },
+    "BC": {
+     "stat": 170.2009,
+     "df": 144,
+     "p": 0.0670885081638903,
+     "minExpected": 13
+    }
+   },
+   "wholeDeck": null,
+   "lag1": {
+    "pairs": 999980,
+    "r": 0.000634,
+    "z": 0.634
+   },
+   "adjacentRepeatsA": {
+    "observed": 64,
+    "expected": 64.498,
+    "z": -0.062
+   },
+   "stops": [
+    {
+     "stop": 1,
+     "countsK": [
+      15634,
+      141280,
+      422628,
+      420458
+     ],
+     "survivors": 2247910,
+     "expectedSurvivors": 2250000,
+     "survivalZ": -2.787,
+     "sampleRTP": 98.15874,
+     "theoryRTP": 98.25,
+     "rtpZ": -2.787,
+     "hitRate": 98.4366,
+     "zeroReturn": 1.5634,
+     "wilsonRTP95": [
+      98.094,
+      98.223
+     ]
+    },
+    {
+     "stop": 2,
+     "countsK": [
+      89500,
+      332469,
+      410201,
+      167830
+     ],
+     "survivors": 1656361,
+     "expectedSurvivors": 1657894.737,
+     "survivalZ": -1.781,
+     "sampleRTP": 97.7253,
+     "theoryRTP": 97.815789,
+     "rtpZ": -1.781,
+     "hitRate": 91.05,
+     "zeroReturn": 8.95,
+     "wilsonRTP95": [
+      97.626,
+      97.825
+     ]
+    },
+    {
+     "stop": 3,
+     "countsK": [
+      217111,
+      432502,
+      286940,
+      63447
+     ],
+     "survivors": 1196723,
+     "expectedSurvivors": 1197368.421,
+     "survivalZ": -0.761,
+     "sampleRTP": 98.13129,
+     "theoryRTP": 98.184211,
+     "rtpZ": -0.761,
+     "hitRate": 78.2889,
+     "zeroReturn": 21.7111,
+     "wilsonRTP95": [
+      97.995,
+      98.268
+     ]
+    },
+    {
+     "stop": 4,
+     "countsK": [
+      370650,
+      436526,
+      170517,
+      22307
+     ],
+     "survivors": 844481,
+     "expectedSurvivors": 845201.238,
+     "survivalZ": -0.924,
+     "sampleRTP": 97.9598,
+     "theoryRTP": 98.043344,
+     "rtpZ": -0.924,
+     "hitRate": 62.935,
+     "zeroReturn": 37.065,
+     "wilsonRTP95": [
+      97.783,
+      98.137
+     ]
+    },
+    {
+     "stop": 5,
+     "countsK": [
+      524321,
+      377838,
+      90537,
+      7304
+     ],
+     "survivors": 580824,
+     "expectedSurvivors": 581075.851,
+     "survivalZ": -0.368,
+     "sampleRTP": 97.96565,
+     "theoryRTP": 98.008127,
+     "rtpZ": -0.368,
+     "hitRate": 47.5679,
+     "zeroReturn": 52.4321,
+     "wilsonRTP95": [
+      97.74,
+      98.192
+     ]
+    },
+    {
+     "stop": 6,
+     "countsK": [
+      661306,
+      293142,
+      43359,
+      2193
+     ],
+     "survivors": 386439,
+     "expectedSurvivors": 387383.901,
+     "survivalZ": -1.627,
+     "sampleRTP": 97.76907,
+     "theoryRTP": 98.008127,
+     "rtpZ": -1.627,
+     "hitRate": 33.8694,
+     "zeroReturn": 66.1306,
+     "wilsonRTP95": [
+      97.482,
+      98.057
+     ]
+    },
+    {
+     "stop": 7,
+     "countsK": [
+      771409,
+      209095,
+      18891,
+      605
+     ],
+     "survivors": 248692,
+     "expectedSurvivors": 249032.508,
+     "survivalZ": -0.713,
+     "sampleRTP": 97.90175,
+     "theoryRTP": 98.035797,
+     "rtpZ": -0.713,
+     "hitRate": 22.8591,
+     "zeroReturn": 77.1409,
+     "wilsonRTP95": [
+      97.534,
+      98.271
+     ]
+    },
+    {
+     "stop": 8,
+     "countsK": [
+      854755,
+      137667,
+      7441,
+      137
+     ],
+     "survivors": 152960,
+     "expectedSurvivors": 153250.774,
+     "survivalZ": -0.763,
+     "sampleRTP": 97.79243,
+     "theoryRTP": 97.978328,
+     "rtpZ": -0.763,
+     "hitRate": 14.5245,
+     "zeroReturn": 85.4755,
+     "wilsonRTP95": [
+      97.316,
+      98.271
+     ]
+    },
+    {
+     "stop": 9,
+     "countsK": [
+      913573,
+      83789,
+      2610,
+      28
+     ],
+     "survivors": 89093,
+     "expectedSurvivors": 89396.285,
+     "survivalZ": -1.03,
+     "sampleRTP": 97.67563,
+     "theoryRTP": 98.008127,
+     "rtpZ": -1.03,
+     "hitRate": 8.6427,
+     "zeroReturn": 91.3573,
+     "wilsonRTP95": [
+      97.046,
+      98.309
+     ]
+    },
+    {
+     "stop": 10,
+     "countsK": [
+      952055,
+      47200,
+      739,
+      6
+     ],
+     "survivors": 48696,
+     "expectedSurvivors": 48761.61,
+     "survivalZ": -0.3,
+     "sampleRTP": 97.86273,
+     "theoryRTP": 97.994582,
+     "rtpZ": -0.3,
+     "hitRate": 4.7945,
+     "zeroReturn": 95.2055,
+     "wilsonRTP95": [
+      97.004,
+      98.729
+     ]
+    },
+    {
+     "stop": 11,
+     "countsK": [
+      975852,
+      23969,
+      179,
+      0
+     ],
+     "survivors": 24327,
+     "expectedSurvivors": 24380.805,
+     "survivalZ": -0.346,
+     "sampleRTP": 97.78643,
+     "theoryRTP": 98.002709,
+     "rtpZ": -0.346,
+     "hitRate": 2.4148,
+     "zeroReturn": 97.5852,
+     "wilsonRTP95": [
+      96.57,
+      99.018
+     ]
+    },
+    {
+     "stop": 12,
+     "countsK": [
+      989208,
+      10756,
+      36,
+      0
+     ],
+     "survivors": 10828,
+     "expectedSurvivors": 10835.913,
+     "survivalZ": -0.076,
+     "sampleRTP": 97.92843,
+     "theoryRTP": 98,
+     "rtpZ": -0.076,
+     "hitRate": 1.0792,
+     "zeroReturn": 98.9208,
+     "wilsonRTP95": [
+      96.104,
+      99.787
+     ]
+    },
+    {
+     "stop": 13,
+     "countsK": [
+      995911,
+      4086,
+      3,
+      0
+     ],
+     "survivors": 4092,
+     "expectedSurvivors": 4063.467,
+     "survivalZ": 0.448,
+     "sampleRTP": 98.68813,
+     "theoryRTP": 98,
+     "rtpZ": 0.448,
+     "hitRate": 0.4089,
+     "zeroReturn": 99.5911,
+     "wilsonRTP95": [
+      95.712,
+      101.756
+     ]
+    },
+    {
+     "stop": 14,
+     "countsK": [
+      998875,
+      1125,
+      0,
+      0
+     ],
+     "survivors": 1125,
+     "expectedSurvivors": 1160.991,
+     "survivalZ": -1.056,
+     "sampleRTP": 94.962,
+     "theoryRTP": 98,
+     "rtpZ": -1.056,
+     "hitRate": 0.1125,
+     "zeroReturn": 99.8875,
+     "wilsonRTP95": [
+      89.574,
+      100.674
+     ]
+    },
+    {
+     "stop": 15,
+     "countsK": [
+      999829,
+      171,
+      0,
+      0
+     ],
+     "survivors": 171,
+     "expectedSurvivors": 193.498,
+     "survivalZ": -1.617,
+     "sampleRTP": 86.60534,
+     "theoryRTP": 98,
+     "rtpZ": -1.617,
+     "hitRate": 0.0171,
+     "zeroReturn": 99.9829,
+     "wilsonRTP95": [
+      74.561,
+      100.595
+     ]
+    }
+   ]
+  },
+  "expert": {
+   "rounds": 1000000,
+   "routes": 3000000,
+   "invalidDecks": 0,
+   "referenceCrossCheck": {
+    "decksCompared": 30000,
+    "mismatches": 0
+   },
+   "streamHash": "7b5a17c5f486bb46c3cef604c3d49d71e33df5102033d23f2cfb78c44adbe61e",
+   "maxAbsSurvivalZ": 1.536,
+   "maxAbsRtpZ": 1.536,
+   "positions": [
+    {
+     "stat": 7.5944,
+     "df": 19,
+     "p": 0.9903073903974742,
+     "minExpected": 500000
+    },
+    {
+     "stat": 8.8571,
+     "df": 19,
+     "p": 0.9757783044670062,
+     "minExpected": 500000
+    },
+    {
+     "stat": 15.5024,
+     "df": 19,
+     "p": 0.690174904736389,
+     "minExpected": 500000
+    }
+   ],
+   "firstHazard": [
+    {
+     "stat": 5.968,
+     "df": 9,
+     "p": 0.7431140311751159,
+     "minExpected": 59.54
+    },
+    {
+     "stat": 12.361,
+     "df": 9,
+     "p": 0.1937135952995989,
+     "minExpected": 59.54
+    },
+    {
+     "stat": 12.4672,
+     "df": 9,
+     "p": 0.1882333191928289,
+     "minExpected": 59.54
+    }
+   ],
+   "firstHazardBins": [
+    [
+     1
+    ],
+    [
+     2
+    ],
+    [
+     3
+    ],
+    [
+     4
+    ],
+    [
+     5
+    ],
+    [
+     6
+    ],
+    [
+     7
+    ],
+    [
+     8
+    ],
+    [
+     9
+    ],
+    [
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20
+    ]
+   ],
+   "pairIndependence": {
+    "AB": {
+     "stat": 29.9215,
+     "df": 36,
+     "p": 0.7521761421821631,
+     "minExpected": 29.1
+    },
+    "AC": {
+     "stat": 28.0079,
+     "df": 36,
+     "p": 0.8269198250963754,
+     "minExpected": 28.9
+    },
+    "BC": {
+     "stat": 27.3716,
+     "df": 36,
+     "p": 0.8488307099469689,
+     "minExpected": 29.39
+    }
+   },
+   "wholeDeck": null,
+   "lag1": {
+    "pairs": 999980,
+    "r": -0.0009723,
+    "z": -0.972
+   },
+   "adjacentRepeatsA": {
+    "observed": 3,
+    "expected": 5.412,
+    "z": -1.037
+   },
+   "stops": [
+    {
+     "stop": 1,
+     "countsK": [
+      125166,
+      374970,
+      375184,
+      124680
+     ],
+     "survivors": 1499378,
+     "expectedSurvivors": 1500000,
+     "survivalZ": -0.718,
+     "sampleRTP": 97.95936,
+     "theoryRTP": 98,
+     "rtpZ": -0.718,
+     "hitRate": 87.4834,
+     "zeroReturn": 12.5166,
+     "wilsonRTP95": [
+      97.848,
+      98.07
+     ]
+    },
+    {
+     "stop": 2,
+     "countsK": [
+      444141,
+      413871,
+      128531,
+      13457
+     ],
+     "survivors": 711304,
+     "expectedSurvivors": 710526.316,
+     "survivalZ": 1.056,
+     "sampleRTP": 98.15995,
+     "theoryRTP": 98.052632,
+     "rtpZ": 1.056,
+     "hitRate": 55.5859,
+     "zeroReturn": 44.4141,
+     "wilsonRTP95": [
+      97.961,
+      98.359
+     ]
+    },
+    {
+     "stop": 3,
+     "countsK": [
+      716533,
+      252459,
+      29814,
+      1194
+     ],
+     "survivors": 315669,
+     "expectedSurvivors": 315789.474,
+     "survivalZ": -0.227,
+     "sampleRTP": 97.96261,
+     "theoryRTP": 98,
+     "rtpZ": -0.227,
+     "hitRate": 28.3467,
+     "zeroReturn": 71.6533,
+     "wilsonRTP95": [
+      97.64,
+      98.286
+     ]
+    },
+    {
+     "stop": 4,
+     "countsK": [
+      875250,
+      119277,
+      5378,
+      95
+     ],
+     "survivors": 130318,
+     "expectedSurvivors": 130030.96,
+     "survivalZ": 0.814,
+     "sampleRTP": 98.21633,
+     "theoryRTP": 98,
+     "rtpZ": 0.814,
+     "hitRate": 12.475,
+     "zeroReturn": 87.525,
+     "wilsonRTP95": [
+      97.696,
+      98.739
+     ]
+    },
+    {
+     "stop": 5,
+     "countsK": [
+      951698,
+      47513,
+      782,
+      7
+     ],
+     "survivors": 49098,
+     "expectedSurvivors": 48761.61,
+     "survivalZ": 1.536,
+     "sampleRTP": 98.67061,
+     "theoryRTP": 97.994582,
+     "rtpZ": 1.536,
+     "hitRate": 4.8302,
+     "zeroReturn": 95.1698,
+     "wilsonRTP95": [
+      97.809,
+      99.54
+     ]
+    },
+    {
+     "stop": 6,
+     "countsK": [
+      983901,
+      16006,
+      93,
+      0
+     ],
+     "survivors": 16192,
+     "expectedSurvivors": 16253.87,
+     "survivalZ": -0.487,
+     "sampleRTP": 97.62697,
+     "theoryRTP": 98,
+     "rtpZ": -0.487,
+     "hitRate": 1.6099,
+     "zeroReturn": 98.3901,
+     "wilsonRTP95": [
+      96.139,
+      99.138
+     ]
+    },
+    {
+     "stop": 7,
+     "countsK": [
+      995343,
+      4648,
+      9,
+      0
+     ],
+     "survivors": 4666,
+     "expectedSurvivors": 4643.963,
+     "survivalZ": 0.324,
+     "sampleRTP": 98.46504,
+     "theoryRTP": 98,
+     "rtpZ": 0.324,
+     "hitRate": 0.4657,
+     "zeroReturn": 99.5343,
+     "wilsonRTP95": [
+      95.682,
+      101.329
+     ]
+    },
+    {
+     "stop": 8,
+     "countsK": [
+      998938,
+      1062,
+      0,
+      0
+     ],
+     "survivors": 1062,
+     "expectedSurvivors": 1071.684,
+     "survivalZ": -0.296,
+     "sampleRTP": 97.11459,
+     "theoryRTP": 98.000119,
+     "rtpZ": -0.296,
+     "hitRate": 0.1062,
+     "zeroReturn": 99.8938,
+     "wilsonRTP95": [
+      91.448,
+      103.132
+     ]
+    },
+    {
+     "stop": 9,
+     "countsK": [
+      999833,
+      167,
+      0,
+      0
+     ],
+     "survivors": 167,
+     "expectedSurvivors": 178.614,
+     "survivalZ": -0.869,
+     "sampleRTP": 91.62778,
+     "theoryRTP": 98,
+     "rtpZ": -0.869,
+     "hitRate": 0.0167,
+     "zeroReturn": 99.9833,
+     "wilsonRTP95": [
+      78.745,
+      106.618
+     ]
+    },
+    {
+     "stop": 10,
+     "countsK": [
+      999981,
+      19,
+      0,
+      0
+     ],
+     "survivors": 19,
+     "expectedSurvivors": 16.238,
+     "survivalZ": 0.686,
+     "sampleRTP": 114.67189,
+     "theoryRTP": 98,
+     "rtpZ": 0.686,
+     "hitRate": 0.0019,
+     "zeroReturn": 99.9981,
+     "wilsonRTP95": [
+      73.415,
+      179.113
+     ]
+    }
+   ]
+  }
+ }
+}

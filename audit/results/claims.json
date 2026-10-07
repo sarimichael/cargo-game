@@ -1,0 +1,2191 @@
+{
+ "meta": {
+  "script": "audit/validate-claims.mjs",
+  "node": "v24.21.0",
+  "generatedAt": "2026-10-07T21:20:42.237Z",
+  "source": "CARGO_SAYCOVE_AUDIT.md"
+ },
+ "summary": {
+  "total": 240,
+  "matched": 169,
+  "consistent": 69,
+  "unverifiable": 10,
+  "mismatches": 2,
+  "mismatchList": [
+   "§1 Headline maximum RTP (6 dp)",
+   "§1 Headline minimum house edge (6 dp)"
+  ]
+ },
+ "claims": [
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 1",
+   "printed": "95.000000% | 5.000000% | 95.000000% | 5.000000%",
+   "expected": "95.000000% | 5.000000% | 95.000000% | 5.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 2",
+   "printed": "94.736842% | 5.263158% | 90.000000% | 10.000000%",
+   "expected": "94.736842% | 5.263158% | 90.000000% | 10.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 3",
+   "printed": "94.444444% | 5.555556% | 85.000000% | 15.000000%",
+   "expected": "94.444444% | 5.555556% | 85.000000% | 15.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 4",
+   "printed": "94.117647% | 5.882353% | 80.000000% | 20.000000%",
+   "expected": "94.117647% | 5.882353% | 80.000000% | 20.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 5",
+   "printed": "93.750000% | 6.250000% | 75.000000% | 25.000000%",
+   "expected": "93.750000% | 6.250000% | 75.000000% | 25.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 6",
+   "printed": "93.333333% | 6.666667% | 70.000000% | 30.000000%",
+   "expected": "93.333333% | 6.666667% | 70.000000% | 30.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 7",
+   "printed": "92.857143% | 7.142857% | 65.000000% | 35.000000%",
+   "expected": "92.857143% | 7.142857% | 65.000000% | 35.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 8",
+   "printed": "92.307692% | 7.692308% | 60.000000% | 40.000000%",
+   "expected": "92.307692% | 7.692308% | 60.000000% | 40.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 9",
+   "printed": "91.666667% | 8.333333% | 55.000000% | 45.000000%",
+   "expected": "91.666667% | 8.333333% | 55.000000% | 45.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 10",
+   "printed": "90.909091% | 9.090909% | 50.000000% | 50.000000%",
+   "expected": "90.909091% | 9.090909% | 50.000000% | 50.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 11",
+   "printed": "90.000000% | 10.000000% | 45.000000% | 55.000000%",
+   "expected": "90.000000% | 10.000000% | 45.000000% | 55.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 12",
+   "printed": "88.888889% | 11.111111% | 40.000000% | 60.000000%",
+   "expected": "88.888889% | 11.111111% | 40.000000% | 60.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 13",
+   "printed": "87.500000% | 12.500000% | 35.000000% | 65.000000%",
+   "expected": "87.500000% | 12.500000% | 35.000000% | 65.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 14",
+   "printed": "85.714286% | 14.285714% | 30.000000% | 70.000000%",
+   "expected": "85.714286% | 14.285714% | 30.000000% | 70.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 15",
+   "printed": "83.333333% | 16.666667% | 25.000000% | 75.000000%",
+   "expected": "83.333333% | 16.666667% | 25.000000% | 75.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 16",
+   "printed": "80.000000% | 20.000000% | 20.000000% | 80.000000%",
+   "expected": "80.000000% | 20.000000% | 20.000000% | 80.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 17",
+   "printed": "75.000000% | 25.000000% | 15.000000% | 85.000000%",
+   "expected": "75.000000% | 25.000000% | 15.000000% | 85.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 18",
+   "printed": "66.666667% | 33.333333% | 10.000000% | 90.000000%",
+   "expected": "66.666667% | 33.333333% | 10.000000% | 90.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy odds stop 19",
+   "printed": "50.000000% | 50.000000% | 5.000000% | 95.000000%",
+   "expected": "50.000000% | 50.000000% | 5.000000% | 95.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 1",
+   "printed": "1.03× | 0.97850000 | 97.850000% | 2.150000% | 97.456897%–98.247863% | $3,090.00",
+   "expected": "1.03× | 0.97850000 | 97.850000% | 2.150000% | 97.456897%–98.247863% | $3,090.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 2",
+   "printed": "1.09× | 0.98100000 | 98.100000% | 1.900000% | 97.714286%–98.490566% | $3,270.00",
+   "expected": "1.09× | 0.98100000 | 98.100000% | 1.900000% | 97.714286%–98.490566% | $3,270.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 3",
+   "printed": "1.15× | 0.97750000 | 97.750000% | 2.250000% | 97.378641%–98.136364% | $3,450.00",
+   "expected": "1.15× | 0.97750000 | 97.750000% | 2.250000% | 97.378641%–98.136364% | $3,450.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 4",
+   "printed": "1.23× | 0.98400000 | 98.400000% | 1.600000% | 98.039216%–98.738739% | $3,690.00",
+   "expected": "1.23× | 0.98400000 | 98.400000% | 1.600000% | 98.039216%–98.738739% | $3,690.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 5",
+   "printed": "1.31× | 0.98250000 | 98.250000% | 1.750000% | 97.916667%–98.571429% | $3,930.00",
+   "expected": "1.31× | 0.98250000 | 98.250000% | 1.750000% | 97.916667%–98.571429% | $3,930.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 6",
+   "printed": "1.40× | 0.98000000 | 98.000000% | 2.000000% | 97.722772%–98.269231% | $4,200.00",
+   "expected": "1.40× | 0.98000000 | 98.000000% | 2.000000% | 97.722772%–98.269231% | $4,200.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 7",
+   "printed": "1.51× | 0.98150000 | 98.150000% | 1.850000% | 97.939189%–98.465347% | $4,530.00",
+   "expected": "1.51× | 0.98150000 | 98.150000% | 1.850000% | 97.939189%–98.465347% | $4,530.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 8",
+   "printed": "1.63× | 0.97800000 | 97.800000% | 2.200000% | 97.560976%–98.076923% | $4,890.00",
+   "expected": "1.63× | 0.97800000 | 97.800000% | 2.200000% | 97.560976%–98.076923% | $4,890.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 9",
+   "printed": "1.78× | 0.97900000 | 97.900000% | 2.100000% | 97.663551%–98.137255% | $5,340.00",
+   "expected": "1.78× | 0.97900000 | 97.900000% | 2.100000% | 97.663551%–98.137255% | $5,340.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 10",
+   "printed": "1.96× | 0.98000000 | 98.000000% | 2.000000% | 97.787611%–98.214286% | $5,880.00",
+   "expected": "1.96× | 0.98000000 | 98.000000% | 2.000000% | 97.787611%–98.214286% | $5,880.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 11",
+   "printed": "2.18× | 0.98100000 | 98.100000% | 1.900000% | 97.916667%–98.300971% | $6,540.00",
+   "expected": "2.18× | 0.98100000 | 98.100000% | 1.900000% | 97.916667%–98.300971% | $6,540.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 12",
+   "printed": "2.45× | 0.98000000 | 98.000000% | 2.000000% | 97.821782%–98.181818% | $7,350.00",
+   "expected": "2.45× | 0.98000000 | 98.000000% | 2.000000% | 97.821782%–98.181818% | $7,350.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 13",
+   "printed": "2.80× | 0.98000000 | 98.000000% | 2.000000% | 97.864078%–98.137255% | $8,400.00",
+   "expected": "2.80× | 0.98000000 | 98.000000% | 2.000000% | 97.864078%–98.137255% | $8,400.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 14",
+   "printed": "3.27× | 0.98100000 | 98.100000% | 1.900000% | 97.981651%–98.235294% | $9,810.00",
+   "expected": "3.27× | 0.98100000 | 98.100000% | 1.900000% | 97.981651%–98.235294% | $9,810.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 15",
+   "printed": "3.92× | 0.98000000 | 98.000000% | 2.000000% | 97.897196%–98.113208% | $11,760.00",
+   "expected": "3.92× | 0.98000000 | 98.000000% | 2.000000% | 97.897196%–98.113208% | $11,760.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 16",
+   "printed": "4.90× | 0.98000000 | 98.000000% | 2.000000% | 97.924528%–98.095238% | $14,700.00",
+   "expected": "4.90× | 0.98000000 | 98.000000% | 2.000000% | 97.924528%–98.095238% | $14,700.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 17",
+   "printed": "6.53× | 0.97950000 | 97.950000% | 2.050000% | 97.887931%–98.019802% | $19,590.00",
+   "expected": "6.53× | 0.97950000 | 97.950000% | 2.050000% | 97.887931%–98.019802% | $19,590.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 18",
+   "printed": "9.80× | 0.98000000 | 98.000000% | 2.000000% | 97.961165%–98.039216% | $29,400.00",
+   "expected": "9.80× | 0.98000000 | 98.000000% | 2.000000% | 97.961165%–98.039216% | $29,400.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Easy payouts stop 19",
+   "printed": "19.60× | 0.98000000 | 98.000000% | 2.000000% | 97.980769%–98.019802% | $58,800.00",
+   "expected": "19.60× | 0.98000000 | 98.000000% | 2.000000% | 97.980769%–98.019802% | $58,800.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 1",
+   "printed": "85.000000% | 15.000000% | 85.000000% | 15.000000%",
+   "expected": "85.000000% | 15.000000% | 85.000000% | 15.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 2",
+   "printed": "84.210526% | 15.789474% | 71.578947% | 28.421053%",
+   "expected": "84.210526% | 15.789474% | 71.578947% | 28.421053%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 3",
+   "printed": "83.333333% | 16.666667% | 59.649123% | 40.350877%",
+   "expected": "83.333333% | 16.666667% | 59.649123% | 40.350877%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 4",
+   "printed": "82.352941% | 17.647059% | 49.122807% | 50.877193%",
+   "expected": "82.352941% | 17.647059% | 49.122807% | 50.877193%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 5",
+   "printed": "81.250000% | 18.750000% | 39.912281% | 60.087719%",
+   "expected": "81.250000% | 18.750000% | 39.912281% | 60.087719%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 6",
+   "printed": "80.000000% | 20.000000% | 31.929825% | 68.070175%",
+   "expected": "80.000000% | 20.000000% | 31.929825% | 68.070175%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 7",
+   "printed": "78.571429% | 21.428571% | 25.087719% | 74.912281%",
+   "expected": "78.571429% | 21.428571% | 25.087719% | 74.912281%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 8",
+   "printed": "76.923077% | 23.076923% | 19.298246% | 80.701754%",
+   "expected": "76.923077% | 23.076923% | 19.298246% | 80.701754%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 9",
+   "printed": "75.000000% | 25.000000% | 14.473684% | 85.526316%",
+   "expected": "75.000000% | 25.000000% | 14.473684% | 85.526316%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 10",
+   "printed": "72.727273% | 27.272727% | 10.526316% | 89.473684%",
+   "expected": "72.727273% | 27.272727% | 10.526316% | 89.473684%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 11",
+   "printed": "70.000000% | 30.000000% | 7.368421% | 92.631579%",
+   "expected": "70.000000% | 30.000000% | 7.368421% | 92.631579%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 12",
+   "printed": "66.666667% | 33.333333% | 4.912281% | 95.087719%",
+   "expected": "66.666667% | 33.333333% | 4.912281% | 95.087719%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 13",
+   "printed": "62.500000% | 37.500000% | 3.070175% | 96.929825%",
+   "expected": "62.500000% | 37.500000% | 3.070175% | 96.929825%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 14",
+   "printed": "57.142857% | 42.857143% | 1.754386% | 98.245614%",
+   "expected": "57.142857% | 42.857143% | 1.754386% | 98.245614%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 15",
+   "printed": "50.000000% | 50.000000% | 0.877193% | 99.122807%",
+   "expected": "50.000000% | 50.000000% | 0.877193% | 99.122807%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 16",
+   "printed": "40.000000% | 60.000000% | 0.350877% | 99.649123%",
+   "expected": "40.000000% | 60.000000% | 0.350877% | 99.649123%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium odds stop 17",
+   "printed": "25.000000% | 75.000000% | 0.087719% | 99.912281%",
+   "expected": "25.000000% | 75.000000% | 0.087719% | 99.912281%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 1",
+   "printed": "1.15× | 0.97750000 | 97.750000% | 2.250000% | 97.378641%–98.136364% | $3,450.00",
+   "expected": "1.15× | 0.97750000 | 97.750000% | 2.250000% | 97.378641%–98.136364% | $3,450.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 2",
+   "printed": "1.37× | 0.98063158 | 98.063158% | 1.936842% | 97.732794%–98.348310% | $4,110.00",
+   "expected": "1.37× | 0.98063158 | 98.063158% | 1.936842% | 97.732794%–98.348310% | $4,110.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 3",
+   "printed": "1.64× | 0.97824561 | 97.824561% | 2.175439% | 97.556977%–98.076923% | $4,920.00",
+   "expected": "1.64× | 0.97824561 | 97.824561% | 2.175439% | 97.556977%–98.076923% | $4,920.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 4",
+   "printed": "2.00× | 0.98245614 | 98.245614% | 1.754386% | 98.245614%–98.245614% | $6,000.00",
+   "expected": "2.00× | 0.98245614 | 98.245614% | 1.754386% | 98.245614%–98.245614% | $6,000.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 5",
+   "printed": "2.46× | 0.98184211 | 98.184211% | 1.815789% | 98.002432%–98.355263% | $7,380.00",
+   "expected": "2.46× | 0.98184211 | 98.184211% | 1.815789% | 98.002432%–98.355263% | $7,380.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 6",
+   "printed": "3.07× | 0.98024561 | 98.024561% | 1.975439% | 97.878341%–98.154646% | $9,210.00",
+   "expected": "3.07× | 0.98024561 | 98.024561% | 1.975439% | 97.878341%–98.154646% | $9,210.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 7",
+   "printed": "3.91× | 0.98092982 | 98.092982% | 1.907018% | 97.984111%–98.200501% | $11,730.00",
+   "expected": "3.91× | 0.98092982 | 98.092982% | 1.907018% | 97.984111%–98.200501% | $11,730.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 8",
+   "printed": "5.08× | 0.98035088 | 98.035088% | 1.964912% | 97.947699%–98.114445% | $15,240.00",
+   "expected": "5.08× | 0.98035088 | 98.035088% | 1.964912% | 97.947699%–98.114445% | $15,240.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 9",
+   "printed": "6.77× | 0.97986842 | 97.986842% | 2.013158% | 97.925557%–98.052116% | $20,310.00",
+   "expected": "6.77× | 0.97986842 | 97.986842% | 2.013158% | 97.925557%–98.052116% | $20,310.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 10",
+   "printed": "9.31× | 0.98000000 | 98.000000% | 2.000000% | 97.953216%–98.045113% | $27,930.00",
+   "expected": "9.31× | 0.98000000 | 98.000000% | 2.000000% | 97.953216%–98.045113% | $27,930.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 11",
+   "printed": "13.30× | 0.98000000 | 98.000000% | 2.000000% | 97.972710%–98.035088% | $39,900.00",
+   "expected": "13.30× | 0.98000000 | 98.000000% | 2.000000% | 97.972710%–98.035088% | $39,900.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 12",
+   "printed": "19.95× | 0.98000000 | 98.000000% | 2.000000% | 97.980085%–98.022329% | $59,850.00",
+   "expected": "19.95× | 0.98000000 | 98.000000% | 2.000000% | 97.980085%–98.022329% | $59,850.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 13",
+   "printed": "31.92× | 0.98000000 | 98.000000% | 2.000000% | 97.987375%–98.013903% | $95,760.00",
+   "expected": "31.92× | 0.98000000 | 98.000000% | 2.000000% | 97.987375%–98.013903% | $95,760.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 14",
+   "printed": "55.86× | 0.98000000 | 98.000000% | 2.000000% | 97.992578%–98.007154% | $167,580.00",
+   "expected": "55.86× | 0.98000000 | 98.000000% | 2.000000% | 97.992578%–98.007154% | $167,580.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 15",
+   "printed": "111.72× | 0.98000000 | 98.000000% | 2.000000% | 97.996137%–98.003630% | $335,160.00",
+   "expected": "111.72× | 0.98000000 | 98.000000% | 2.000000% | 97.996137%–98.003630% | $335,160.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 16",
+   "printed": "279.30× | 0.98000000 | 98.000000% | 2.000000% | 97.998700%–98.001671% | $837,900.00",
+   "expected": "279.30× | 0.98000000 | 98.000000% | 2.000000% | 97.998700%–98.001671% | $837,900.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Medium payouts stop 17",
+   "printed": "1,117.20× | 0.98000000 | 98.000000% | 2.000000% | 97.999656%–98.000341% | $3,351,600.00",
+   "expected": "1,117.20× | 0.98000000 | 98.000000% | 2.000000% | 97.999656%–98.000341% | $3,351,600.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 1",
+   "printed": "75.000000% | 25.000000% | 75.000000% | 25.000000%",
+   "expected": "75.000000% | 25.000000% | 75.000000% | 25.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 2",
+   "printed": "73.684211% | 26.315789% | 55.263158% | 44.736842%",
+   "expected": "73.684211% | 26.315789% | 55.263158% | 44.736842%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 3",
+   "printed": "72.222222% | 27.777778% | 39.912281% | 60.087719%",
+   "expected": "72.222222% | 27.777778% | 39.912281% | 60.087719%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 4",
+   "printed": "70.588235% | 29.411765% | 28.173375% | 71.826625%",
+   "expected": "70.588235% | 29.411765% | 28.173375% | 71.826625%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 5",
+   "printed": "68.750000% | 31.250000% | 19.369195% | 80.630805%",
+   "expected": "68.750000% | 31.250000% | 19.369195% | 80.630805%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 6",
+   "printed": "66.666667% | 33.333333% | 12.912797% | 87.087203%",
+   "expected": "66.666667% | 33.333333% | 12.912797% | 87.087203%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 7",
+   "printed": "64.285714% | 35.714286% | 8.301084% | 91.698916%",
+   "expected": "64.285714% | 35.714286% | 8.301084% | 91.698916%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 8",
+   "printed": "61.538462% | 38.461538% | 5.108359% | 94.891641%",
+   "expected": "61.538462% | 38.461538% | 5.108359% | 94.891641%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 9",
+   "printed": "58.333333% | 41.666667% | 2.979876% | 97.020124%",
+   "expected": "58.333333% | 41.666667% | 2.979876% | 97.020124%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 10",
+   "printed": "54.545455% | 45.454545% | 1.625387% | 98.374613%",
+   "expected": "54.545455% | 45.454545% | 1.625387% | 98.374613%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 11",
+   "printed": "50.000000% | 50.000000% | 0.812693% | 99.187307%",
+   "expected": "50.000000% | 50.000000% | 0.812693% | 99.187307%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 12",
+   "printed": "44.444444% | 55.555556% | 0.361197% | 99.638803%",
+   "expected": "44.444444% | 55.555556% | 0.361197% | 99.638803%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 13",
+   "printed": "37.500000% | 62.500000% | 0.135449% | 99.864551%",
+   "expected": "37.500000% | 62.500000% | 0.135449% | 99.864551%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 14",
+   "printed": "28.571429% | 71.428571% | 0.038700% | 99.961300%",
+   "expected": "28.571429% | 71.428571% | 0.038700% | 99.961300%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard odds stop 15",
+   "printed": "16.666667% | 83.333333% | 0.006450% | 99.993550%",
+   "expected": "16.666667% | 83.333333% | 0.006450% | 99.993550%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 1",
+   "printed": "1.31× | 0.98250000 | 98.250000% | 1.750000% | 97.916667%–98.571429% | $3,930.00",
+   "expected": "1.31× | 0.98250000 | 98.250000% | 1.750000% | 97.916667%–98.571429% | $3,930.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 2",
+   "printed": "1.77× | 0.97815789 | 97.815789% | 2.184211% | 97.581792%–98.065015% | $5,310.00",
+   "expected": "1.77× | 0.97815789 | 97.815789% | 2.184211% | 97.581792%–98.065015% | $5,310.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 3",
+   "printed": "2.46× | 0.98184211 | 98.184211% | 1.815789% | 98.002432%–98.355263% | $7,380.00",
+   "expected": "2.46× | 0.98184211 | 98.184211% | 1.815789% | 98.002432%–98.355263% | $7,380.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 4",
+   "printed": "3.48× | 0.98043344 | 98.043344% | 1.956656% | 97.909450%–98.152402% | $10,440.00",
+   "expected": "3.48× | 0.98043344 | 98.043344% | 1.956656% | 97.909450%–98.152402% | $10,440.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 5",
+   "printed": "5.06× | 0.98008127 | 98.008127% | 1.991873% | 97.922042%–98.089868% | $15,180.00",
+   "expected": "5.06× | 0.98008127 | 98.008127% | 1.991873% | 97.922042%–98.089868% | $15,180.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 6",
+   "printed": "7.59× | 0.98008127 | 98.008127% | 1.991873% | 97.951124%–98.064164% | $22,770.00",
+   "expected": "7.59× | 0.98008127 | 98.008127% | 1.991873% | 97.951124%–98.064164% | $22,770.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 7",
+   "printed": "11.81× | 0.98035797 | 98.035797% | 1.964203% | 97.998904%–98.070324% | $35,430.00",
+   "expected": "11.81× | 0.98035797 | 98.035797% | 1.964203% | 97.998904%–98.070324% | $35,430.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 8",
+   "printed": "19.18× | 0.97978328 | 97.978328% | 2.021672% | 97.957516%–98.001142% | $57,540.00",
+   "expected": "19.18× | 0.97978328 | 97.978328% | 2.021672% | 97.957516%–98.001142% | $57,540.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 9",
+   "printed": "32.89× | 0.98008127 | 98.008127% | 1.991873% | 97.995356%–98.020734% | $98,670.00",
+   "expected": "32.89× | 0.98008127 | 98.008127% | 1.991873% | 97.995356%–98.020734% | $98,670.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 10",
+   "printed": "60.29× | 0.97994582 | 97.994582% | 2.005418% | 97.987616%–98.001275% | $180,870.00",
+   "expected": "60.29× | 0.97994582 | 97.994582% | 2.005418% | 97.987616%–98.001275% | $180,870.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 11",
+   "printed": "120.59× | 0.98002709 | 98.002709% | 1.997291% | 97.999121%–98.006236% | $361,770.00",
+   "expected": "120.59× | 0.98002709 | 98.002709% | 1.997291% | 97.999121%–98.006236% | $361,770.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 12",
+   "printed": "271.32× | 0.98000000 | 98.000000% | 2.000000% | 97.998479%–98.001562% | $813,960.00",
+   "expected": "271.32× | 0.98000000 | 98.000000% | 2.000000% | 97.998479%–98.001562% | $813,960.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 13",
+   "printed": "723.52× | 0.98000000 | 98.000000% | 2.000000% | 97.999476%–98.000644% | $2,170,560.00",
+   "expected": "723.52× | 0.98000000 | 98.000000% | 2.000000% | 97.999476%–98.000644% | $2,170,560.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 14",
+   "printed": "2,532.32× | 0.98000000 | 98.000000% | 2.000000% | 97.999837%–98.000167% | $7,596,960.00",
+   "expected": "2,532.32× | 0.98000000 | 98.000000% | 2.000000% | 97.999837%–98.000167% | $7,596,960.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Hard payouts stop 15",
+   "printed": "15,193.92× | 0.98000000 | 98.000000% | 2.000000% | 97.999973%–98.000029% | $45,581,760.00",
+   "expected": "15,193.92× | 0.98000000 | 98.000000% | 2.000000% | 97.999973%–98.000029% | $45,581,760.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert odds stop 1",
+   "printed": "50.000000% | 50.000000% | 50.000000% | 50.000000%",
+   "expected": "50.000000% | 50.000000% | 50.000000% | 50.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert odds stop 2",
+   "printed": "47.368421% | 52.631579% | 23.684211% | 76.315789%",
+   "expected": "47.368421% | 52.631579% | 23.684211% | 76.315789%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert odds stop 3",
+   "printed": "44.444444% | 55.555556% | 10.526316% | 89.473684%",
+   "expected": "44.444444% | 55.555556% | 10.526316% | 89.473684%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert odds stop 4",
+   "printed": "41.176471% | 58.823529% | 4.334365% | 95.665635%",
+   "expected": "41.176471% | 58.823529% | 4.334365% | 95.665635%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert odds stop 5",
+   "printed": "37.500000% | 62.500000% | 1.625387% | 98.374613%",
+   "expected": "37.500000% | 62.500000% | 1.625387% | 98.374613%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert odds stop 6",
+   "printed": "33.333333% | 66.666667% | 0.541796% | 99.458204%",
+   "expected": "33.333333% | 66.666667% | 0.541796% | 99.458204%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert odds stop 7",
+   "printed": "28.571429% | 71.428571% | 0.154799% | 99.845201%",
+   "expected": "28.571429% | 71.428571% | 0.154799% | 99.845201%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert odds stop 8",
+   "printed": "23.076923% | 76.923077% | 0.035723% | 99.964277%",
+   "expected": "23.076923% | 76.923077% | 0.035723% | 99.964277%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert odds stop 9",
+   "printed": "16.666667% | 83.333333% | 0.005954% | 99.994046%",
+   "expected": "16.666667% | 83.333333% | 0.005954% | 99.994046%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert odds stop 10",
+   "printed": "9.090909% | 90.909091% | 0.000541% | 99.999459%",
+   "expected": "9.090909% | 90.909091% | 0.000541% | 99.999459%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert payouts stop 1",
+   "printed": "1.96× | 0.98000000 | 98.000000% | 2.000000% | 97.787611%–98.214286% | $5,880.00",
+   "expected": "1.96× | 0.98000000 | 98.000000% | 2.000000% | 97.787611%–98.214286% | $5,880.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert payouts stop 2",
+   "printed": "4.14× | 0.98052632 | 98.052632% | 1.947368% | 97.956055%–98.152834% | $12,420.00",
+   "expected": "4.14× | 0.98052632 | 98.052632% | 1.947368% | 97.956055%–98.152834% | $12,420.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert payouts stop 3",
+   "printed": "9.31× | 0.98000000 | 98.000000% | 2.000000% | 97.953216%–98.045113% | $27,930.00",
+   "expected": "9.31× | 0.98000000 | 98.000000% | 2.000000% | 97.953216%–98.045113% | $27,930.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert payouts stop 4",
+   "printed": "22.61× | 0.98000000 | 98.000000% | 2.000000% | 97.980515%–98.017490% | $67,830.00",
+   "expected": "22.61× | 0.98000000 | 98.000000% | 2.000000% | 97.980515%–98.017490% | $67,830.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert payouts stop 5",
+   "printed": "60.29× | 0.97994582 | 97.994582% | 2.005418% | 97.987616%–98.001275% | $180,870.00",
+   "expected": "60.29× | 0.97994582 | 97.994582% | 2.005418% | 97.987616%–98.001275% | $180,870.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert payouts stop 6",
+   "printed": "180.88× | 0.98000000 | 98.000000% | 2.000000% | 97.997851%–98.002501% | $542,640.00",
+   "expected": "180.88× | 0.98000000 | 98.000000% | 2.000000% | 97.997851%–98.002501% | $542,640.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert payouts stop 7",
+   "printed": "633.08× | 0.98000000 | 98.000000% | 2.000000% | 97.999299%–98.000637% | $1,899,240.00",
+   "expected": "633.08× | 0.98000000 | 98.000000% | 2.000000% | 97.999299%–98.000637% | $1,899,240.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert payouts stop 8",
+   "printed": "2,743.35× | 0.98000119 | 98.000119% | 1.999881% | 97.999969%–98.000281% | $8,230,050.00",
+   "expected": "2,743.35× | 0.98000119 | 98.000119% | 1.999881% | 97.999969%–98.000281% | $8,230,050.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert payouts stop 9",
+   "printed": "16,460.08× | 0.98000000 | 98.000000% | 2.000000% | 97.999973%–98.000024% | $49,380,240.00",
+   "expected": "16,460.08× | 0.98000000 | 98.000000% | 2.000000% | 97.999973%–98.000024% | $49,380,240.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Expert payouts stop 10",
+   "printed": "181,060.88× | 0.98000000 | 98.000000% | 2.000000% | 97.999998%–98.000002% | $543,182,640.00",
+   "expected": "181,060.88× | 0.98000000 | 98.000000% | 2.000000% | 97.999998%–98.000002% | $543,182,640.00",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Final-stop exposure Easy",
+   "printed": "$19,600.00 | $58,800.00 | $55,800.00 | 14.262500000% | 1.250000000e-4",
+   "expected": "$19,600.00 | $58,800.00 | $55,800.00 | 14.262500000% | 1.250000000e-4",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Final-stop exposure Medium",
+   "printed": "$1,117,200.00 | $3,351,600.00 | $3,348,600.00 | 0.262927122% | 6.749715162e-10",
+   "expected": "$1,117,200.00 | $3,351,600.00 | $3,348,600.00 | 0.262927122% | 6.749715162e-10",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Final-stop exposure Hard",
+   "printed": "$15,193,920.00 | $45,581,760.00 | $45,578,760.00 | 0.019348597% | 2.683296850e-13",
+   "expected": "$15,193,920.00 | $45,581,760.00 | $45,578,760.00 | 0.019348597% | 2.683296850e-13",
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Final-stop exposure Expert",
+   "printed": "$181,060,880.00 | $543,182,640.00 | $543,179,640.00 | 0.001623754% | 1.585639101e-16",
+   "expected": "$181,060,880.00 | $543,182,640.00 | $543,179,640.00 | 0.001623754% | 1.585639101e-16",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Maximum RTP Easy",
+   "printed": "$3.33 | $1.11/$1.11/$1.11 | 4/4/4 | 98.738739% | 1.261261%",
+   "expected": "$3.33 | $1.11/$1.11/$1.11 | 4/4/4 | 98.738739% | 1.261261%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "UNVERIFIABLE",
+   "description": "Simulated RTP at optimum Easy",
+   "printed": "98.756018%",
+   "expected": null,
+   "status": "MATCH",
+   "detail": "Original random sample and audit-sim.mjs not retained."
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Maximum RTP Medium",
+   "printed": "$3.36 | $1.12/$1.12/$1.12 | 5/5/5 | 98.355263% | 1.644737%",
+   "expected": "$3.36 | $1.12/$1.12/$1.12 | 5/5/5 | 98.355263% | 1.644737%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "UNVERIFIABLE",
+   "description": "Simulated RTP at optimum Medium",
+   "printed": "98.304218%",
+   "expected": null,
+   "status": "MATCH",
+   "detail": "Original random sample and audit-sim.mjs not retained."
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Maximum RTP Hard",
+   "printed": "$3.15 | $1.05/$1.05/$1.05 | 1/1/1 | 98.571429% | 1.428571%",
+   "expected": "$3.15 | $1.05/$1.05/$1.05 | 1/1/1 | 98.571429% | 1.428571%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "UNVERIFIABLE",
+   "description": "Simulated RTP at optimum Hard",
+   "printed": "98.570859%",
+   "expected": null,
+   "status": "MATCH",
+   "detail": "Original random sample and audit-sim.mjs not retained."
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Maximum RTP Expert",
+   "printed": "$3.36 | $1.12/$1.12/$1.12 | 1/1/1 | 98.214286% | 1.785714%",
+   "expected": "$3.36 | $1.12/$1.12/$1.12 | 1/1/1 | 98.214286% | 1.785714%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "UNVERIFIABLE",
+   "description": "Simulated RTP at optimum Expert",
+   "printed": "98.311452%",
+   "expected": null,
+   "status": "MATCH",
+   "detail": "Original random sample and audit-sim.mjs not retained."
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Strategy \"All at first\"",
+   "printed": "97.850000% | 97.750000% | 98.250000% | 98.000000%",
+   "expected": "97.850000% | 97.750000% | 98.250000% | 98.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Strategy \"All at final\"",
+   "printed": "98.000000% | 98.000000% | 98.000000% | 98.000000%",
+   "expected": "98.000000% | 98.000000% | 98.000000% | 98.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Strategy \"A/B/C at 1/Mid/Final\"",
+   "printed": "97.950000% | 97.912281% | 98.076109% | 97.998194%",
+   "expected": "97.950000% | 97.912281% | 98.076109% | 97.998194%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Strategy \"A at 1; B/C at Final\"",
+   "printed": "97.950000% | 97.916667% | 98.083333% | 98.000000%",
+   "expected": "97.950000% | 97.916667% | 98.083333% | 98.000000%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Strategy \"Adaptive rule above\"",
+   "printed": "97.945125% | 97.890373% | 98.115728% | 97.999549%",
+   "expected": "97.945125% | 97.890373% | 98.115728% | 97.999549%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Strategy \"Optimal at $30\"",
+   "printed": "98.400000% | 98.245614% | 98.250000% | 98.052632%",
+   "expected": "98.400000% | 98.245614% | 98.250000% | 98.052632%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "$3.01 Easy optimal targets and RTP",
+   "printed": "A→7, B/C→4, 98.421927%",
+   "expected": "targets 7/4/4, 98.421927%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "$3.01 Easy all at stop 4",
+   "printed": "about 98.338870%",
+   "expected": "98.338870%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "$3.02 Easy optimal targets and RTP",
+   "printed": "A/B→7, C→4, 98.443709%",
+   "expected": "targets 7/7/4, 98.443709%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "Easy maximum worked example 0.8×137/111",
+   "printed": "548/555=98.738738…%",
+   "expected": "98.738739%",
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "medium best stake 112¢ returns 276¢ at stop 5",
+   "printed": 276,
+   "expected": 276,
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "hard best stake 105¢ returns 138¢ at stop 1",
+   "printed": 138,
+   "expected": 138,
+   "status": "MATCH"
+  },
+  {
+   "section": "§6",
+   "kind": "REPRODUCED",
+   "description": "expert best stake 112¢ returns 220¢ at stop 1",
+   "printed": 220,
+   "expected": 220,
+   "status": "MATCH"
+  },
+  {
+   "section": "§1",
+   "kind": "REPRODUCED",
+   "description": "Headline maximum RTP (6 dp)",
+   "printed": "98.738738%",
+   "expected": "98.738739%",
+   "status": "MISMATCH",
+   "detail": "Exact value 98.738738738…%; the §1/§10 text truncates to 98.738738% while §4/§6 tables round to 98.738739%."
+  },
+  {
+   "section": "§1",
+   "kind": "REPRODUCED",
+   "description": "Headline minimum house edge (6 dp)",
+   "printed": "1.261262%",
+   "expected": "1.261261%",
+   "status": "MISMATCH",
+   "detail": "Exact value 1.261261261…% (=7/555). Printed 1.261262% is neither truncated nor correctly rounded; §6 table prints 1.261261%."
+  },
+  {
+   "section": "§1",
+   "kind": "REPRODUCED",
+   "description": "Total hazard subsets",
+   "printed": "201,420",
+   "expected": 201420,
+   "status": "MATCH"
+  },
+  {
+   "section": "§1",
+   "kind": "REPRODUCED",
+   "description": "Permitted total wagers",
+   "printed": "299,701",
+   "expected": 299701,
+   "status": "MATCH"
+  },
+  {
+   "section": "§1",
+   "kind": "REPRODUCED",
+   "description": "Stake/multiplier pairs",
+   "printed": "6,093,961",
+   "expected": 6093961,
+   "status": "MATCH"
+  },
+  {
+   "section": "§5",
+   "kind": "REPRODUCED",
+   "description": "Settlement fixtures 61 × 5",
+   "printed": "305",
+   "expected": 305,
+   "status": "MATCH"
+  },
+  {
+   "section": "§9",
+   "kind": "REPRODUCED",
+   "description": "Largest multiplication 100,000 × 18,106,088",
+   "printed": "1,810,608,800,000",
+   "expected": 1810608800000,
+   "status": "MATCH"
+  },
+  {
+   "section": "§4",
+   "kind": "REPRODUCED",
+   "description": "Max-bet Expert maximum gross (cents)",
+   "printed": "54,318,264,000",
+   "expected": 54318264000,
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "REPRODUCED",
+   "description": "Expected Expert final survivors in 3M routes",
+   "printed": "≈16.2376",
+   "expected": "16.2376",
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "REPRODUCED",
+   "description": "Expert rounds for ±1pp 95% half-width",
+   "printed": "roughly 2.27 billion",
+   "expected": "2.27 billion",
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 1 figures derive from its own k-counts",
+   "printed": "97.85827% | 2.14173% | 99.98850% | 0.01150% | 115/7127/135160/857598 | 0.01677 | 0.638",
+   "expected": {
+    "rtp": "97.85827%",
+    "z": "0.638",
+    "var": "0.01677"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 2 figures derive from its own k-counts",
+   "printed": "98.13008% | 1.86992% | 99.90280% | 0.09720% | 972/26891/242474/729663 | 0.03555 | 1.593",
+   "expected": {
+    "rtp": "98.13008%",
+    "z": "1.593",
+    "var": "0.03555"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 3 figures derive from its own k-counts",
+   "printed": "97.76273% | 2.23727% | 99.66720% | 0.33280% | 3328/57190/325304/614178 | 0.05611 | 0.537",
+   "expected": {
+    "rtp": "97.76273%",
+    "z": "0.537",
+    "var": "0.05611"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 4 figures derive from its own k-counts",
+   "printed": "98.41722% | 1.58278% | 99.20290% | 0.79710% | 7971/95579/384509/511941 | 0.08053 | 0.606",
+   "expected": {
+    "rtp": "98.41722%",
+    "z": "0.606",
+    "var": "0.08053"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 5 figures derive from its own k-counts",
+   "printed": "98.25432% | 1.74568% | 98.43810% | 1.56190% | 15619/140198/422648/421535 | 0.10710 | 0.132",
+   "expected": {
+    "rtp": "98.25432%",
+    "z": "0.132",
+    "var": "0.10710"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 6 figures derive from its own k-counts",
+   "printed": "97.99151% | 2.00849% | 97.32400% | 2.67600% | 26760/189060/441782/342398 | 0.13688 | -0.229",
+   "expected": {
+    "rtp": "97.99151%",
+    "z": "-0.229",
+    "var": "0.13688"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 7 figures derive from its own k-counts",
+   "printed": "98.10566% | 1.89434% | 95.73580% | 4.26420% | 42642/239454/444047/273857 | 0.17260 | -1.066",
+   "expected": {
+    "rtp": "98.10566%",
+    "z": "-1.066",
+    "var": "0.17260"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 8 figures derive from its own k-counts",
+   "printed": "97.79821% | 2.20179% | 93.62130% | 6.37870% | 63787/287985/432702/215526 | 0.21215 | -0.039",
+   "expected": {
+    "rtp": "97.79821%",
+    "z": "-0.039",
+    "var": "0.21215"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 9 figures derive from its own k-counts",
+   "printed": "97.89887% | 2.10113% | 90.91730% | 9.08270% | 90827/334446/408646/166081 | 0.26098 | -0.022",
+   "expected": {
+    "rtp": "97.89887%",
+    "z": "-0.022",
+    "var": "0.26098"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 10 figures derive from its own k-counts",
+   "printed": "97.97080% | 2.02920% | 87.52900% | 12.47100% | 124710/375811/374695/124784 | 0.31970 | -0.516",
+   "expected": {
+    "rtp": "97.97080%",
+    "z": "-0.516",
+    "var": "0.31970"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 11 figures derive from its own k-counts",
+   "printed": "98.05945% | 1.94055% | 83.36880% | 16.63120% | 166312/409011/333600/91077 | 0.39187 | -0.648",
+   "expected": {
+    "rtp": "98.05945%",
+    "z": "-0.648",
+    "var": "0.39187"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 12 figures derive from its own k-counts",
+   "printed": "97.97370% | 2.02630% | 78.40540% | 21.59460% | 215946/432465/287554/64035 | 0.48005 | -0.379",
+   "expected": {
+    "rtp": "97.97370%",
+    "z": "-0.379",
+    "var": "0.48005"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 13 figures derive from its own k-counts",
+   "printed": "98.00597% | 1.99403% | 72.54460% | 27.45540% | 274554/443778/238718/42950 | 0.59459 | 0.077",
+   "expected": {
+    "rtp": "98.00597%",
+    "z": "0.077",
+    "var": "0.59459"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 14 figures derive from its own k-counts",
+   "printed": "98.09913% | 1.90087% | 65.70230% | 34.29770% | 342977/440950/189177/26896 | 0.74819 | -0.010",
+   "expected": {
+    "rtp": "98.09913%",
+    "z": "-0.010",
+    "var": "0.74819"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 15 figures derive from its own k-counts",
+   "printed": "97.95910% | 2.04090% | 57.79780% | 42.20220% | 422022/421827/140593/15558 | 0.95987 | -0.417",
+   "expected": {
+    "rtp": "97.95910%",
+    "z": "-0.417",
+    "var": "0.95987"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 16 figures derive from its own k-counts",
+   "printed": "97.97583% | 2.02417% | 48.80630% | 51.19370% | 511937/384275/95787/8001 | 1.27949 | -0.214",
+   "expected": {
+    "rtp": "97.97583%",
+    "z": "-0.214",
+    "var": "1.27949"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 17 figures derive from its own k-counts",
+   "printed": "97.79981% | 2.20019% | 38.55440% | 61.44560% | 614456/325168/56986/3390 | 1.80865 | -1.116",
+   "expected": {
+    "rtp": "97.79981%",
+    "z": "-1.116",
+    "var": "1.80865"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 18 figures derive from its own k-counts",
+   "printed": "97.95492% | 2.04508% | 27.09690% | 72.90310% | 729031/243042/26961/966 | 2.87760 | -0.266",
+   "expected": {
+    "rtp": "97.95492%",
+    "z": "-0.266",
+    "var": "2.87760"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy simulated stop 19 figures derive from its own k-counts",
+   "printed": "97.79812% | 2.20188% | 14.23610% | 85.76390% | 857639/135157/7078/126 | 6.06954 | -0.819",
+   "expected": {
+    "rtp": "97.79812%",
+    "z": "-0.819",
+    "var": "6.06955"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 1 figures derive from its own k-counts",
+   "printed": "97.77300% | 2.22700% | 99.66530% | 0.33470% | 3347/56947/325465/614241 | 0.05605 | 0.970",
+   "expected": {
+    "rtp": "97.77300%",
+    "z": "0.970",
+    "var": "0.05605"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 2 figures derive from its own k-counts",
+   "printed": "98.06967% | 1.93033% | 97.71480% | 2.28520% | 22852/173115/437703/366330 | 0.12702 | 0.183",
+   "expected": {
+    "rtp": "98.06967%",
+    "z": "0.183",
+    "var": "0.12702"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 3 figures derive from its own k-counts",
+   "printed": "97.79216% | 2.20784% | 93.43090% | 6.56910% | 65691/291533/430980/211796 | 0.21562 | -0.697",
+   "expected": {
+    "rtp": "97.79216%",
+    "z": "-0.697",
+    "var": "0.21562"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 4 figures derive from its own k-counts",
+   "printed": "98.20240% | 1.79760% | 86.86100% | 13.13900% | 131390/382399/367996/118215 | 0.33266 | -0.749",
+   "expected": {
+    "rtp": "98.20240%",
+    "z": "-0.749",
+    "var": "0.33266"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 5 figures derive from its own k-counts",
+   "printed": "98.13325% | 1.86675% | 78.34420% | 21.65580% | 216558/433546/286487/63409 | 0.48276 | -0.733",
+   "expected": {
+    "rtp": "98.13325%",
+    "z": "-0.733",
+    "var": "0.48276"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 6 figures derive from its own k-counts",
+   "printed": "97.93361% | 2.06639% | 68.50220% | 31.49780% | 314978/445320/207420/32282 | 0.68035 | -1.101",
+   "expected": {
+    "rtp": "97.93361%",
+    "z": "-1.101",
+    "var": "0.68035"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 7 figures derive from its own k-counts",
+   "printed": "97.92712% | 2.07288% | 57.94260% | 42.05740% | 420574/423087/140745/15594 | 0.95444 | -1.695",
+   "expected": {
+    "rtp": "97.92712%",
+    "z": "-1.695",
+    "var": "0.95444"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 8 figures derive from its own k-counts",
+   "printed": "97.79271% | 2.20729% | 47.36950% | 52.63050% | 526305/377091/89387/7217 | 1.33639 | -2.094",
+   "expected": {
+    "rtp": "97.79271%",
+    "z": "-2.094",
+    "var": "1.33639"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 9 figures derive from its own k-counts",
+   "printed": "97.67034% | 2.32966% | 37.35080% | 62.64920% | 626492/317286/53144/3078 | 1.88547 | -2.301",
+   "expected": {
+    "rtp": "97.67034%",
+    "z": "-2.301",
+    "var": "1.88547"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 10 figures derive from its own k-counts",
+   "printed": "97.69386% | 2.30614% | 28.30130% | 71.69870% | 716987/252388/29460/1165 | 2.71212 | -1.856",
+   "expected": {
+    "rtp": "97.69386%",
+    "z": "-1.856",
+    "var": "2.71212"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 11 figures derive from its own k-counts",
+   "printed": "97.65569% | 2.34431% | 20.44980% | 79.55020% | 795502/189095/15028/375 | 4.01070 | -1.716",
+   "expected": {
+    "rtp": "97.65569%",
+    "z": "-1.716",
+    "var": "4.01070"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 12 figures derive from its own k-counts",
+   "printed": "97.47770% | 2.52230% | 13.95170% | 86.04830% | 860483/132555/6858/104 | 6.16623 | -2.098",
+   "expected": {
+    "rtp": "97.47770%",
+    "z": "-2.098",
+    "var": "6.16623"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 13 figures derive from its own k-counts",
+   "printed": "97.36345% | 2.63655% | 8.87270% | 91.12730% | 911273/85970/2734/23 | 10.04616 | -2.002",
+   "expected": {
+    "rtp": "97.36345%",
+    "z": "-2.002",
+    "var": "10.04617"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 14 figures derive from its own k-counts",
+   "printed": "97.80341% | 2.19659% | 5.16060% | 94.83940% | 948394/50690/912/4 | 17.89515 | -0.464",
+   "expected": {
+    "rtp": "97.80341%",
+    "z": "-0.464",
+    "var": "17.89517"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 15 figures derive from its own k-counts",
+   "printed": "97.80714% | 2.19286% | 2.60230% | 97.39770% | 973977/25782/241/0 | 36.13520 | -0.321",
+   "expected": {
+    "rtp": "97.80714%",
+    "z": "-0.321",
+    "var": "36.13524"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 16 figures derive from its own k-counts",
+   "printed": "98.22981% | 1.77019% | 1.05100% | 98.94900% | 989490/10469/41/0 | 91.19779 | 0.241",
+   "expected": {
+    "rtp": "98.22981%",
+    "z": "0.241",
+    "var": "91.19788"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium simulated stop 17 figures derive from its own k-counts",
+   "printed": "96.93572% | 3.06428% | 0.26020% | 99.73980% | 997398/2601/1/0 | 360.32633 | -0.557",
+   "expected": {
+    "rtp": "96.93572%",
+    "z": "-0.557",
+    "var": "360.32669"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 1 figures derive from its own k-counts",
+   "printed": "98.24943% | 1.75057% | 98.44870% | 1.55130% | 15513/140566/422342/421579 | 0.10710 | -0.017",
+   "expected": {
+    "rtp": "98.24943%",
+    "z": "-0.017",
+    "var": "0.10710"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 2 figures derive from its own k-counts",
+   "printed": "97.72188% | 2.27812% | 91.04010% | 8.95990% | 89599/332647/409606/168148 | 0.25796 | -1.848",
+   "expected": {
+    "rtp": "97.72188%",
+    "z": "-1.848",
+    "var": "0.25796"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 3 figures derive from its own k-counts",
+   "printed": "98.03444% | 1.96556% | 78.27590% | 21.72410% | 217241/433419/285897/63443 | 0.48324 | -2.153",
+   "expected": {
+    "rtp": "98.03444%",
+    "z": "-2.153",
+    "var": "0.48324"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 4 figures derive from its own k-counts",
+   "printed": "97.93428% | 2.06572% | 62.94920% | 37.05080% | 370508/437045/170125/22322 | 0.81498 | -1.207",
+   "expected": {
+    "rtp": "97.93428%",
+    "z": "-1.207",
+    "var": "0.81499"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 5 figures derive from its own k-counts",
+   "printed": "97.88064% | 2.11936% | 47.55080% | 52.44920% | 524492/377943/90318/7247 | 1.33044 | -1.104",
+   "expected": {
+    "rtp": "97.88064%",
+    "z": "-1.104",
+    "var": "1.33044"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 6 figures derive from its own k-counts",
+   "printed": "97.94591% | 2.05409% | 33.92970% | 66.07030% | 660703/293647/43459/2191 | 2.15919 | -0.423",
+   "expected": {
+    "rtp": "97.94591%",
+    "z": "-0.423",
+    "var": "2.15919"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 7 figures derive from its own k-counts",
+   "printed": "98.06434% | 1.93566% | 22.89020% | 77.10980% | 771098/209281/19039/582 | 3.54303 | 0.152",
+   "expected": {
+    "rtp": "98.06434%",
+    "z": "0.152",
+    "var": "3.54303"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 8 figures derive from its own k-counts",
+   "printed": "97.78859% | 2.21141% | 14.50840% | 85.49160% | 854916/137346/7606/132 | 5.94985 | -0.778",
+   "expected": {
+    "rtp": "97.78859%",
+    "z": "-0.778",
+    "var": "5.94985"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 9 figures derive from its own k-counts",
+   "printed": "97.97492% | 2.02508% | 8.66780% | 91.33220% | 913322/84010/2648/20 | 10.43238 | -0.103",
+   "expected": {
+    "rtp": "97.97492%",
+    "z": "-0.103",
+    "var": "10.43239"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 10 figures derive from its own k-counts",
+   "printed": "97.71602% | 2.28398% | 4.78340% | 95.21660% | 952166/47048/783/3 | 19.32256 | -0.633",
+   "expected": {
+    "rtp": "97.71602%",
+    "z": "-0.633",
+    "var": "19.32258"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 11 figures derive from its own k-counts",
+   "printed": "98.31301% | 1.68699% | 2.42870% | 97.57130% | 975713/24116/171/0 | 39.10460 | 0.496",
+   "expected": {
+    "rtp": "98.31301%",
+    "z": "0.496",
+    "var": "39.10464"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 12 figures derive from its own k-counts",
+   "printed": "98.95040% | 1.04960% | 1.09120% | 98.90880% | 989088/10883/29/0 | 88.98603 | 1.011",
+   "expected": {
+    "rtp": "98.95040%",
+    "z": "1.011",
+    "var": "88.98612"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 13 figures derive from its own k-counts",
+   "printed": "100.44869% | -0.44869% | 0.41600% | 99.58400% | 995840/4155/5/0 | 241.82811 | 1.594",
+   "expected": {
+    "rtp": "100.44869%",
+    "z": "1.594",
+    "var": "241.82836"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 14 figures derive from its own k-counts",
+   "printed": "101.54603% | -1.54603% | 0.12020% | 99.87980% | 998798/1201/1/0 | 857.55070 | 1.233",
+   "expected": {
+    "rtp": "101.54603%",
+    "z": "1.233",
+    "var": "857.55156"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard simulated stop 15 figures derive from its own k-counts",
+   "printed": "97.24109% | 2.75891% | 0.01920% | 99.98080% | 999808/192/0/0 | 4,923.96546 | -0.108",
+   "expected": {
+    "rtp": "97.24109%",
+    "z": "-0.108",
+    "var": "4923.97038"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert simulated stop 1 figures derive from its own k-counts",
+   "printed": "98.09695% | 1.90305% | 87.55210% | 12.44790% | 124479/374641/375797/125083 | 0.31976 | 1.714",
+   "expected": {
+    "rtp": "98.09695%",
+    "z": "1.714",
+    "var": "0.31976"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert simulated stop 2 figures derive from its own k-counts",
+   "printed": "98.26345% | 1.73655% | 55.63380% | 44.36620% | 443662/413966/129028/13344 | 1.03438 | 2.075",
+   "expected": {
+    "rtp": "98.26345%",
+    "z": "2.075",
+    "var": "1.03438"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert simulated stop 3 figures derive from its own k-counts",
+   "printed": "98.05571% | 1.94429% | 28.38270% | 71.61730% | 716173/252781/29950/1096 | 2.72171 | 0.338",
+   "expected": {
+    "rtp": "98.05571%",
+    "z": "0.338",
+    "var": "2.72171"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert simulated stop 4 figures derive from its own k-counts",
+   "printed": "98.45223% | 1.54777% | 12.49910% | 87.50090% | 875009/119427/5488/76 | 7.10009 | 1.701",
+   "expected": {
+    "rtp": "98.45223%",
+    "z": "1.701",
+    "var": "7.10009"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert simulated stop 5 figures derive from its own k-counts",
+   "printed": "97.92101% | 2.07899% | 4.79280% | 95.20720% | 952072/47133/793/2 | 19.36540 | -0.167",
+   "expected": {
+    "rtp": "97.92101%",
+    "z": "-0.167",
+    "var": "19.36542"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert simulated stop 6 figures derive from its own k-counts",
+   "printed": "98.54945% | 1.45055% | 1.62660% | 98.37340% | 983734/16187/79/0 | 59.02193 | 0.717",
+   "expected": {
+    "rtp": "98.54945%",
+    "z": "0.717",
+    "var": "59.02199"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert simulated stop 7 figures derive from its own k-counts",
+   "printed": "98.80269% | 1.19731% | 0.46730% | 99.53270% | 995327/4664/9/0 | 208.32540 | 0.559",
+   "expected": {
+    "rtp": "98.80269%",
+    "z": "0.559",
+    "var": "208.32561"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert simulated stop 8 figures derive from its own k-counts",
+   "printed": "101.04673% | -1.04673% | 0.11040% | 99.88960% | 998896/1103/1/0 | 924.67317 | 1.018",
+   "expected": {
+    "rtp": "101.04673%",
+    "z": "1.018",
+    "var": "924.67409"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert simulated stop 9 figures derive from its own k-counts",
+   "printed": "90.53044% | 9.46956% | 0.01650% | 99.98350% | 999835/165/0/0 | 4,966.30804 | -1.019",
+   "expected": {
+    "rtp": "90.53044%",
+    "z": "-1.019",
+    "var": "4966.31301"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert simulated stop 10 figures derive from its own k-counts",
+   "printed": "72.42435% | 27.57565% | 0.00120% | 99.99880% | 999988/12/0/0 | 43,710.19849 | -1.052",
+   "expected": {
+    "rtp": "72.42435%",
+    "z": "-1.052",
+    "var": "43710.24220"
+   },
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy final distribution matches per-stop final row",
+   "printed": "857639/135157/7078/126",
+   "expected": "857639/135157/7078/126",
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "REPRODUCED",
+   "description": "Easy final payout points k×$10×m",
+   "printed": "$0.00, $196.00, $392.00, $588.00",
+   "expected": "k×$10×m",
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium final distribution matches per-stop final row",
+   "printed": "997398/2601/1/0",
+   "expected": "997398/2601/1/0",
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "REPRODUCED",
+   "description": "Medium final payout points k×$10×m",
+   "printed": "$0.00, $11,172.00, $22,344.00, $33,516.00",
+   "expected": "k×$10×m",
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard final distribution matches per-stop final row",
+   "printed": "999808/192/0/0",
+   "expected": "999808/192/0/0",
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "REPRODUCED",
+   "description": "Hard final payout points k×$10×m",
+   "printed": "$0.00, $151,939.20, $303,878.40, $455,817.60",
+   "expected": "k×$10×m",
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert final distribution matches per-stop final row",
+   "printed": "999988/12/0/0",
+   "expected": "999988/12/0/0",
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "REPRODUCED",
+   "description": "Expert final payout points k×$10×m",
+   "printed": "$0.00, $1,810,608.80, $3,621,217.60, $5,431,826.40",
+   "expected": "k×$10×m",
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "REPRODUCED",
+   "description": "Easy theory variance",
+   "printed": "6.082533",
+   "expected": "6.082533",
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Easy 95% Wilson RTP interval from 149691 survivors",
+   "printed": "97.316%–98.282%",
+   "expected": "97.316%–98.282%",
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "REPRODUCED",
+   "description": "Medium theory variance",
+   "printed": "364.631867",
+   "expected": "364.631867",
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Medium 95% Wilson RTP interval from 2603 survivors",
+   "printed": "93.284%–100.730%",
+   "expected": "93.284%–100.730%",
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "REPRODUCED",
+   "description": "Hard theory variance",
+   "printed": "4,963.027067",
+   "expected": "4963.027067",
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Hard 95% Wilson RTP interval from 192 survivors",
+   "printed": "84.425%–112.002%",
+   "expected": "84.425%–112.002%",
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§8",
+   "kind": "REPRODUCED",
+   "description": "Expert theory variance",
+   "printed": "59,146.234000",
+   "expected": "59146.234000",
+   "status": "MATCH"
+  },
+  {
+   "section": "§8",
+   "kind": "CONSISTENT",
+   "description": "Expert 95% Wilson RTP interval from 12 survivors",
+   "printed": "41.431%–126.602%",
+   "expected": "41.431%–126.602%",
+   "status": "CONSISTENT"
+  },
+  {
+   "section": "§1/§12",
+   "kind": "UNVERIFIABLE",
+   "description": "audit-math.mjs, audit-sim.mjs, audit-exploits.mjs, audit-extra.mjs, audit-findings.mjs and audit-results/*.json (only SHA-256 hashes recorded)",
+   "printed": null,
+   "expected": null,
+   "status": "MATCH"
+  },
+  {
+   "section": "§1/§12",
+   "kind": "UNVERIFIABLE",
+   "description": "18 additional adversarial test groups and 80 cash-out/elimination races (scripts absent)",
+   "printed": null,
+   "expected": null,
+   "status": "MATCH"
+  },
+  {
+   "section": "§1/§12",
+   "kind": "UNVERIFIABLE",
+   "description": "Browser session with $3.01 wager, captured API bodies, 100 browser-verified rounds",
+   "printed": null,
+   "expected": null,
+   "status": "MATCH"
+  },
+  {
+   "section": "§1/§12",
+   "kind": "UNVERIFIABLE",
+   "description": "Live private deployment equivalence (site behind authentication; not in scope)",
+   "printed": null,
+   "expected": null,
+   "status": "MATCH"
+  },
+  {
+   "section": "§1/§12",
+   "kind": "UNVERIFIABLE",
+   "description": "§7 forced 0xFFFFFFFF rejection on an in-memory copy (re-done independently in validate-rng.mjs R03)",
+   "printed": null,
+   "expected": null,
+   "status": "MATCH"
+  },
+  {
+   "section": "§1/§12",
+   "kind": "UNVERIFIABLE",
+   "description": "F03 measurement \"≈888 histories\" at the injected 2,000,000-byte limit (re-measured independently in validate-system.mjs S15)",
+   "printed": null,
+   "expected": null,
+   "status": "MATCH"
+  }
+ ]
+}

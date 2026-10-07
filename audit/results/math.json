@@ -1,0 +1,2029 @@
+{
+ "meta": {
+  "script": "audit/validate-math.mjs",
+  "node": "v24.21.0",
+  "generatedAt": "2026-10-07T21:20:42.148Z",
+  "runtimeMs": 3587,
+  "productionFiles": [
+   "public/math.js"
+  ]
+ },
+ "summary": {
+  "checks": 13,
+  "passed": 13,
+  "failed": []
+ },
+ "checks": [
+  {
+   "id": "M01",
+   "title": "Configuration matches documented rules",
+   "assumption": "README.md and docs/FAIRNESS.md describe the intended rules.",
+   "method": "Compare MODES hazard counts, stop counts (20−h), total stops (61), wager limits, starting balance and container IDs with documentation.",
+   "pass": true,
+   "rows": [
+    {
+     "mode": "easy",
+     "hazards": 1,
+     "stops": 19,
+     "documented": {
+      "hazards": 1,
+      "stops": 19
+     },
+     "ok": true
+    },
+    {
+     "mode": "medium",
+     "hazards": 3,
+     "stops": 17,
+     "documented": {
+      "hazards": 3,
+      "stops": 17
+     },
+     "ok": true
+    },
+    {
+     "mode": "hard",
+     "hazards": 5,
+     "stops": 15,
+     "documented": {
+      "hazards": 5,
+      "stops": 15
+     },
+     "ok": true
+    },
+    {
+     "mode": "expert",
+     "hazards": 10,
+     "stops": 10,
+     "documented": {
+      "hazards": 10,
+      "stops": 10
+     },
+     "ok": true
+    }
+   ],
+   "totalStops": 61,
+   "rules": {
+    "minBetCents": 300,
+    "maxBetCents": 300000,
+    "startingBalanceCents": 100000,
+    "currency": "USD",
+    "algorithm": "cargo-v1"
+   },
+   "observation": {
+    "modesFrozen": true,
+    "innerModeObjectsFrozen": false,
+    "payoutArraysFrozen": false
+   },
+   "ms": 0
+  },
+  {
+   "id": "M02",
+   "title": "Exhaustive hazard-subset enumeration reproduces survival counts",
+   "assumption": "A hazard deck is a uniformly random h-subset of {1..20} (follows from an unbiased Fisher–Yates shuffle).",
+   "method": "Enumerate every h-subset (20 + 1,140 + 15,504 + 184,756 = 201,420). For each stop s count subsets whose minimum exceeds s; compare with C(20−s,h).",
+   "pass": true,
+   "totalSubsets": 201420,
+   "rows": [
+    {
+     "mode": "easy",
+     "subsets": 20,
+     "expected": "20",
+     "mismatches": []
+    },
+    {
+     "mode": "medium",
+     "subsets": 1140,
+     "expected": "1140",
+     "mismatches": []
+    },
+    {
+     "mode": "hard",
+     "subsets": 15504,
+     "expected": "15504",
+     "mismatches": []
+    },
+    {
+     "mode": "expert",
+     "subsets": 184756,
+     "expected": "184756",
+     "mismatches": []
+    }
+   ],
+   "ms": 5
+  },
+  {
+   "id": "M03",
+   "title": "Conditional loss, cumulative survival and nextRisk() are mutually consistent",
+   "assumption": "Documented formulas: p_s = h/(21−s), S_s = C(20−s,h)/C(20,h).",
+   "method": "Exactly verify S_s = Π(1−p_j) for every stop; compare production nextRisk(mode, s−1) with h/(21−s); check nextRisk at the final stop is 0.",
+   "pass": true,
+   "issues": [],
+   "ms": 1
+  },
+  {
+   "id": "M04",
+   "title": "All 61 multipliers equal round-half-up(98 / S_s) in hundredths; exact ties identified",
+   "assumption": "docs/FAIRNESS.md: \"round(0.98 / survival, 2)\"; public/math.js integer hundredths are authoritative.",
+   "method": "Compute 98·C(20,h)/C(20−s,h) exactly as a rational; round half up; compare with MODES payouts. Detect exact .5 ties (where rounding direction would be ambiguous) and measure the distance to the nearest tie. Also confirm the existing float-based test cannot disagree.",
+   "pass": true,
+   "count": 61,
+   "ties": 2,
+   "tieRows": [
+    {
+     "mode": "easy",
+     "stop": 4,
+     "exactHundredths": "122.500000",
+     "table": 123,
+     "halfUp": "123",
+     "halfEven": "122",
+     "conventionMatters": true
+    },
+    {
+     "mode": "medium",
+     "stop": 4,
+     "exactHundredths": "199.500000",
+     "table": 200,
+     "halfUp": "200",
+     "halfEven": "200",
+     "conventionMatters": false
+    }
+   ],
+   "minDistanceToHalfTie": "0.000000",
+   "mismatches": [],
+   "rows": [
+    {
+     "mode": "easy",
+     "stop": 1,
+     "multiplier100": 103,
+     "unrounded100": "103.157895"
+    },
+    {
+     "mode": "easy",
+     "stop": 2,
+     "multiplier100": 109,
+     "unrounded100": "108.888889"
+    },
+    {
+     "mode": "easy",
+     "stop": 3,
+     "multiplier100": 115,
+     "unrounded100": "115.294118"
+    },
+    {
+     "mode": "easy",
+     "stop": 4,
+     "multiplier100": 123,
+     "unrounded100": "122.500000"
+    },
+    {
+     "mode": "easy",
+     "stop": 5,
+     "multiplier100": 131,
+     "unrounded100": "130.666667"
+    },
+    {
+     "mode": "easy",
+     "stop": 6,
+     "multiplier100": 140,
+     "unrounded100": "140.000000"
+    },
+    {
+     "mode": "easy",
+     "stop": 7,
+     "multiplier100": 151,
+     "unrounded100": "150.769231"
+    },
+    {
+     "mode": "easy",
+     "stop": 8,
+     "multiplier100": 163,
+     "unrounded100": "163.333333"
+    },
+    {
+     "mode": "easy",
+     "stop": 9,
+     "multiplier100": 178,
+     "unrounded100": "178.181818"
+    },
+    {
+     "mode": "easy",
+     "stop": 10,
+     "multiplier100": 196,
+     "unrounded100": "196.000000"
+    },
+    {
+     "mode": "easy",
+     "stop": 11,
+     "multiplier100": 218,
+     "unrounded100": "217.777778"
+    },
+    {
+     "mode": "easy",
+     "stop": 12,
+     "multiplier100": 245,
+     "unrounded100": "245.000000"
+    },
+    {
+     "mode": "easy",
+     "stop": 13,
+     "multiplier100": 280,
+     "unrounded100": "280.000000"
+    },
+    {
+     "mode": "easy",
+     "stop": 14,
+     "multiplier100": 327,
+     "unrounded100": "326.666667"
+    },
+    {
+     "mode": "easy",
+     "stop": 15,
+     "multiplier100": 392,
+     "unrounded100": "392.000000"
+    },
+    {
+     "mode": "easy",
+     "stop": 16,
+     "multiplier100": 490,
+     "unrounded100": "490.000000"
+    },
+    {
+     "mode": "easy",
+     "stop": 17,
+     "multiplier100": 653,
+     "unrounded100": "653.333333"
+    },
+    {
+     "mode": "easy",
+     "stop": 18,
+     "multiplier100": 980,
+     "unrounded100": "980.000000"
+    },
+    {
+     "mode": "easy",
+     "stop": 19,
+     "multiplier100": 1960,
+     "unrounded100": "1960.000000"
+    },
+    {
+     "mode": "medium",
+     "stop": 1,
+     "multiplier100": 115,
+     "unrounded100": "115.294118"
+    },
+    {
+     "mode": "medium",
+     "stop": 2,
+     "multiplier100": 137,
+     "unrounded100": "136.911765"
+    },
+    {
+     "mode": "medium",
+     "stop": 3,
+     "multiplier100": 164,
+     "unrounded100": "164.294118"
+    },
+    {
+     "mode": "medium",
+     "stop": 4,
+     "multiplier100": 200,
+     "unrounded100": "199.500000"
+    },
+    {
+     "mode": "medium",
+     "stop": 5,
+     "multiplier100": 246,
+     "unrounded100": "245.538462"
+    },
+    {
+     "mode": "medium",
+     "stop": 6,
+     "multiplier100": 307,
+     "unrounded100": "306.923077"
+    },
+    {
+     "mode": "medium",
+     "stop": 7,
+     "multiplier100": 391,
+     "unrounded100": "390.629371"
+    },
+    {
+     "mode": "medium",
+     "stop": 8,
+     "multiplier100": 508,
+     "unrounded100": "507.818182"
+    },
+    {
+     "mode": "medium",
+     "stop": 9,
+     "multiplier100": 677,
+     "unrounded100": "677.090909"
+    },
+    {
+     "mode": "medium",
+     "stop": 10,
+     "multiplier100": 931,
+     "unrounded100": "931.000000"
+    },
+    {
+     "mode": "medium",
+     "stop": 11,
+     "multiplier100": 1330,
+     "unrounded100": "1330.000000"
+    },
+    {
+     "mode": "medium",
+     "stop": 12,
+     "multiplier100": 1995,
+     "unrounded100": "1995.000000"
+    },
+    {
+     "mode": "medium",
+     "stop": 13,
+     "multiplier100": 3192,
+     "unrounded100": "3192.000000"
+    },
+    {
+     "mode": "medium",
+     "stop": 14,
+     "multiplier100": 5586,
+     "unrounded100": "5586.000000"
+    },
+    {
+     "mode": "medium",
+     "stop": 15,
+     "multiplier100": 11172,
+     "unrounded100": "11172.000000"
+    },
+    {
+     "mode": "medium",
+     "stop": 16,
+     "multiplier100": 27930,
+     "unrounded100": "27930.000000"
+    },
+    {
+     "mode": "medium",
+     "stop": 17,
+     "multiplier100": 111720,
+     "unrounded100": "111720.000000"
+    },
+    {
+     "mode": "hard",
+     "stop": 1,
+     "multiplier100": 131,
+     "unrounded100": "130.666667"
+    },
+    {
+     "mode": "hard",
+     "stop": 2,
+     "multiplier100": 177,
+     "unrounded100": "177.333333"
+    },
+    {
+     "mode": "hard",
+     "stop": 3,
+     "multiplier100": 246,
+     "unrounded100": "245.538462"
+    },
+    {
+     "mode": "hard",
+     "stop": 4,
+     "multiplier100": 348,
+     "unrounded100": "347.846154"
+    },
+    {
+     "mode": "hard",
+     "stop": 5,
+     "multiplier100": 506,
+     "unrounded100": "505.958042"
+    },
+    {
+     "mode": "hard",
+     "stop": 6,
+     "multiplier100": 759,
+     "unrounded100": "758.937063"
+    },
+    {
+     "mode": "hard",
+     "stop": 7,
+     "multiplier100": 1181,
+     "unrounded100": "1180.568765"
+    },
+    {
+     "mode": "hard",
+     "stop": 8,
+     "multiplier100": 1918,
+     "unrounded100": "1918.424242"
+    },
+    {
+     "mode": "hard",
+     "stop": 9,
+     "multiplier100": 3289,
+     "unrounded100": "3288.727273"
+    },
+    {
+     "mode": "hard",
+     "stop": 10,
+     "multiplier100": 6029,
+     "unrounded100": "6029.333333"
+    },
+    {
+     "mode": "hard",
+     "stop": 11,
+     "multiplier100": 12059,
+     "unrounded100": "12058.666667"
+    },
+    {
+     "mode": "hard",
+     "stop": 12,
+     "multiplier100": 27132,
+     "unrounded100": "27132.000000"
+    },
+    {
+     "mode": "hard",
+     "stop": 13,
+     "multiplier100": 72352,
+     "unrounded100": "72352.000000"
+    },
+    {
+     "mode": "hard",
+     "stop": 14,
+     "multiplier100": 253232,
+     "unrounded100": "253232.000000"
+    },
+    {
+     "mode": "hard",
+     "stop": 15,
+     "multiplier100": 1519392,
+     "unrounded100": "1519392.000000"
+    },
+    {
+     "mode": "expert",
+     "stop": 1,
+     "multiplier100": 196,
+     "unrounded100": "196.000000"
+    },
+    {
+     "mode": "expert",
+     "stop": 2,
+     "multiplier100": 414,
+     "unrounded100": "413.777778"
+    },
+    {
+     "mode": "expert",
+     "stop": 3,
+     "multiplier100": 931,
+     "unrounded100": "931.000000"
+    },
+    {
+     "mode": "expert",
+     "stop": 4,
+     "multiplier100": 2261,
+     "unrounded100": "2261.000000"
+    },
+    {
+     "mode": "expert",
+     "stop": 5,
+     "multiplier100": 6029,
+     "unrounded100": "6029.333333"
+    },
+    {
+     "mode": "expert",
+     "stop": 6,
+     "multiplier100": 18088,
+     "unrounded100": "18088.000000"
+    },
+    {
+     "mode": "expert",
+     "stop": 7,
+     "multiplier100": 63308,
+     "unrounded100": "63308.000000"
+    },
+    {
+     "mode": "expert",
+     "stop": 8,
+     "multiplier100": 274335,
+     "unrounded100": "274334.666667"
+    },
+    {
+     "mode": "expert",
+     "stop": 9,
+     "multiplier100": 1646008,
+     "unrounded100": "1646008.000000"
+    },
+    {
+     "mode": "expert",
+     "stop": 10,
+     "multiplier100": 18106088,
+     "unrounded100": "18106088.000000"
+    }
+   ],
+   "ms": 1
+  },
+  {
+   "id": "M05",
+   "title": "Stake split conserves every permitted total wager",
+   "assumption": "Remainder cents go to A then B (README.md).",
+   "method": "For every W in 300..300,000 (299,701 values) compare production splitStake(W) with an independent BigInt split; check the sum equals W and max−min ≤ 1 cent.",
+   "pass": true,
+   "wagersChecked": 299701,
+   "failures": [],
+   "ms": 53
+  },
+  {
+   "id": "M06",
+   "title": "Payout rounding matches BigInt half-up for every reachable stake × multiplier pair",
+   "assumption": "Payout = floor((w·M + 50)/100) cents (docs/FAIRNESS.md).",
+   "method": "For every individual stake w in 100..100,000 cents and all 61 multipliers (99,901 × 61 = 6,093,961 pairs) compare production payout() with BigInt arithmetic. Also confirm the largest intermediate product is a safe integer.",
+   "pass": true,
+   "pairs": 6093961,
+   "failures": [],
+   "maxProduct": 1810608800000,
+   "maxSafeInteger": 9007199254740991,
+   "headroomFactor": 4974,
+   "ms": 420
+  },
+  {
+   "id": "M07",
+   "title": "Per-stop odds, nominal RTP and exhaustive cent-RTP range",
+   "assumption": "All surviving containers are collected at the same stop; RTP = S_s·Σg(w_i,s)/W.",
+   "method": "For each of the 61 stops: exact conditional/cumulative survival, nominal RTP S·M/100, and the exact min/max of S·Σg/W over all 299,701 wagers (BigInt cross-multiplication when products exceed 2^52).",
+   "pass": true,
+   "stopsBelowNominal98": [
+    "easy:1",
+    "easy:3",
+    "easy:8",
+    "easy:9",
+    "easy:17",
+    "medium:1",
+    "medium:3",
+    "medium:9",
+    "hard:2",
+    "hard:8",
+    "hard:10",
+    "expert:5"
+   ],
+   "stopsAboveNominal98": [
+    "easy:2",
+    "easy:4",
+    "easy:5",
+    "easy:7",
+    "easy:11",
+    "easy:14",
+    "medium:2",
+    "medium:4",
+    "medium:5",
+    "medium:6",
+    "medium:7",
+    "medium:8",
+    "hard:1",
+    "hard:3",
+    "hard:4",
+    "hard:5",
+    "hard:6",
+    "hard:7",
+    "hard:9",
+    "hard:11",
+    "expert:2",
+    "expert:8"
+   ],
+   "table": {
+    "easy": [
+     {
+      "stop": 1,
+      "multiplier100": 103,
+      "condSurvival": "95.000000%",
+      "condLoss": "5.000000%",
+      "cumSurvival": "95.000000%",
+      "cumLoss": "5.000000%",
+      "nominalRTP": "97.850000%",
+      "centRTPMin": "97.456897%",
+      "centRTPMinAtW": 348,
+      "centRTPMax": "98.247863%",
+      "centRTPMaxAtW": 351,
+      "maxGrossAtMaxBetCents": 309000
+     },
+     {
+      "stop": 2,
+      "multiplier100": 109,
+      "condSurvival": "94.736842%",
+      "condLoss": "5.263158%",
+      "cumSurvival": "90.000000%",
+      "cumLoss": "10.000000%",
+      "nominalRTP": "98.100000%",
+      "centRTPMin": "97.714286%",
+      "centRTPMinAtW": 315,
+      "centRTPMax": "98.490566%",
+      "centRTPMaxAtW": 318,
+      "maxGrossAtMaxBetCents": 327000
+     },
+     {
+      "stop": 3,
+      "multiplier100": 115,
+      "condSurvival": "94.444444%",
+      "condLoss": "5.555556%",
+      "cumSurvival": "85.000000%",
+      "cumLoss": "15.000000%",
+      "nominalRTP": "97.750000%",
+      "centRTPMin": "97.378641%",
+      "centRTPMinAtW": 309,
+      "centRTPMax": "98.136364%",
+      "centRTPMaxAtW": 330,
+      "maxGrossAtMaxBetCents": 345000
+     },
+     {
+      "stop": 4,
+      "multiplier100": 123,
+      "condSurvival": "94.117647%",
+      "condLoss": "5.882353%",
+      "cumSurvival": "80.000000%",
+      "cumLoss": "20.000000%",
+      "nominalRTP": "98.400000%",
+      "centRTPMin": "98.039216%",
+      "centRTPMinAtW": 306,
+      "centRTPMax": "98.738739%",
+      "centRTPMaxAtW": 333,
+      "maxGrossAtMaxBetCents": 369000
+     },
+     {
+      "stop": 5,
+      "multiplier100": 131,
+      "condSurvival": "93.750000%",
+      "condLoss": "6.250000%",
+      "cumSurvival": "75.000000%",
+      "cumLoss": "25.000000%",
+      "nominalRTP": "98.250000%",
+      "centRTPMin": "97.916667%",
+      "centRTPMinAtW": 324,
+      "centRTPMax": "98.571429%",
+      "centRTPMaxAtW": 315,
+      "maxGrossAtMaxBetCents": 393000
+     },
+     {
+      "stop": 6,
+      "multiplier100": 140,
+      "condSurvival": "93.333333%",
+      "condLoss": "6.666667%",
+      "cumSurvival": "70.000000%",
+      "cumLoss": "30.000000%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.722772%",
+      "centRTPMinAtW": 303,
+      "centRTPMax": "98.269231%",
+      "centRTPMaxAtW": 312,
+      "maxGrossAtMaxBetCents": 420000
+     },
+     {
+      "stop": 7,
+      "multiplier100": 151,
+      "condSurvival": "92.857143%",
+      "condLoss": "7.142857%",
+      "cumSurvival": "65.000000%",
+      "cumLoss": "35.000000%",
+      "nominalRTP": "98.150000%",
+      "centRTPMin": "97.939189%",
+      "centRTPMinAtW": 444,
+      "centRTPMax": "98.465347%",
+      "centRTPMaxAtW": 303,
+      "maxGrossAtMaxBetCents": 453000
+     },
+     {
+      "stop": 8,
+      "multiplier100": 163,
+      "condSurvival": "92.307692%",
+      "condLoss": "7.692308%",
+      "cumSurvival": "60.000000%",
+      "cumLoss": "40.000000%",
+      "nominalRTP": "97.800000%",
+      "centRTPMin": "97.560976%",
+      "centRTPMinAtW": 369,
+      "centRTPMax": "98.076923%",
+      "centRTPMaxAtW": 312,
+      "maxGrossAtMaxBetCents": 489000
+     },
+     {
+      "stop": 9,
+      "multiplier100": 178,
+      "condSurvival": "91.666667%",
+      "condLoss": "8.333333%",
+      "cumSurvival": "55.000000%",
+      "cumLoss": "45.000000%",
+      "nominalRTP": "97.900000%",
+      "centRTPMin": "97.663551%",
+      "centRTPMinAtW": 321,
+      "centRTPMax": "98.137255%",
+      "centRTPMaxAtW": 306,
+      "maxGrossAtMaxBetCents": 534000
+     },
+     {
+      "stop": 10,
+      "multiplier100": 196,
+      "condSurvival": "90.909091%",
+      "condLoss": "9.090909%",
+      "cumSurvival": "50.000000%",
+      "cumLoss": "50.000000%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.787611%",
+      "centRTPMinAtW": 339,
+      "centRTPMax": "98.214286%",
+      "centRTPMaxAtW": 336,
+      "maxGrossAtMaxBetCents": 588000
+     },
+     {
+      "stop": 11,
+      "multiplier100": 218,
+      "condSurvival": "90.000000%",
+      "condLoss": "10.000000%",
+      "cumSurvival": "45.000000%",
+      "cumLoss": "55.000000%",
+      "nominalRTP": "98.100000%",
+      "centRTPMin": "97.916667%",
+      "centRTPMinAtW": 324,
+      "centRTPMax": "98.300971%",
+      "centRTPMaxAtW": 309,
+      "maxGrossAtMaxBetCents": 654000
+     },
+     {
+      "stop": 12,
+      "multiplier100": 245,
+      "condSurvival": "88.888889%",
+      "condLoss": "11.111111%",
+      "cumSurvival": "40.000000%",
+      "cumLoss": "60.000000%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.821782%",
+      "centRTPMinAtW": 303,
+      "centRTPMax": "98.181818%",
+      "centRTPMaxAtW": 330,
+      "maxGrossAtMaxBetCents": 735000
+     },
+     {
+      "stop": 13,
+      "multiplier100": 280,
+      "condSurvival": "87.500000%",
+      "condLoss": "12.500000%",
+      "cumSurvival": "35.000000%",
+      "cumLoss": "65.000000%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.864078%",
+      "centRTPMinAtW": 309,
+      "centRTPMax": "98.137255%",
+      "centRTPMaxAtW": 306,
+      "maxGrossAtMaxBetCents": 840000
+     },
+     {
+      "stop": 14,
+      "multiplier100": 327,
+      "condSurvival": "85.714286%",
+      "condLoss": "14.285714%",
+      "cumSurvival": "30.000000%",
+      "cumLoss": "70.000000%",
+      "nominalRTP": "98.100000%",
+      "centRTPMin": "97.981651%",
+      "centRTPMinAtW": 327,
+      "centRTPMax": "98.235294%",
+      "centRTPMaxAtW": 306,
+      "maxGrossAtMaxBetCents": 981000
+     },
+     {
+      "stop": 15,
+      "multiplier100": 392,
+      "condSurvival": "83.333333%",
+      "condLoss": "16.666667%",
+      "cumSurvival": "25.000000%",
+      "cumLoss": "75.000000%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.897196%",
+      "centRTPMinAtW": 321,
+      "centRTPMax": "98.113208%",
+      "centRTPMaxAtW": 318,
+      "maxGrossAtMaxBetCents": 1176000
+     },
+     {
+      "stop": 16,
+      "multiplier100": 490,
+      "condSurvival": "80.000000%",
+      "condLoss": "20.000000%",
+      "cumSurvival": "20.000000%",
+      "cumLoss": "80.000000%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.924528%",
+      "centRTPMinAtW": 318,
+      "centRTPMax": "98.095238%",
+      "centRTPMaxAtW": 315,
+      "maxGrossAtMaxBetCents": 1470000
+     },
+     {
+      "stop": 17,
+      "multiplier100": 653,
+      "condSurvival": "75.000000%",
+      "condLoss": "25.000000%",
+      "cumSurvival": "15.000000%",
+      "cumLoss": "85.000000%",
+      "nominalRTP": "97.950000%",
+      "centRTPMin": "97.887931%",
+      "centRTPMinAtW": 348,
+      "centRTPMax": "98.019802%",
+      "centRTPMaxAtW": 303,
+      "maxGrossAtMaxBetCents": 1959000
+     },
+     {
+      "stop": 18,
+      "multiplier100": 980,
+      "condSurvival": "66.666667%",
+      "condLoss": "33.333333%",
+      "cumSurvival": "10.000000%",
+      "cumLoss": "90.000000%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.961165%",
+      "centRTPMinAtW": 309,
+      "centRTPMax": "98.039216%",
+      "centRTPMaxAtW": 306,
+      "maxGrossAtMaxBetCents": 2940000
+     },
+     {
+      "stop": 19,
+      "multiplier100": 1960,
+      "condSurvival": "50.000000%",
+      "condLoss": "50.000000%",
+      "cumSurvival": "5.000000%",
+      "cumLoss": "95.000000%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.980769%",
+      "centRTPMinAtW": 312,
+      "centRTPMax": "98.019802%",
+      "centRTPMaxAtW": 303,
+      "maxGrossAtMaxBetCents": 5880000
+     }
+    ],
+    "medium": [
+     {
+      "stop": 1,
+      "multiplier100": 115,
+      "condSurvival": "85.000000%",
+      "condLoss": "15.000000%",
+      "cumSurvival": "85.000000%",
+      "cumLoss": "15.000000%",
+      "nominalRTP": "97.750000%",
+      "centRTPMin": "97.378641%",
+      "centRTPMinAtW": 309,
+      "centRTPMax": "98.136364%",
+      "centRTPMaxAtW": 330,
+      "maxGrossAtMaxBetCents": 345000
+     },
+     {
+      "stop": 2,
+      "multiplier100": 137,
+      "condSurvival": "84.210526%",
+      "condLoss": "15.789474%",
+      "cumSurvival": "71.578947%",
+      "cumLoss": "28.421053%",
+      "nominalRTP": "98.063158%",
+      "centRTPMin": "97.732794%",
+      "centRTPMinAtW": 312,
+      "centRTPMax": "98.348310%",
+      "centRTPMaxAtW": 369,
+      "maxGrossAtMaxBetCents": 411000
+     },
+     {
+      "stop": 3,
+      "multiplier100": 164,
+      "condSurvival": "83.333333%",
+      "condLoss": "16.666667%",
+      "cumSurvival": "59.649123%",
+      "cumLoss": "40.350877%",
+      "nominalRTP": "97.824561%",
+      "centRTPMin": "97.556977%",
+      "centRTPMinAtW": 321,
+      "centRTPMax": "98.076923%",
+      "centRTPMaxAtW": 312,
+      "maxGrossAtMaxBetCents": 492000
+     },
+     {
+      "stop": 4,
+      "multiplier100": 200,
+      "condSurvival": "82.352941%",
+      "condLoss": "17.647059%",
+      "cumSurvival": "49.122807%",
+      "cumLoss": "50.877193%",
+      "nominalRTP": "98.245614%",
+      "centRTPMin": "98.245614%",
+      "centRTPMinAtW": 300,
+      "centRTPMax": "98.245614%",
+      "centRTPMaxAtW": 300,
+      "maxGrossAtMaxBetCents": 600000
+     },
+     {
+      "stop": 5,
+      "multiplier100": 246,
+      "condSurvival": "81.250000%",
+      "condLoss": "18.750000%",
+      "cumSurvival": "39.912281%",
+      "cumLoss": "60.087719%",
+      "nominalRTP": "98.184211%",
+      "centRTPMin": "98.002432%",
+      "centRTPMinAtW": 303,
+      "centRTPMax": "98.355263%",
+      "centRTPMaxAtW": 336,
+      "maxGrossAtMaxBetCents": 738000
+     },
+     {
+      "stop": 6,
+      "multiplier100": 307,
+      "condSurvival": "80.000000%",
+      "condLoss": "20.000000%",
+      "cumSurvival": "31.929825%",
+      "cumLoss": "68.070175%",
+      "nominalRTP": "98.024561%",
+      "centRTPMin": "97.878341%",
+      "centRTPMinAtW": 321,
+      "centRTPMax": "98.154646%",
+      "centRTPMaxAtW": 324,
+      "maxGrossAtMaxBetCents": 921000
+     },
+     {
+      "stop": 7,
+      "multiplier100": 391,
+      "condSurvival": "78.571429%",
+      "condLoss": "21.428571%",
+      "cumSurvival": "25.087719%",
+      "cumLoss": "74.912281%",
+      "nominalRTP": "98.092982%",
+      "centRTPMin": "97.984111%",
+      "centRTPMinAtW": 318,
+      "centRTPMax": "98.200501%",
+      "centRTPMaxAtW": 315,
+      "maxGrossAtMaxBetCents": 1173000
+     },
+     {
+      "stop": 8,
+      "multiplier100": 508,
+      "condSurvival": "76.923077%",
+      "condLoss": "23.076923%",
+      "cumSurvival": "19.298246%",
+      "cumLoss": "80.701754%",
+      "nominalRTP": "98.035088%",
+      "centRTPMin": "97.947699%",
+      "centRTPMinAtW": 318,
+      "centRTPMax": "98.114445%",
+      "centRTPMaxAtW": 321,
+      "maxGrossAtMaxBetCents": 1524000
+     },
+     {
+      "stop": 9,
+      "multiplier100": 677,
+      "condSurvival": "75.000000%",
+      "condLoss": "25.000000%",
+      "cumSurvival": "14.473684%",
+      "cumLoss": "85.526316%",
+      "nominalRTP": "97.986842%",
+      "centRTPMin": "97.925557%",
+      "centRTPMinAtW": 333,
+      "centRTPMax": "98.052116%",
+      "centRTPMaxAtW": 306,
+      "maxGrossAtMaxBetCents": 2031000
+     },
+     {
+      "stop": 10,
+      "multiplier100": 931,
+      "condSurvival": "72.727273%",
+      "condLoss": "27.272727%",
+      "cumSurvival": "10.526316%",
+      "cumLoss": "89.473684%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.953216%",
+      "centRTPMinAtW": 324,
+      "centRTPMax": "98.045113%",
+      "centRTPMaxAtW": 315,
+      "maxGrossAtMaxBetCents": 2793000
+     },
+     {
+      "stop": 11,
+      "multiplier100": 1330,
+      "condSurvival": "70.000000%",
+      "condLoss": "30.000000%",
+      "cumSurvival": "7.368421%",
+      "cumLoss": "92.631579%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.972710%",
+      "centRTPMinAtW": 324,
+      "centRTPMax": "98.035088%",
+      "centRTPMaxAtW": 315,
+      "maxGrossAtMaxBetCents": 3990000
+     },
+     {
+      "stop": 12,
+      "multiplier100": 1995,
+      "condSurvival": "66.666667%",
+      "condLoss": "33.333333%",
+      "cumSurvival": "4.912281%",
+      "cumLoss": "95.087719%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.980085%",
+      "centRTPMinAtW": 333,
+      "centRTPMax": "98.022329%",
+      "centRTPMaxAtW": 330,
+      "maxGrossAtMaxBetCents": 5985000
+     },
+     {
+      "stop": 13,
+      "multiplier100": 3192,
+      "condSurvival": "62.500000%",
+      "condLoss": "37.500000%",
+      "cumSurvival": "3.070175%",
+      "cumLoss": "96.929825%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.987375%",
+      "centRTPMinAtW": 321,
+      "centRTPMax": "98.013903%",
+      "centRTPMaxAtW": 318,
+      "maxGrossAtMaxBetCents": 9576000
+     },
+     {
+      "stop": 14,
+      "multiplier100": 5586,
+      "condSurvival": "57.142857%",
+      "condLoss": "42.857143%",
+      "cumSurvival": "1.754386%",
+      "cumLoss": "98.245614%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.992578%",
+      "centRTPMinAtW": 312,
+      "centRTPMax": "98.007154%",
+      "centRTPMaxAtW": 309,
+      "maxGrossAtMaxBetCents": 16758000
+     },
+     {
+      "stop": 15,
+      "multiplier100": 11172,
+      "condSurvival": "50.000000%",
+      "condLoss": "50.000000%",
+      "cumSurvival": "0.877193%",
+      "cumLoss": "99.122807%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.996137%",
+      "centRTPMinAtW": 327,
+      "centRTPMax": "98.003630%",
+      "centRTPMaxAtW": 348,
+      "maxGrossAtMaxBetCents": 33516000
+     },
+     {
+      "stop": 16,
+      "multiplier100": 27930,
+      "condSurvival": "40.000000%",
+      "condLoss": "60.000000%",
+      "cumSurvival": "0.350877%",
+      "cumLoss": "99.649123%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.998700%",
+      "centRTPMinAtW": 324,
+      "centRTPMax": "98.001671%",
+      "centRTPMaxAtW": 315,
+      "maxGrossAtMaxBetCents": 83790000
+     },
+     {
+      "stop": 17,
+      "multiplier100": 111720,
+      "condSurvival": "25.000000%",
+      "condLoss": "75.000000%",
+      "cumSurvival": "0.087719%",
+      "cumLoss": "99.912281%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.999656%",
+      "centRTPMinAtW": 306,
+      "centRTPMax": "98.000341%",
+      "centRTPMaxAtW": 309,
+      "maxGrossAtMaxBetCents": 335160000
+     }
+    ],
+    "hard": [
+     {
+      "stop": 1,
+      "multiplier100": 131,
+      "condSurvival": "75.000000%",
+      "condLoss": "25.000000%",
+      "cumSurvival": "75.000000%",
+      "cumLoss": "25.000000%",
+      "nominalRTP": "98.250000%",
+      "centRTPMin": "97.916667%",
+      "centRTPMinAtW": 324,
+      "centRTPMax": "98.571429%",
+      "centRTPMaxAtW": 315,
+      "maxGrossAtMaxBetCents": 393000
+     },
+     {
+      "stop": 2,
+      "multiplier100": 177,
+      "condSurvival": "73.684211%",
+      "condLoss": "26.315789%",
+      "cumSurvival": "55.263158%",
+      "cumLoss": "44.736842%",
+      "nominalRTP": "97.815789%",
+      "centRTPMin": "97.581792%",
+      "centRTPMinAtW": 333,
+      "centRTPMax": "98.065015%",
+      "centRTPMaxAtW": 306,
+      "maxGrossAtMaxBetCents": 531000
+     },
+     {
+      "stop": 3,
+      "multiplier100": 246,
+      "condSurvival": "72.222222%",
+      "condLoss": "27.777778%",
+      "cumSurvival": "39.912281%",
+      "cumLoss": "60.087719%",
+      "nominalRTP": "98.184211%",
+      "centRTPMin": "98.002432%",
+      "centRTPMinAtW": 303,
+      "centRTPMax": "98.355263%",
+      "centRTPMaxAtW": 336,
+      "maxGrossAtMaxBetCents": 738000
+     },
+     {
+      "stop": 4,
+      "multiplier100": 348,
+      "condSurvival": "70.588235%",
+      "condLoss": "29.411765%",
+      "cumSurvival": "28.173375%",
+      "cumLoss": "71.826625%",
+      "nominalRTP": "98.043344%",
+      "centRTPMin": "97.909450%",
+      "centRTPMinAtW": 303,
+      "centRTPMax": "98.152402%",
+      "centRTPMaxAtW": 372,
+      "maxGrossAtMaxBetCents": 1044000
+     },
+     {
+      "stop": 5,
+      "multiplier100": 506,
+      "condSurvival": "68.750000%",
+      "condLoss": "31.250000%",
+      "cumSurvival": "19.369195%",
+      "cumLoss": "80.630805%",
+      "nominalRTP": "98.008127%",
+      "centRTPMin": "97.922042%",
+      "centRTPMinAtW": 324,
+      "centRTPMax": "98.089868%",
+      "centRTPMaxAtW": 327,
+      "maxGrossAtMaxBetCents": 1518000
+     },
+     {
+      "stop": 6,
+      "multiplier100": 759,
+      "condSurvival": "66.666667%",
+      "condLoss": "33.333333%",
+      "cumSurvival": "12.912797%",
+      "cumLoss": "87.087203%",
+      "nominalRTP": "98.008127%",
+      "centRTPMin": "97.951124%",
+      "centRTPMinAtW": 333,
+      "centRTPMax": "98.064164%",
+      "centRTPMaxAtW": 318,
+      "maxGrossAtMaxBetCents": 2277000
+     },
+     {
+      "stop": 7,
+      "multiplier100": 1181,
+      "condSurvival": "64.285714%",
+      "condLoss": "35.714286%",
+      "cumSurvival": "8.301084%",
+      "cumLoss": "91.698916%",
+      "nominalRTP": "98.035797%",
+      "centRTPMin": "97.998904%",
+      "centRTPMinAtW": 324,
+      "centRTPMax": "98.070324%",
+      "centRTPMaxAtW": 339,
+      "maxGrossAtMaxBetCents": 3543000
+     },
+     {
+      "stop": 8,
+      "multiplier100": 1918,
+      "condSurvival": "61.538462%",
+      "condLoss": "38.461538%",
+      "cumSurvival": "5.108359%",
+      "cumLoss": "94.891641%",
+      "nominalRTP": "97.978328%",
+      "centRTPMin": "97.957516%",
+      "centRTPMinAtW": 324,
+      "centRTPMax": "98.001142%",
+      "centRTPMaxAtW": 309,
+      "maxGrossAtMaxBetCents": 5754000
+     },
+     {
+      "stop": 9,
+      "multiplier100": 3289,
+      "condSurvival": "58.333333%",
+      "condLoss": "41.666667%",
+      "cumSurvival": "2.979876%",
+      "cumLoss": "97.020124%",
+      "nominalRTP": "98.008127%",
+      "centRTPMin": "97.995356%",
+      "centRTPMinAtW": 315,
+      "centRTPMax": "98.020734%",
+      "centRTPMaxAtW": 312,
+      "maxGrossAtMaxBetCents": 9867000
+     },
+     {
+      "stop": 10,
+      "multiplier100": 6029,
+      "condSurvival": "54.545455%",
+      "condLoss": "45.454545%",
+      "cumSurvival": "1.625387%",
+      "cumLoss": "98.374613%",
+      "nominalRTP": "97.994582%",
+      "centRTPMin": "97.987616%",
+      "centRTPMinAtW": 315,
+      "centRTPMax": "98.001275%",
+      "centRTPMaxAtW": 306,
+      "maxGrossAtMaxBetCents": 18087000
+     },
+     {
+      "stop": 11,
+      "multiplier100": 12059,
+      "condSurvival": "50.000000%",
+      "condLoss": "50.000000%",
+      "cumSurvival": "0.812693%",
+      "cumLoss": "99.187307%",
+      "nominalRTP": "98.002709%",
+      "centRTPMin": "97.999121%",
+      "centRTPMinAtW": 333,
+      "centRTPMax": "98.006236%",
+      "centRTPMaxAtW": 318,
+      "maxGrossAtMaxBetCents": 36177000
+     },
+     {
+      "stop": 12,
+      "multiplier100": 27132,
+      "condSurvival": "44.444444%",
+      "condLoss": "55.555556%",
+      "cumSurvival": "0.361197%",
+      "cumLoss": "99.638803%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.998479%",
+      "centRTPMinAtW": 342,
+      "centRTPMax": "98.001562%",
+      "centRTPMaxAtW": 333,
+      "maxGrossAtMaxBetCents": 81396000
+     },
+     {
+      "stop": 13,
+      "multiplier100": 72352,
+      "condSurvival": "37.500000%",
+      "condLoss": "62.500000%",
+      "cumSurvival": "0.135449%",
+      "cumLoss": "99.864551%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.999476%",
+      "centRTPMinAtW": 372,
+      "centRTPMax": "98.000644%",
+      "centRTPMaxAtW": 303,
+      "maxGrossAtMaxBetCents": 217056000
+     },
+     {
+      "stop": 14,
+      "multiplier100": 253232,
+      "condSurvival": "28.571429%",
+      "condLoss": "71.428571%",
+      "cumSurvival": "0.038700%",
+      "cumLoss": "99.961300%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.999837%",
+      "centRTPMinAtW": 342,
+      "centRTPMax": "98.000167%",
+      "centRTPMaxAtW": 333,
+      "maxGrossAtMaxBetCents": 759696000
+     },
+     {
+      "stop": 15,
+      "multiplier100": 1519392,
+      "condSurvival": "16.666667%",
+      "condLoss": "83.333333%",
+      "cumSurvival": "0.006450%",
+      "cumLoss": "99.993550%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.999973%",
+      "centRTPMinAtW": 321,
+      "centRTPMax": "98.000029%",
+      "centRTPMaxAtW": 318,
+      "maxGrossAtMaxBetCents": 4558176000
+     }
+    ],
+    "expert": [
+     {
+      "stop": 1,
+      "multiplier100": 196,
+      "condSurvival": "50.000000%",
+      "condLoss": "50.000000%",
+      "cumSurvival": "50.000000%",
+      "cumLoss": "50.000000%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.787611%",
+      "centRTPMinAtW": 339,
+      "centRTPMax": "98.214286%",
+      "centRTPMaxAtW": 336,
+      "maxGrossAtMaxBetCents": 588000
+     },
+     {
+      "stop": 2,
+      "multiplier100": 414,
+      "condSurvival": "47.368421%",
+      "condLoss": "52.631579%",
+      "cumSurvival": "23.684211%",
+      "cumLoss": "76.315789%",
+      "nominalRTP": "98.052632%",
+      "centRTPMin": "97.956055%",
+      "centRTPMinAtW": 309,
+      "centRTPMax": "98.152834%",
+      "centRTPMaxAtW": 312,
+      "maxGrossAtMaxBetCents": 1242000
+     },
+     {
+      "stop": 3,
+      "multiplier100": 931,
+      "condSurvival": "44.444444%",
+      "condLoss": "55.555556%",
+      "cumSurvival": "10.526316%",
+      "cumLoss": "89.473684%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.953216%",
+      "centRTPMinAtW": 324,
+      "centRTPMax": "98.045113%",
+      "centRTPMaxAtW": 315,
+      "maxGrossAtMaxBetCents": 2793000
+     },
+     {
+      "stop": 4,
+      "multiplier100": 2261,
+      "condSurvival": "41.176471%",
+      "condLoss": "58.823529%",
+      "cumSurvival": "4.334365%",
+      "cumLoss": "95.665635%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.980515%",
+      "centRTPMinAtW": 327,
+      "centRTPMax": "98.017490%",
+      "centRTPMaxAtW": 342,
+      "maxGrossAtMaxBetCents": 6783000
+     },
+     {
+      "stop": 5,
+      "multiplier100": 6029,
+      "condSurvival": "37.500000%",
+      "condLoss": "62.500000%",
+      "cumSurvival": "1.625387%",
+      "cumLoss": "98.374613%",
+      "nominalRTP": "97.994582%",
+      "centRTPMin": "97.987616%",
+      "centRTPMinAtW": 315,
+      "centRTPMax": "98.001275%",
+      "centRTPMaxAtW": 306,
+      "maxGrossAtMaxBetCents": 18087000
+     },
+     {
+      "stop": 6,
+      "multiplier100": 18088,
+      "condSurvival": "33.333333%",
+      "condLoss": "66.666667%",
+      "cumSurvival": "0.541796%",
+      "cumLoss": "99.458204%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.997851%",
+      "centRTPMinAtW": 363,
+      "centRTPMax": "98.002501%",
+      "centRTPMaxAtW": 312,
+      "maxGrossAtMaxBetCents": 54264000
+     },
+     {
+      "stop": 7,
+      "multiplier100": 63308,
+      "condSurvival": "28.571429%",
+      "condLoss": "71.428571%",
+      "cumSurvival": "0.154799%",
+      "cumLoss": "99.845201%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.999299%",
+      "centRTPMinAtW": 318,
+      "centRTPMax": "98.000637%",
+      "centRTPMaxAtW": 321,
+      "maxGrossAtMaxBetCents": 189924000
+     },
+     {
+      "stop": 8,
+      "multiplier100": 274335,
+      "condSurvival": "23.076923%",
+      "condLoss": "76.923077%",
+      "cumSurvival": "0.035723%",
+      "cumLoss": "99.964277%",
+      "nominalRTP": "98.000119%",
+      "centRTPMin": "97.999969%",
+      "centRTPMinAtW": 321,
+      "centRTPMax": "98.000281%",
+      "centRTPMaxAtW": 330,
+      "maxGrossAtMaxBetCents": 823005000
+     },
+     {
+      "stop": 9,
+      "multiplier100": 1646008,
+      "condSurvival": "16.666667%",
+      "condLoss": "83.333333%",
+      "cumSurvival": "0.005954%",
+      "cumLoss": "99.994046%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.999973%",
+      "centRTPMinAtW": 318,
+      "centRTPMax": "98.000024%",
+      "centRTPMaxAtW": 321,
+      "maxGrossAtMaxBetCents": 4938024000
+     },
+     {
+      "stop": 10,
+      "multiplier100": 18106088,
+      "condSurvival": "9.090909%",
+      "condLoss": "90.909091%",
+      "cumSurvival": "0.000541%",
+      "cumLoss": "99.999459%",
+      "nominalRTP": "98.000000%",
+      "centRTPMin": "97.999998%",
+      "centRTPMinAtW": 363,
+      "centRTPMax": "98.000002%",
+      "centRTPMaxAtW": 312,
+      "maxGrossAtMaxBetCents": 54318264000
+     }
+    ]
+   },
+   "ms": 1281
+  },
+  {
+   "id": "M08",
+   "title": "Exhaustive optimal-stopping RTP over every permitted wager",
+   "assumption": "Containers are independent (separate HMAC domains) and the player cannot see future hazards; then the optimum is the sum of single-container optima (proved in audit §6 and checked by M09).",
+   "method": "For each stake w (99,901 values) find t maximising S_t·g(w,t); for every total W (299,701) sum the three container optima; report the exact maximum RTP and its wager.",
+   "pass": true,
+   "rows": [
+    {
+     "mode": "easy",
+     "bestTotalWagerCents": 333,
+     "stakes": [
+      111,
+      111,
+      111
+     ],
+     "targets": [
+      4,
+      4,
+      4
+     ],
+     "maxRTP": "98.738739%",
+     "maxRTPExact": "548/555",
+     "minHouseEdge": "1.261261%",
+     "lowestOptimalRTP": "98.181818%",
+     "lowestOptimalAtW": 330
+    },
+    {
+     "mode": "medium",
+     "bestTotalWagerCents": 336,
+     "stakes": [
+      112,
+      112,
+      112
+     ],
+     "targets": [
+      5,
+      5,
+      5
+     ],
+     "maxRTP": "98.355263%",
+     "maxRTPExact": "299/304",
+     "minHouseEdge": "1.644737%",
+     "lowestOptimalRTP": "98.245614%",
+     "lowestOptimalAtW": 300
+    },
+    {
+     "mode": "hard",
+     "bestTotalWagerCents": 315,
+     "stakes": [
+      105,
+      105,
+      105
+     ],
+     "targets": [
+      1,
+      1,
+      1
+     ],
+     "maxRTP": "98.571429%",
+     "maxRTPExact": "69/70",
+     "minHouseEdge": "1.428571%",
+     "lowestOptimalRTP": "98.060545%",
+     "lowestOptimalAtW": 303
+    },
+    {
+     "mode": "expert",
+     "bestTotalWagerCents": 336,
+     "stakes": [
+      112,
+      112,
+      112
+     ],
+     "targets": [
+      1,
+      1,
+      1
+     ],
+     "maxRTP": "98.214286%",
+     "maxRTPExact": "55/56",
+     "minHouseEdge": "1.785714%",
+     "lowestOptimalRTP": "98.000185%",
+     "lowestOptimalAtW": 351
+    }
+   ],
+   "global": {
+    "mode": "easy",
+    "wager": 333,
+    "maxRTP": "98.738739%",
+    "exact": "548/555"
+   },
+   "ms": 1773
+  },
+  {
+   "id": "M09",
+   "title": "Joint three-container Bellman optimum equals the factorised optimum",
+   "assumption": "Container survivals are mutually independent given the documented RNG; within a container hazards are drawn without replacement.",
+   "method": "Solve the exact joint dynamic program over every (stop, onboard-set) state and every collectable subset with rational arithmetic, for 4 modes × 12 wagers including uneven splits. Require exact equality with the sum of single-container optima.",
+   "pass": true,
+   "cases": 48,
+   "rows": [
+    {
+     "mode": "easy",
+     "W": 300,
+     "jointRTP": "98.400000000%",
+     "factorisedRTP": "98.400000000%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 301,
+     "jointRTP": "98.421926910%",
+     "factorisedRTP": "98.421926910%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 302,
+     "jointRTP": "98.443708609%",
+     "factorisedRTP": "98.443708609%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 315,
+     "jointRTP": "98.571428571%",
+     "factorisedRTP": "98.571428571%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 333,
+     "jointRTP": "98.738738739%",
+     "factorisedRTP": "98.738738739%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 336,
+     "jointRTP": "98.571428571%",
+     "factorisedRTP": "98.571428571%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 3000,
+     "jointRTP": "98.400000000%",
+     "factorisedRTP": "98.400000000%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 3001,
+     "jointRTP": "98.393868710%",
+     "factorisedRTP": "98.393868710%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 3002,
+     "jointRTP": "98.387741506%",
+     "factorisedRTP": "98.387741506%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 30000,
+     "jointRTP": "98.400000000%",
+     "factorisedRTP": "98.400000000%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 299999,
+     "jointRTP": "98.400061334%",
+     "factorisedRTP": "98.400061334%",
+     "exactEqual": true
+    },
+    {
+     "mode": "easy",
+     "W": 300000,
+     "jointRTP": "98.400000000%",
+     "factorisedRTP": "98.400000000%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 300,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 301,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 302,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 315,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 333,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 336,
+     "jointRTP": "98.355263158%",
+     "factorisedRTP": "98.355263158%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 3000,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 3001,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 3002,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 30000,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 299999,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "medium",
+     "W": 300000,
+     "jointRTP": "98.245614035%",
+     "factorisedRTP": "98.245614035%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 300,
+     "jointRTP": "98.250000000%",
+     "factorisedRTP": "98.250000000%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 301,
+     "jointRTP": "98.186428794%",
+     "factorisedRTP": "98.186428794%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 302,
+     "jointRTP": "98.123278590%",
+     "factorisedRTP": "98.123278590%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 315,
+     "jointRTP": "98.571428571%",
+     "factorisedRTP": "98.571428571%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 333,
+     "jointRTP": "98.162636321%",
+     "factorisedRTP": "98.162636321%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 336,
+     "jointRTP": "98.437500000%",
+     "factorisedRTP": "98.437500000%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 3000,
+     "jointRTP": "98.250000000%",
+     "factorisedRTP": "98.250000000%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 3001,
+     "jointRTP": "98.242252582%",
+     "factorisedRTP": "98.242252582%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 3002,
+     "jointRTP": "98.234510326%",
+     "factorisedRTP": "98.234510326%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 30000,
+     "jointRTP": "98.250000000%",
+     "factorisedRTP": "98.250000000%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 299999,
+     "jointRTP": "98.250077500%",
+     "factorisedRTP": "98.250077500%",
+     "exactEqual": true
+    },
+    {
+     "mode": "hard",
+     "W": 300000,
+     "jointRTP": "98.250000000%",
+     "factorisedRTP": "98.250000000%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 300,
+     "jointRTP": "98.052631579%",
+     "factorisedRTP": "98.052631579%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 301,
+     "jointRTP": "98.041615667%",
+     "factorisedRTP": "98.041615667%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 302,
+     "jointRTP": "98.030672708%",
+     "factorisedRTP": "98.030672708%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 315,
+     "jointRTP": "98.120300752%",
+     "factorisedRTP": "98.120300752%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 333,
+     "jointRTP": "98.198198198%",
+     "factorisedRTP": "98.198198198%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 336,
+     "jointRTP": "98.214285714%",
+     "factorisedRTP": "98.214285714%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 3000,
+     "jointRTP": "98.052631579%",
+     "factorisedRTP": "98.052631579%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 3001,
+     "jointRTP": "98.051526684%",
+     "factorisedRTP": "98.051526684%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 3002,
+     "jointRTP": "98.050422525%",
+     "factorisedRTP": "98.050422525%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 30000,
+     "jointRTP": "98.052631579%",
+     "factorisedRTP": "98.052631579%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 299999,
+     "jointRTP": "98.052642632%",
+     "factorisedRTP": "98.052642632%",
+     "exactEqual": true
+    },
+    {
+     "mode": "expert",
+     "W": 300000,
+     "jointRTP": "98.052631579%",
+     "factorisedRTP": "98.052631579%",
+     "exactEqual": true
+    }
+   ],
+   "ms": 47
+  },
+  {
+   "id": "M10",
+   "title": "Strategy comparison at a $30 wager ($10 per container)",
+   "assumption": "Same as M09. Mid = ceil(N/2). Adaptive rule exactly as described in audit §6.",
+   "method": "Closed-form expectation with exact rationals for each named strategy; independent of simulation.",
+   "pass": true,
+   "rows": [
+    {
+     "mode": "easy",
+     "mid": 10,
+     "allAtFirst": "97.850000%",
+     "allAtFinal": "98.000000%",
+     "abcAt1MidFinal": "97.950000%",
+     "aAt1BCFinal": "97.950000%",
+     "adaptive": "97.945125%",
+     "optimalAt30": "98.400000%"
+    },
+    {
+     "mode": "medium",
+     "mid": 9,
+     "allAtFirst": "97.750000%",
+     "allAtFinal": "98.000000%",
+     "abcAt1MidFinal": "97.912281%",
+     "aAt1BCFinal": "97.916667%",
+     "adaptive": "97.890373%",
+     "optimalAt30": "98.245614%"
+    },
+    {
+     "mode": "hard",
+     "mid": 8,
+     "allAtFirst": "98.250000%",
+     "allAtFinal": "98.000000%",
+     "abcAt1MidFinal": "98.076109%",
+     "aAt1BCFinal": "98.083333%",
+     "adaptive": "98.115728%",
+     "optimalAt30": "98.250000%"
+    },
+    {
+     "mode": "expert",
+     "mid": 5,
+     "allAtFirst": "98.000000%",
+     "allAtFinal": "98.000000%",
+     "abcAt1MidFinal": "97.998194%",
+     "aAt1BCFinal": "98.000000%",
+     "adaptive": "97.999549%",
+     "optimalAt30": "98.052632%"
+    }
+   ],
+   "ms": 0
+  },
+  {
+   "id": "M11",
+   "title": "Maximum exposure and final-stop probabilities",
+   "assumption": "No maximum-win cap exists in the source (confirmed by reading server/game.js and public/math.js).",
+   "method": "Exact payout at the largest container stake and the final multiplier; P(≥1 reaches final) = 1−(1−S_N)^3, P(all three) = S_N^3.",
+   "pass": true,
+   "rows": [
+    {
+     "mode": "easy",
+     "maxOneCargoCents": 1960000,
+     "maxRoundGrossCents": 5880000,
+     "maxRoundNetCents": 5580000,
+     "pAtLeastOneReachesFinal": "14.262500000%",
+     "pAllThreeReachFinal": "1.250000000e-4",
+     "finalSurvivalPerCargo": "1/20"
+    },
+    {
+     "mode": "medium",
+     "maxOneCargoCents": 111720000,
+     "maxRoundGrossCents": 335160000,
+     "maxRoundNetCents": 334860000,
+     "pAtLeastOneReachesFinal": "0.262927122%",
+     "pAllThreeReachFinal": "6.749715162e-10",
+     "finalSurvivalPerCargo": "1/1140"
+    },
+    {
+     "mode": "hard",
+     "maxOneCargoCents": 1519392000,
+     "maxRoundGrossCents": 4558176000,
+     "maxRoundNetCents": 4557876000,
+     "pAtLeastOneReachesFinal": "0.019348597%",
+     "pAllThreeReachFinal": "2.683296850e-13",
+     "finalSurvivalPerCargo": "1/15504"
+    },
+    {
+     "mode": "expert",
+     "maxOneCargoCents": 18106088000,
+     "maxRoundGrossCents": 54318264000,
+     "maxRoundNetCents": 54317964000,
+     "pAtLeastOneReachesFinal": "0.001623754%",
+     "pAllThreeReachFinal": "1.585639101e-16",
+     "finalSurvivalPerCargo": "1/184756"
+    }
+   ],
+   "globalMaxRoundGrossCents": 54318264000,
+   "ms": 0
+  },
+  {
+   "id": "M12",
+   "title": "Theoretical variance of return/wager at the final stop (equal stakes, no rounding)",
+   "assumption": "Survivor count K ~ Binomial(3, S_N); X = m·K/3.",
+   "method": "Var(X) = m²·S·(1−S)/3 computed exactly with the table multiplier.",
+   "pass": true,
+   "rows": [
+    {
+     "mode": "easy",
+     "variance": "6.082533"
+    },
+    {
+     "mode": "medium",
+     "variance": "364.631867"
+    },
+    {
+     "mode": "hard",
+     "variance": "4963.027067"
+    },
+    {
+     "mode": "expert",
+     "variance": "59146.234000"
+    }
+   ],
+   "ms": 0
+  },
+  {
+   "id": "M13",
+   "title": "Rounding effect bound",
+   "assumption": "RTP deviation from 98% comes only from multiplier rounding (≤ 0.005·S in RTP) and payout rounding (≤ 0.5 cent per container).",
+   "method": "Exactly verify |S·M/100 − 0.98| ≤ 0.005·S for every stop (multiplier rounding), and that every exhaustive cent-RTP extreme lies within a further S·(1.5 cents / 300 cents) = S/200 of the nominal RTP (payout rounding, ≤0.5 cent per container on a ≥$3 wager).",
+   "pass": true,
+   "issues": [],
+   "ms": 0
+  }
+ ]
+}

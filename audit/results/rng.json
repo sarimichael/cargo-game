@@ -1,0 +1,272 @@
+{
+ "meta": {
+  "script": "audit/validate-rng.mjs",
+  "node": "v24.21.0",
+  "generatedAt": "2026-10-07T21:20:56.283Z",
+  "runtimeMs": 13995
+ },
+ "summary": {
+  "checks": 8,
+  "passed": 8,
+  "failed": [],
+  "knownAnswerVectors": 108
+ },
+ "checks": [
+  {
+   "id": "R01",
+   "title": "Production hazardDeck() equals an independent re-implementation",
+   "assumption": "docs/FAIRNESS.md fully specifies the algorithm.",
+   "method": "4 modes × 3 containers × 8 client seeds × 150 nonces = 14,400 decks. Each deck compared element-wise with audit/lib/reference-rng.mjs, written from the specification only.",
+   "pass": true,
+   "compared": 14400,
+   "mismatches": [],
+   "ms": 10906
+  },
+  {
+   "id": "R02",
+   "title": "Browser Web Crypto verifier accepts engine rounds for every stress client seed and mode",
+   "assumption": "public/fairness.js is the independent player-side check.",
+   "method": "For each mode × stress client seed × 6 nonces, play a deterministic round in the real engine (collect A at stop 1, B at stop 2, then sail until settled or collect at the final port), then run verifyRound() on publicRound().",
+   "pass": true,
+   "verified": 192,
+   "failures": [],
+   "ms": 870
+  },
+  {
+   "id": "R03",
+   "title": "Rejection sampling is exactly unbiased for every bound used (2..20)",
+   "assumption": "Draw words are uniform 32-bit integers.",
+   "method": "For each bound b: limit = floor(2^32/b)·b; verify limit ≡ 0 (mod b), the rejected tail 2^32−limit < b, and every residue has exactly limit/b preimages. Then drive the reference shuffle with forced words: 0xFFFFFFFF first (must be rejected and consume an extra counter).",
+   "pass": true,
+   "bounds": [
+    {
+     "bound": 2,
+     "limit": 4294967296,
+     "rejectedValues": 0,
+     "rejectionProbability": 0
+    },
+    {
+     "bound": 3,
+     "limit": 4294967295,
+     "rejectedValues": 1,
+     "rejectionProbability": 2.3283064365386963e-10
+    },
+    {
+     "bound": 4,
+     "limit": 4294967296,
+     "rejectedValues": 0,
+     "rejectionProbability": 0
+    },
+    {
+     "bound": 5,
+     "limit": 4294967295,
+     "rejectedValues": 1,
+     "rejectionProbability": 2.3283064365386963e-10
+    },
+    {
+     "bound": 6,
+     "limit": 4294967292,
+     "rejectedValues": 4,
+     "rejectionProbability": 9.313225746154785e-10
+    },
+    {
+     "bound": 7,
+     "limit": 4294967292,
+     "rejectedValues": 4,
+     "rejectionProbability": 9.313225746154785e-10
+    },
+    {
+     "bound": 8,
+     "limit": 4294967296,
+     "rejectedValues": 0,
+     "rejectionProbability": 0
+    },
+    {
+     "bound": 9,
+     "limit": 4294967292,
+     "rejectedValues": 4,
+     "rejectionProbability": 9.313225746154785e-10
+    },
+    {
+     "bound": 10,
+     "limit": 4294967290,
+     "rejectedValues": 6,
+     "rejectionProbability": 1.3969838619232178e-9
+    },
+    {
+     "bound": 11,
+     "limit": 4294967292,
+     "rejectedValues": 4,
+     "rejectionProbability": 9.313225746154785e-10
+    },
+    {
+     "bound": 12,
+     "limit": 4294967292,
+     "rejectedValues": 4,
+     "rejectionProbability": 9.313225746154785e-10
+    },
+    {
+     "bound": 13,
+     "limit": 4294967287,
+     "rejectedValues": 9,
+     "rejectionProbability": 2.0954757928848267e-9
+    },
+    {
+     "bound": 14,
+     "limit": 4294967292,
+     "rejectedValues": 4,
+     "rejectionProbability": 9.313225746154785e-10
+    },
+    {
+     "bound": 15,
+     "limit": 4294967295,
+     "rejectedValues": 1,
+     "rejectionProbability": 2.3283064365386963e-10
+    },
+    {
+     "bound": 16,
+     "limit": 4294967296,
+     "rejectedValues": 0,
+     "rejectionProbability": 0
+    },
+    {
+     "bound": 17,
+     "limit": 4294967295,
+     "rejectedValues": 1,
+     "rejectionProbability": 2.3283064365386963e-10
+    },
+    {
+     "bound": 18,
+     "limit": 4294967292,
+     "rejectedValues": 4,
+     "rejectionProbability": 9.313225746154785e-10
+    },
+    {
+     "bound": 19,
+     "limit": 4294967290,
+     "rejectedValues": 6,
+     "rejectionProbability": 1.3969838619232178e-9
+    },
+    {
+     "bound": 20,
+     "limit": 4294967280,
+     "rejectedValues": 16,
+     "rejectionProbability": 3.725290298461914e-9
+    }
+   ],
+   "forcedFirstWordRejected": true,
+   "drawsConsumedWithOneRejection": 20,
+   "firstRejectedBound20Value": 4294967280,
+   "pAnyRejectionPerDeck": 1.6065314412117004e-8,
+   "note": "Natural rejections occur with probability ≈ 1.607e-8 per deck, so they cannot be observed in practical samples; equivalence on natural data (R01) plus this forced-input test cover the path.",
+   "ms": 0
+  },
+  {
+   "id": "R04",
+   "title": "Fisher–Yates form is a bijection between draw sequences and permutations",
+   "assumption": "Descending i from n−1 to 1, j uniform in [0, i] (as implemented).",
+   "method": "Generalise the implemented loop to n = 1..8 and enumerate every possible draw sequence (n! of them); require n! distinct permutations. Also confirm n = 20 has 20!/(h!(20−h)!) equally weighted h-prefix sets by counting multiplicities for n = 8, h = 3.",
+   "pass": true,
+   "rows": [
+    {
+     "n": 1,
+     "sequences": 1,
+     "distinctPermutations": 1,
+     "bijection": true
+    },
+    {
+     "n": 2,
+     "sequences": 2,
+     "distinctPermutations": 2,
+     "bijection": true
+    },
+    {
+     "n": 3,
+     "sequences": 6,
+     "distinctPermutations": 6,
+     "bijection": true
+    },
+    {
+     "n": 4,
+     "sequences": 24,
+     "distinctPermutations": 24,
+     "bijection": true
+    },
+    {
+     "n": 5,
+     "sequences": 120,
+     "distinctPermutations": 120,
+     "bijection": true
+    },
+    {
+     "n": 6,
+     "sequences": 720,
+     "distinctPermutations": 720,
+     "bijection": true
+    },
+    {
+     "n": 7,
+     "sequences": 5040,
+     "distinctPermutations": 5040,
+     "bijection": true
+    },
+    {
+     "n": 8,
+     "sequences": 40320,
+     "distinctPermutations": 40320,
+     "bijection": true
+    }
+   ],
+   "prefixSets": 56,
+   "prefixMultiplicity": [
+    720
+   ],
+   "ms": 54
+  },
+  {
+   "id": "R05",
+   "title": "HMAC message serialization is canonical and injective over stress inputs",
+   "assumption": "JSON.stringify of a fixed-shape array is unambiguous.",
+   "method": "Compare production randomMessage() with the reference serializer for all stress seeds; verify field order; verify 8 seeds × 3 containers × 3 nonces × 3 counters produce 216 distinct messages; confirm a separator-injection seed cannot collide with a genuine field split.",
+   "pass": true,
+   "distinctMessages": 216,
+   "loneSurrogateSerializedAs": "[\"cargo-v1\",\"\\ud800\",0,\"A\",0]",
+   "note": "Unpaired surrogates are escaped by JSON.stringify (ES2019 well-formed stringify), so Node createHmac and browser TextEncoder hash identical bytes.",
+   "ms": 0
+  },
+  {
+   "id": "R06",
+   "title": "Seed commitment is SHA-256 over raw bytes; newSeed() emits 64 lowercase hex",
+   "assumption": "docs/FAIRNESS.md §Commitment.",
+   "method": "Compare seedHash() with reference over 1,000 derived seeds and confirm it differs from hashing the hex text. Draw 10,000 production newSeed() values (non-deterministic) and check format and uniqueness only.",
+   "pass": true,
+   "hashesCompared": 1000,
+   "newSeedSamples": 10000,
+   "allFormatOk": true,
+   "allUnique": true,
+   "ms": 46
+  },
+  {
+   "id": "R07",
+   "title": "Difficulty is not part of the HMAC message: decks are nested across difficulties",
+   "assumption": "Observation about the documented algorithm, not a defect by itself.",
+   "method": "For 1,000 (seed, nonce, container) tuples compute decks for h = 1, 3, 5, 10 and test Easy ⊂ Medium ⊂ Hard ⊂ Expert.",
+   "pass": true,
+   "tuples": 1000,
+   "nested": 1000,
+   "implication": "Safe only because each committed server seed is consumed by exactly one round with one locked difficulty (verified in validate-system S05/S06). Any future feature that lets the same seed/nonce be replayed under a different difficulty would leak information across difficulties.",
+   "ms": 1471
+  },
+  {
+   "id": "R08",
+   "title": "Active-round responses never contain the server seed or hazard decks",
+   "assumption": "publicRound()/snapshot() are the only public projections.",
+   "method": "For 400 deterministic engine rounds, serialise publicRound() after every action while active and search for the raw seed, its hazards key and every hazard array; require revelation after settlement.",
+   "pass": true,
+   "activeSnapshots": 3369,
+   "leaks": [],
+   "settledRevealed": 400,
+   "ms": 598
+  }
+ ]
+}
