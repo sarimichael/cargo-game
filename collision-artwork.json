@@ -1,0 +1,38 @@
+{
+  "mode": "built-in image_gen",
+  "requestCount": 2,
+  "retries": 0,
+  "variants": 0,
+  "assets": [
+    {
+      "name": "iceberg",
+      "savedPath": "public/iceberg.png",
+      "width": 1254,
+      "height": 1254,
+      "pixelFormat": "Format32bppArgb",
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 917920,
+      "nonzeroAlphaPixels": 654596,
+      "semiTransparentPixels": 653845,
+      "bytes": 1024429,
+      "prompt": "Use case: stylized-concept\nAsset type: transparent PNG obstacle sprite for a simplified 2D maritime cargo game, rendered about 170 x 150 logical pixels\nPrimary request: One angular iceberg floating at the ocean surface, viewed side-on with slight 3/4 depth, in a clean stylized flat/isometric 2D game illustration.\nSubject: A single large asymmetrical triangular ice mass with one pointed peak and a broad underwater base visible. The implied waterline is at about 70% of the sprite height, expressed in the object itself without a surrounding water rectangle.\nStyle/medium: Simple crisp faceted shape design, restrained details, sharp readable silhouette that harmonizes with a simplified game ship; no outline, or exceptionally thin clean outlines.\nComposition/framing: Square sprite, object centered with about 5% transparent margin. Show the entire iceberg including broad lower submerged base.\nLighting/mood: Cool light from top left, bright frosted edges.\nColor palette: Pale icy cyan faces, bright icy highlights, restrained teal shadow facets. Must read clearly over navy/teal #193f53 ocean and #0c2537 water.\nScene/backdrop: Truly transparent background with preserved alpha everywhere outside the iceberg; no painted background.\nConstraints: Exactly one iceberg; clean simple faceted shape, no other objects.\nAvoid: Sky, ocean or sea rectangles, horizon, ship, characters, text, logos, watermark, backdrop, checkerboard painted into image, excessive texture, glow or drop shadow outside object.",
+      "visualNotes": "Single faceted angular iceberg with broad submerged base and true transparent background. The generated waterline is around the middle of sprite height, rather than requested 70%."
+    },
+    {
+      "name": "maritime-debris",
+      "savedPath": "public/debris.png",
+      "width": 1959,
+      "height": 803,
+      "pixelFormat": "Format32bppArgb",
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 1062797,
+      "nonzeroAlphaPixels": 510280,
+      "semiTransparentPixels": 509693,
+      "bytes": 1040249,
+      "prompt": "Use case: stylized-concept\nAsset type: transparent PNG obstacle sprite for a simplified 2D maritime cargo game, rendered about 120 x 45 logical pixels\nPrimary request: One small floating piece of maritime debris: a long weathered broken timber/log with a short diagonal splinter and attached frayed rope.\nStyle/medium: Clean stylized flat/isometric 2D game illustration, side view with slight 3/4 depth. Simple crisp faceted shape design with restrained details, harmonizing with a simplified game ship.\nComposition/framing: Compact horizontal silhouette; entire single connected timber debris assembly centered with about 5% transparent margin. Landscape sprite.\nLighting/mood: Cool top-left lighting with readable warm highlights.\nColor palette: Muted warm amber/brown highlighted timber faces, restrained teal shaded faces, frayed rope in muted tan. Must read clearly over navy/teal #193f53 ocean and #0c2537 water.\nMaterials/textures: Weathered broken wood with simple grain indications and jagged ends, one short diagonal splinter, attached loosely frayed rope. Only a few subtle water droplets around the object.\nScene/backdrop: Truly transparent background with preserved alpha outside the object and the few droplets; no painted background.\nConstraints: Exactly one compact debris sprite, clean readable silhouette at small game size, no outline or exceptionally thin clean outlines.\nAvoid: Sky, ocean or sea rectangles, horizon, ship, characters, text, logos, watermark, backdrop, checkerboard painted into image, extra separate debris pieces, excessive texture, glow or drop shadow outside object.",
+      "visualNotes": "Single horizontal broken timber with short diagonal splinter, frayed rope and small water droplets. True transparent background. Texture is more detailed than a flat simplified game illustration."
+    }
+  ]
+}

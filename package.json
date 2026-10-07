@@ -1,0 +1,25 @@
+{
+  "name": "cargo-game",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build/build.mjs",
+    "db:generate": "drizzle-kit generate",
+    "start": "node server/index.js",
+    "test": "node --test test/*.test.js",
+    "test:hosted": "node build/check-worker.mjs",
+    "test:collisions": "node build/check-collision.mjs"
+  },
+  "dependencies": {
+    "drizzle-orm": "0.45.2"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.31.10",
+    "esbuild": "0.25.0"
+  },
+  "description": "Cargo voyage game with local and private hosted play-money prototypes",
+  "engines": {
+    "node": ">=24"
+  }
+}
