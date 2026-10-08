@@ -2,8 +2,8 @@
  "meta": {
   "script": "audit/validate-math.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-08T05:02:26.915Z",
-  "runtimeMs": 2554,
+  "generatedAt": "2026-10-08T19:43:18.803Z",
+  "runtimeMs": 2391,
   "productionFiles": [
    "public/math.js"
   ]
@@ -75,7 +75,7 @@
     "innerModeObjectsFrozen": true,
     "payoutArraysFrozen": true
    },
-   "ms": 0
+   "ms": 1
   },
   {
    "id": "M02",
@@ -110,7 +110,7 @@
      "mismatches": []
     }
    ],
-   "ms": 6
+   "ms": 4
   },
   {
    "id": "M03",
@@ -119,7 +119,7 @@
    "method": "Exactly verify S_s = Π(1−p_j) for every stop; compare production nextRisk(mode, s−1) with h/(21−s); check nextRisk at the final stop is 0.",
    "pass": true,
    "issues": [],
-   "ms": 1
+   "ms": 5
   },
   {
    "id": "M04",
@@ -519,7 +519,7 @@
      "unrounded100": "18106088.000000"
     }
    ],
-   "ms": 1
+   "ms": 2
   },
   {
    "id": "M05",
@@ -529,7 +529,7 @@
    "pass": true,
    "wagersChecked": 299701,
    "failures": [],
-   "ms": 40
+   "ms": 38
   },
   {
    "id": "M06",
@@ -542,7 +542,7 @@
    "maxProduct": 1810608800000,
    "maxSafeInteger": 9007199254740991,
    "headroomFactor": 4974,
-   "ms": 296
+   "ms": 288
   },
   {
    "id": "M07",
@@ -1452,7 +1452,7 @@
      }
     ]
    },
-   "ms": 1052
+   "ms": 931
   },
   {
    "id": "M08",
@@ -1544,7 +1544,7 @@
     "maxRTP": "98.738739%",
     "exact": "548/555"
    },
-   "ms": 1114
+   "ms": 1085
   },
   {
    "id": "M09",
@@ -1891,7 +1891,7 @@
      "exactEqual": true
     }
    ],
-   "ms": 37
+   "ms": 31
   },
   {
    "id": "M10",

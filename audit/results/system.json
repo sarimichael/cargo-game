@@ -2,8 +2,8 @@
  "meta": {
   "script": "audit/validate-system.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-08T05:03:07.865Z",
-  "runtimeMs": 31201
+  "generatedAt": "2026-10-08T19:43:57.786Z",
+  "runtimeMs": 29482
  },
  "summary": {
   "checks": 21,
@@ -71,7 +71,7 @@
      "balance": 97000
     }
    },
-   "ms": 145
+   "ms": 138
   },
   {
    "id": "S02",
@@ -94,7 +94,7 @@
      "ledgerEntries": 1
     }
    },
-   "ms": 62
+   "ms": 52
   },
   {
    "id": "S03",
@@ -119,7 +119,7 @@
      ]
     }
    },
-   "ms": 44
+   "ms": 36
   },
   {
    "id": "S04",
@@ -142,7 +142,7 @@
      "expected": 3091
     }
    },
-   "ms": 106
+   "ms": 98
   },
   {
    "id": "S05",
@@ -165,7 +165,7 @@
      "bad": 0
     }
    },
-   "ms": 515
+   "ms": 482
   },
   {
    "id": "S06",
@@ -186,7 +186,7 @@
      "expected": 100090
     }
    },
-   "ms": 14
+   "ms": 9
   },
   {
    "id": "S07",
@@ -209,7 +209,7 @@
      "failures": []
     }
    },
-   "ms": 30
+   "ms": 29
   },
   {
    "id": "S08",
@@ -230,7 +230,7 @@
      "mismatches": []
     }
    },
-   "ms": 31
+   "ms": 28
   },
   {
    "id": "S09",
@@ -242,16 +242,16 @@
    "adapters": {
     "local": {
      "ok": true,
-     "inspectedActiveResponses": 1014,
+     "inspectedActiveResponses": 978,
      "leaks": []
     },
     "worker": {
      "ok": true,
-     "inspectedActiveResponses": 1002,
+     "inspectedActiveResponses": 998,
      "leaks": []
     }
    },
-   "ms": 2147
+   "ms": 1942
   },
   {
    "id": "S10",
@@ -264,16 +264,16 @@
     "local": {
      "ok": true,
      "rounds": 80,
-     "sails": 327,
-     "icebergs": 23,
-     "debris": 87,
+     "sails": 326,
+     "icebergs": 33,
+     "debris": 86,
      "proofsVerified": 80,
      "ledger": {
       "ok": true,
       "start": 100000,
-      "sum": -3559,
-      "balance": 96441,
-      "entries": 186,
+      "sum": -56171,
+      "balance": 43829,
+      "entries": 173,
       "refills": 0
      },
      "issues": []
@@ -281,22 +281,22 @@
     "worker": {
      "ok": true,
      "rounds": 80,
-     "sails": 403,
-     "icebergs": 27,
-     "debris": 87,
+     "sails": 367,
+     "icebergs": 28,
+     "debris": 96,
      "proofsVerified": 80,
      "ledger": {
       "ok": true,
       "start": 100000,
-      "sum": -47064,
-      "balance": 52936,
-      "entries": 181,
+      "sum": -72674,
+      "balance": 27326,
+      "entries": 173,
       "refills": 0
      },
      "issues": []
     }
    },
-   "ms": 2704
+   "ms": 2651
   },
   {
    "id": "S11",
@@ -367,7 +367,7 @@
      "betEntries": 1
     }
    ],
-   "ms": 275
+   "ms": 277
   },
   {
    "id": "S12",
@@ -398,7 +398,7 @@
      }
     }
    },
-   "ms": 11
+   "ms": 12
   },
   {
    "id": "S13",
@@ -425,7 +425,7 @@
      "creditsAfter": 3
     }
    },
-   "ms": 15
+   "ms": 16
   },
   {
    "id": "S14",
@@ -448,7 +448,7 @@
      "newSessionsFrom25Gets": 25
     }
    },
-   "ms": 38
+   "ms": 37
   },
   {
    "id": "S15",
@@ -457,19 +457,19 @@
    "assumption": "Cloudflare D1 documents a 2,000,000-byte maximum string/BLOB/row; emulated in the SQLite stand-in. Root cause (unbounded session growth) is still open.",
    "method": "Play minimum-stake Easy rounds through the real Worker under the emulated limit. Once within two reserves of the limit, switch to worst-case rounds (19 stops, three separate collections, 80-character action IDs). Continue until a bet is refused; require that no request ever fails with 500, the refusal is 409 SESSION_STORAGE_FULL, and every accepted round settled. Separately measure bytes per round on the local store.",
    "pass": true,
-   "completedRounds": 867,
+   "completedRounds": 870,
    "worstCaseRoundsNearLimit": 8,
    "refusal": {
     "status": 409,
     "code": "SESSION_STORAGE_FULL",
-    "bytes": 1942586,
-    "headroomBytes": 57414
+    "bytes": 1941188,
+    "headroomBytes": 58812
    },
    "serverErrors": [],
    "unsettledRounds": [],
-   "localStoreBytesPerRound": 2174.54,
+   "localStoreBytesPerRound": 2170.12,
    "stillOpen": "Once refused, the play session cannot start new voyages; normalised storage (F03 root fix) is deferred.",
-   "ms": 24778
+   "ms": 23369
   },
   {
    "id": "S16",
@@ -538,7 +538,7 @@
      ]
     }
    },
-   "ms": 175
+   "ms": 190
   },
   {
    "id": "S17",
@@ -549,7 +549,7 @@
    "pass": true,
    "secondWriterRefusedWith": "DATA_DIRECTORY_LOCKED",
    "balanceOnDiskAfterSecondAttempt": 99900,
-   "ms": 2
+   "ms": 3
   },
   {
    "id": "S18",
@@ -570,7 +570,7 @@
     "unknownField": false
    },
    "remainingLimitation": "A different but well-formed round ID and plausible timestamps cannot be detected: they are not bound into the seed commitment.",
-   "ms": 16
+   "ms": 19
   },
   {
    "id": "S19",
@@ -583,7 +583,7 @@
    "expectedUnderAcceptedRules": 103,
    "inProcessMutationBlocked": true,
    "roundStoresMathVersion": [],
-   "ms": 8
+   "ms": 7
   },
   {
    "id": "S20",
@@ -606,7 +606,7 @@
      "invalidUtf8Status": 400
     }
    },
-   "ms": 70
+   "ms": 71
   },
   {
    "id": "S21",

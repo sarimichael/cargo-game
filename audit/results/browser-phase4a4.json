@@ -1,0 +1,3417 @@
+{
+ "meta": {
+  "script": "audit/browser-phase4a4.mjs",
+  "root": "/home/user/cargo-game",
+  "rootHead": "d157909576426a14a3c82a54cfaaa9a6f619fef3",
+  "rootUncommitted": [
+   "M CARGO_PHASE4A3_CORRECTION_REPORT.md",
+   " M audit/README.md",
+   " M audit/results/browser-phase4a2.json",
+   " M audit/results/browser-phase4a3.json",
+   " M audit/results/browser.json",
+   " M audit/results/claims.json",
+   " M audit/results/lock-stress.json",
+   " M audit/results/manifest.json",
+   " M audit/results/math.json",
+   " M audit/results/rng.json",
+   " M audit/results/simulation.json",
+   " M audit/results/storage.json",
+   " M audit/results/system.json",
+   " M audit/run-all.mjs",
+   " M audit/tests/phase4a3.test.js",
+   " M docs/API.md",
+   " M public/app.js"
+  ],
+  "sha256": {
+   "public/app.js": "28a3dfb03f860d598c9626e6bdb49c0276cd4dd60a7bbc12d9b7ea9753fabc18",
+   "server/app.js": "0fdba910fb57bc1b3f5a5dd631dc682d919a0e1657a72d820fa7f328acb8a910",
+   "server/store.js": "7fdf4f20074c0e6bc7fe95c2a6f2209ce3c7455706c02b4fcefd79b37ad4fda7",
+   "server/worker.js": "3d92e74c1a5cc5393d06b188815edc0b4537fe8bec56c80f672a03e5d14899e8",
+   "server/game.js": "c2bde58abbf025c81daa6fe5b6898c2652931a4e29526037f8e564a71cc31b34"
+  },
+  "adapters": [
+   "local",
+   "worker"
+  ],
+  "node": "v24.21.0",
+  "chromium": "141.0.7390.37",
+  "generatedAt": "2026-10-08T19:51:36.384Z",
+  "reducedMotion": true,
+  "views": [
+   {
+    "name": "desktop",
+    "width": 1440,
+    "height": 900
+   },
+   {
+    "name": "phone",
+    "width": 390,
+    "height": 844
+   }
+  ]
+ },
+ "pass": true,
+ "summary": {
+  "scenarios": 20,
+  "passed": 20,
+  "failed": []
+ },
+ "results": [
+  {
+   "scenario": "C-01 confirmation overtaken by a newer unchanged poll (A → B → A)",
+   "adapter": "local",
+   "view": "desktop",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: A and B are separate sessions, both at revision 1, with different balances and rounds",
+     "pass": true
+    },
+    {
+     "assertion": "setup: the browser displays A",
+     "pass": true
+    },
+    {
+     "assertion": "the page detected B and sent a confirmation read; the server answered it with B and its delivery is held",
+     "pass": true
+    },
+    {
+     "assertion": "while the confirmation is pending, A is still displayed",
+     "pass": true
+    },
+    {
+     "assertion": "the newer natural poll returned unchanged A and was accepted with no re-render and no notice",
+     "pass": true
+    },
+    {
+     "assertion": "validity: exactly three reads (detection, confirmation, poll), confirmation still within the request limit",
+     "pass": true
+    },
+    {
+     "assertion": "A remains displayed: balance $970.00",
+     "pass": true
+    },
+    {
+     "assertion": "A's round, difficulty and stake remain",
+     "pass": true
+    },
+    {
+     "assertion": "A's controls remain: Sail to stop 01, saved status",
+     "pass": true
+    },
+    {
+     "assertion": "no replacement or synchronisation notice",
+     "pass": true
+    },
+    {
+     "assertion": "B's $997.00 was never displayed",
+     "pass": true
+    },
+    {
+     "assertion": "Sail advanced A's own round, with no 404",
+     "pass": true
+    },
+    {
+     "assertion": "session B is unchanged on the server",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "sessions": {
+     "a": {
+      "revision": 1,
+      "balanceCents": 97000,
+      "round": "ROUND BF0806CF"
+     },
+     "b": {
+      "revision": 1,
+      "balanceCents": 99700,
+      "round": "ROUND AF4E98E6"
+     }
+    },
+    "initial": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND BF0806CF",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "detectStatus": 200,
+    "confirmStatus": 200,
+    "whileConfirming": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND BF0806CF",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "pollStatus": 200,
+    "pollAfterMs": 11909,
+    "afterPoll": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND BF0806CF",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterConfirmation": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND BF0806CF",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSail": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "STOP 01 OF 19",
+     "round": "ROUND BF0806CF",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 02"
+     },
+     "cargoButtons": [
+      "Collect $10.30",
+      "Collect $10.30",
+      "Collect $10.30"
+     ],
+     "enabledControls": [
+      "sail-button",
+      "collect-all",
+      "cargo-A",
+      "cargo-B",
+      "cargo-C"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 2,
+     "balances": [
+      "$970.00",
+      "$970.00"
+     ],
+     "overflow": false
+    },
+    "serverAfterSail": {
+     "aStep": 1,
+     "aRevision": 2,
+     "bStep": 0,
+     "bRevision": 1,
+     "bBalanceCents": 99700
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200"
+    ]
+   }
+  },
+  {
+   "scenario": "C-02 overlapping confirmations overtaken by a newer unchanged poll",
+   "adapter": "local",
+   "view": "desktop",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: two detection reads and two confirmations, both answered with B, both held",
+     "pass": true
+    },
+    {
+     "assertion": "the newer natural poll returned unchanged A with no re-render",
+     "pass": true
+    },
+    {
+     "assertion": "validity: exactly five reads, confirmations still within the request limit",
+     "pass": true
+    },
+    {
+     "assertion": "A remains displayed: balance $970.00",
+     "pass": true
+    },
+    {
+     "assertion": "A's round, difficulty and stake remain",
+     "pass": true
+    },
+    {
+     "assertion": "A's controls remain: Sail to stop 01, saved status",
+     "pass": true
+    },
+    {
+     "assertion": "no replacement or synchronisation notice",
+     "pass": true
+    },
+    {
+     "assertion": "B's $997.00 was never displayed",
+     "pass": true
+    },
+    {
+     "assertion": "Sail advanced A's own round, with no 404",
+     "pass": true
+    },
+    {
+     "assertion": "session B is unchanged on the server",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "c1Status": 200,
+    "c2Status": 200,
+    "pollStatus": 200,
+    "afterPoll": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 15FE1BC1",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterConfirmation": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 15FE1BC1",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSail": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "STOP 01 OF 19",
+     "round": "ROUND 15FE1BC1",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 02"
+     },
+     "cargoButtons": [
+      "Collect $10.30",
+      "Collect $10.30",
+      "Collect $10.30"
+     ],
+     "enabledControls": [
+      "sail-button",
+      "collect-all",
+      "cargo-A",
+      "cargo-B",
+      "cargo-C"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 2,
+     "balances": [
+      "$970.00",
+      "$970.00"
+     ],
+     "overflow": false
+    },
+    "serverAfterSail": {
+     "aStep": 1,
+     "aRevision": 2,
+     "bStep": 0,
+     "bRevision": 1,
+     "bBalanceCents": 99700
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-01 equal- and lower-revision replacements are still shown",
+   "adapter": "local",
+   "view": "desktop",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "equal revision: B is shown with its round and the replacement notice",
+     "pass": true
+    },
+    {
+     "assertion": "equal revision: Sail advances B on the server, A untouched",
+     "pass": true
+    },
+    {
+     "assertion": "lower revision: the new session is shown with the replacement notice",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "equalRevision": {
+     "balance": "$997.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND C449FA6B",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "hard",
+     "bet": "3.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "This browser is now using a different demo session. Its current balance is shown.",
+     "renders": null,
+     "balances": null,
+     "overflow": false
+    },
+    "lowerRevision": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $3.00"
+     },
+     "cargoButtons": [
+      "$1.00 allocated",
+      "$1.00 allocated",
+      "$1.00 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "hard",
+     "bet": "3.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "This browser is now using a different demo session. Its current balance is shown.",
+     "renders": null,
+     "balances": null,
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200",
+     "GET /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-02 unchanged poll keeps input; same-session change is synchronised",
+   "adapter": "local",
+   "view": "desktop",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "unchanged poll: no re-render, typed bet and focus kept, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "same-session change: new balance shown as a synchronisation, typed bet and focus kept",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "typing": {
+     "balance": "$1,000.90",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSamePoll": {
+     "balance": "$1,000.90",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSameSessionChange": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "Voyage synchronized.",
+     "renders": 1,
+     "balances": [
+      "$1,000.00"
+     ],
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "POST /api/rounds/:id/advance 200",
+     "POST /api/rounds/:id/collect 200",
+     "GET /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-03 removed session stays quarantined; explicit recovery works",
+   "adapter": "local",
+   "view": "desktop",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: newest read 200 before the removal, older read a genuine 404 after it",
+     "pass": true
+    },
+    {
+     "assertion": "validity: only the two scripted reads were sent",
+     "pass": true
+    },
+    {
+     "assertion": "after closing the dialog: balance \"—\", no enabled control, \"not found\" labels",
+     "pass": true
+    },
+    {
+     "assertion": "after closing the dialog: recovery control present and visible, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "after the delayed success: balance \"—\", no enabled control, \"not found\" labels",
+     "pass": true
+    },
+    {
+     "assertion": "after the delayed success: recovery control present and visible, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "A's $970.00 is never shown again after the 404",
+     "pass": true
+    },
+    {
+     "assertion": "explicit recovery: one POST, one new session, loaded and saved",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "read2Status": 200,
+    "read1Status": 404,
+    "closed": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "statusText": "Session not found",
+     "stage": "SESSION NOT FOUND",
+     "round": "ROUND 5DB777E1",
+     "sail": {
+      "disabled": true,
+      "text": "Session not found"
+     },
+     "cargoButtons": [
+      "Unavailable",
+      "Unavailable",
+      "Unavailable"
+     ],
+     "enabledControls": [],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "",
+     "renders": 0,
+     "balances": [
+      "—"
+     ],
+     "overflow": false
+    },
+    "afterStaleSuccess": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "statusText": "Session not found",
+     "stage": "SESSION NOT FOUND",
+     "round": "ROUND 5DB777E1",
+     "sail": {
+      "disabled": true,
+      "text": "Session not found"
+     },
+     "cargoButtons": [
+      "Unavailable",
+      "Unavailable",
+      "Unavailable"
+     ],
+     "enabledControls": [],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "",
+     "renders": 0,
+     "balances": [
+      "—"
+     ],
+     "overflow": false
+    },
+    "recovered": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $30.00"
+     },
+     "cargoButtons": [
+      "$10.00 allocated",
+      "$10.00 allocated",
+      "$10.00 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "New demo session started.",
+     "renders": 1,
+     "balances": [
+      "—",
+      "$1,000.00"
+     ],
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 404",
+     "GET /api/session 200",
+     "POST /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "C-01 confirmation overtaken by a newer unchanged poll (A → B → A)",
+   "adapter": "local",
+   "view": "phone",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: A and B are separate sessions, both at revision 1, with different balances and rounds",
+     "pass": true
+    },
+    {
+     "assertion": "setup: the browser displays A",
+     "pass": true
+    },
+    {
+     "assertion": "the page detected B and sent a confirmation read; the server answered it with B and its delivery is held",
+     "pass": true
+    },
+    {
+     "assertion": "while the confirmation is pending, A is still displayed",
+     "pass": true
+    },
+    {
+     "assertion": "the newer natural poll returned unchanged A and was accepted with no re-render and no notice",
+     "pass": true
+    },
+    {
+     "assertion": "validity: exactly three reads (detection, confirmation, poll), confirmation still within the request limit",
+     "pass": true
+    },
+    {
+     "assertion": "A remains displayed: balance $970.00",
+     "pass": true
+    },
+    {
+     "assertion": "A's round, difficulty and stake remain",
+     "pass": true
+    },
+    {
+     "assertion": "A's controls remain: Sail to stop 01, saved status",
+     "pass": true
+    },
+    {
+     "assertion": "no replacement or synchronisation notice",
+     "pass": true
+    },
+    {
+     "assertion": "B's $997.00 was never displayed",
+     "pass": true
+    },
+    {
+     "assertion": "Sail advanced A's own round, with no 404",
+     "pass": true
+    },
+    {
+     "assertion": "session B is unchanged on the server",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "sessions": {
+     "a": {
+      "revision": 1,
+      "balanceCents": 97000,
+      "round": "ROUND AEC9A590"
+     },
+     "b": {
+      "revision": 1,
+      "balanceCents": 99700,
+      "round": "ROUND 38F29492"
+     }
+    },
+    "initial": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND AEC9A590",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "detectStatus": 200,
+    "confirmStatus": 200,
+    "whileConfirming": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND AEC9A590",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "pollStatus": 200,
+    "pollAfterMs": 11963,
+    "afterPoll": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND AEC9A590",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterConfirmation": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND AEC9A590",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSail": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "STOP 01 OF 19",
+     "round": "ROUND AEC9A590",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 02"
+     },
+     "cargoButtons": [
+      "Collect $10.30",
+      "Collect $10.30",
+      "Collect $10.30"
+     ],
+     "enabledControls": [
+      "sail-button",
+      "collect-all",
+      "cargo-A",
+      "cargo-B",
+      "cargo-C"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 2,
+     "balances": [
+      "$970.00",
+      "$970.00"
+     ],
+     "overflow": false
+    },
+    "serverAfterSail": {
+     "aStep": 1,
+     "aRevision": 2,
+     "bStep": 0,
+     "bRevision": 1,
+     "bBalanceCents": 99700
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200"
+    ]
+   }
+  },
+  {
+   "scenario": "C-02 overlapping confirmations overtaken by a newer unchanged poll",
+   "adapter": "local",
+   "view": "phone",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: two detection reads and two confirmations, both answered with B, both held",
+     "pass": true
+    },
+    {
+     "assertion": "the newer natural poll returned unchanged A with no re-render",
+     "pass": true
+    },
+    {
+     "assertion": "validity: exactly five reads, confirmations still within the request limit",
+     "pass": true
+    },
+    {
+     "assertion": "A remains displayed: balance $970.00",
+     "pass": true
+    },
+    {
+     "assertion": "A's round, difficulty and stake remain",
+     "pass": true
+    },
+    {
+     "assertion": "A's controls remain: Sail to stop 01, saved status",
+     "pass": true
+    },
+    {
+     "assertion": "no replacement or synchronisation notice",
+     "pass": true
+    },
+    {
+     "assertion": "B's $997.00 was never displayed",
+     "pass": true
+    },
+    {
+     "assertion": "Sail advanced A's own round, with no 404",
+     "pass": true
+    },
+    {
+     "assertion": "session B is unchanged on the server",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "c1Status": 200,
+    "c2Status": 200,
+    "pollStatus": 200,
+    "afterPoll": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 0BA14BDB",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterConfirmation": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 0BA14BDB",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSail": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "STOP 01 OF 19",
+     "round": "ROUND 0BA14BDB",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 02"
+     },
+     "cargoButtons": [
+      "Collect $10.30",
+      "Collect $10.30",
+      "Collect $10.30"
+     ],
+     "enabledControls": [
+      "sail-button",
+      "collect-all",
+      "cargo-A",
+      "cargo-B",
+      "cargo-C"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 2,
+     "balances": [
+      "$970.00",
+      "$970.00"
+     ],
+     "overflow": false
+    },
+    "serverAfterSail": {
+     "aStep": 1,
+     "aRevision": 2,
+     "bStep": 0,
+     "bRevision": 1,
+     "bBalanceCents": 99700
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-01 equal- and lower-revision replacements are still shown",
+   "adapter": "local",
+   "view": "phone",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "equal revision: B is shown with its round and the replacement notice",
+     "pass": true
+    },
+    {
+     "assertion": "equal revision: Sail advances B on the server, A untouched",
+     "pass": true
+    },
+    {
+     "assertion": "lower revision: the new session is shown with the replacement notice",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "equalRevision": {
+     "balance": "$997.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND BC3884DE",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "hard",
+     "bet": "3.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "This browser is now using a different demo session. Its current balance is shown.",
+     "renders": null,
+     "balances": null,
+     "overflow": false
+    },
+    "lowerRevision": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $3.00"
+     },
+     "cargoButtons": [
+      "$1.00 allocated",
+      "$1.00 allocated",
+      "$1.00 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "hard",
+     "bet": "3.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "This browser is now using a different demo session. Its current balance is shown.",
+     "renders": null,
+     "balances": null,
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200",
+     "GET /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-02 unchanged poll keeps input; same-session change is synchronised",
+   "adapter": "local",
+   "view": "phone",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "unchanged poll: no re-render, typed bet and focus kept, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "same-session change: new balance shown as a synchronisation, typed bet and focus kept",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "typing": {
+     "balance": "$1,000.90",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSamePoll": {
+     "balance": "$1,000.90",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSameSessionChange": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "Voyage synchronized.",
+     "renders": 1,
+     "balances": [
+      "$1,000.00"
+     ],
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "POST /api/rounds/:id/advance 200",
+     "POST /api/rounds/:id/collect 200",
+     "GET /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-03 removed session stays quarantined; explicit recovery works",
+   "adapter": "local",
+   "view": "phone",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: newest read 200 before the removal, older read a genuine 404 after it",
+     "pass": true
+    },
+    {
+     "assertion": "validity: only the two scripted reads were sent",
+     "pass": true
+    },
+    {
+     "assertion": "after closing the dialog: balance \"—\", no enabled control, \"not found\" labels",
+     "pass": true
+    },
+    {
+     "assertion": "after closing the dialog: recovery control present and visible, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "after the delayed success: balance \"—\", no enabled control, \"not found\" labels",
+     "pass": true
+    },
+    {
+     "assertion": "after the delayed success: recovery control present and visible, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "A's $970.00 is never shown again after the 404",
+     "pass": true
+    },
+    {
+     "assertion": "explicit recovery: one POST, one new session, loaded and saved",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "read2Status": 200,
+    "read1Status": 404,
+    "closed": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "statusText": "Session not found",
+     "stage": "SESSION NOT FOUND",
+     "round": "ROUND 4F3C1BD3",
+     "sail": {
+      "disabled": true,
+      "text": "Session not found"
+     },
+     "cargoButtons": [
+      "Unavailable",
+      "Unavailable",
+      "Unavailable"
+     ],
+     "enabledControls": [],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "",
+     "renders": 0,
+     "balances": [
+      "—"
+     ],
+     "overflow": false
+    },
+    "afterStaleSuccess": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "statusText": "Session not found",
+     "stage": "SESSION NOT FOUND",
+     "round": "ROUND 4F3C1BD3",
+     "sail": {
+      "disabled": true,
+      "text": "Session not found"
+     },
+     "cargoButtons": [
+      "Unavailable",
+      "Unavailable",
+      "Unavailable"
+     ],
+     "enabledControls": [],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "",
+     "renders": 0,
+     "balances": [
+      "—"
+     ],
+     "overflow": false
+    },
+    "recovered": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $30.00"
+     },
+     "cargoButtons": [
+      "$10.00 allocated",
+      "$10.00 allocated",
+      "$10.00 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "New demo session started.",
+     "renders": 1,
+     "balances": [
+      "—",
+      "$1,000.00"
+     ],
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 404",
+     "GET /api/session 200",
+     "POST /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "C-01 confirmation overtaken by a newer unchanged poll (A → B → A)",
+   "adapter": "worker",
+   "view": "desktop",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: A and B are separate sessions, both at revision 1, with different balances and rounds",
+     "pass": true
+    },
+    {
+     "assertion": "setup: the browser displays A",
+     "pass": true
+    },
+    {
+     "assertion": "the page detected B and sent a confirmation read; the server answered it with B and its delivery is held",
+     "pass": true
+    },
+    {
+     "assertion": "while the confirmation is pending, A is still displayed",
+     "pass": true
+    },
+    {
+     "assertion": "the newer natural poll returned unchanged A and was accepted with no re-render and no notice",
+     "pass": true
+    },
+    {
+     "assertion": "validity: exactly three reads (detection, confirmation, poll), confirmation still within the request limit",
+     "pass": true
+    },
+    {
+     "assertion": "A remains displayed: balance $970.00",
+     "pass": true
+    },
+    {
+     "assertion": "A's round, difficulty and stake remain",
+     "pass": true
+    },
+    {
+     "assertion": "A's controls remain: Sail to stop 01, saved status",
+     "pass": true
+    },
+    {
+     "assertion": "no replacement or synchronisation notice",
+     "pass": true
+    },
+    {
+     "assertion": "B's $997.00 was never displayed",
+     "pass": true
+    },
+    {
+     "assertion": "Sail advanced A's own round, with no 404",
+     "pass": true
+    },
+    {
+     "assertion": "session B is unchanged on the server",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "sessions": {
+     "a": {
+      "revision": 1,
+      "balanceCents": 97000,
+      "round": "ROUND 5353C6E0"
+     },
+     "b": {
+      "revision": 1,
+      "balanceCents": 99700,
+      "round": "ROUND 40660F76"
+     }
+    },
+    "initial": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 5353C6E0",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "detectStatus": 200,
+    "confirmStatus": 200,
+    "whileConfirming": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 5353C6E0",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "pollStatus": 200,
+    "pollAfterMs": 11943,
+    "afterPoll": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 5353C6E0",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterConfirmation": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 5353C6E0",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSail": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "STOP 01 OF 19",
+     "round": "ROUND 5353C6E0",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 02"
+     },
+     "cargoButtons": [
+      "Collect $10.30",
+      "Collect $10.30",
+      "Collect $10.30"
+     ],
+     "enabledControls": [
+      "sail-button",
+      "collect-all",
+      "cargo-A",
+      "cargo-B",
+      "cargo-C"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 2,
+     "balances": [
+      "$970.00",
+      "$970.00"
+     ],
+     "overflow": false
+    },
+    "serverAfterSail": {
+     "aStep": 1,
+     "aRevision": 2,
+     "bStep": 0,
+     "bRevision": 1,
+     "bBalanceCents": 99700
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200"
+    ]
+   }
+  },
+  {
+   "scenario": "C-02 overlapping confirmations overtaken by a newer unchanged poll",
+   "adapter": "worker",
+   "view": "desktop",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: two detection reads and two confirmations, both answered with B, both held",
+     "pass": true
+    },
+    {
+     "assertion": "the newer natural poll returned unchanged A with no re-render",
+     "pass": true
+    },
+    {
+     "assertion": "validity: exactly five reads, confirmations still within the request limit",
+     "pass": true
+    },
+    {
+     "assertion": "A remains displayed: balance $970.00",
+     "pass": true
+    },
+    {
+     "assertion": "A's round, difficulty and stake remain",
+     "pass": true
+    },
+    {
+     "assertion": "A's controls remain: Sail to stop 01, saved status",
+     "pass": true
+    },
+    {
+     "assertion": "no replacement or synchronisation notice",
+     "pass": true
+    },
+    {
+     "assertion": "B's $997.00 was never displayed",
+     "pass": true
+    },
+    {
+     "assertion": "Sail advanced A's own round, with no 404",
+     "pass": true
+    },
+    {
+     "assertion": "session B is unchanged on the server",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "c1Status": 200,
+    "c2Status": 200,
+    "pollStatus": 200,
+    "afterPoll": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 0245AA8A",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterConfirmation": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 0245AA8A",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSail": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "STOP 01 OF 19",
+     "round": "ROUND 0245AA8A",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 02"
+     },
+     "cargoButtons": [
+      "Collect $10.30",
+      "Collect $10.30",
+      "Collect $10.30"
+     ],
+     "enabledControls": [
+      "sail-button",
+      "collect-all",
+      "cargo-A",
+      "cargo-B",
+      "cargo-C"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 2,
+     "balances": [
+      "$970.00",
+      "$970.00"
+     ],
+     "overflow": false
+    },
+    "serverAfterSail": {
+     "aStep": 1,
+     "aRevision": 2,
+     "bStep": 0,
+     "bRevision": 1,
+     "bBalanceCents": 99700
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-01 equal- and lower-revision replacements are still shown",
+   "adapter": "worker",
+   "view": "desktop",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "equal revision: B is shown with its round and the replacement notice",
+     "pass": true
+    },
+    {
+     "assertion": "equal revision: Sail advances B on the server, A untouched",
+     "pass": true
+    },
+    {
+     "assertion": "lower revision: the new session is shown with the replacement notice",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "equalRevision": {
+     "balance": "$997.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 0AA00A50",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "hard",
+     "bet": "3.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "This browser is now using a different demo session. Its current balance is shown.",
+     "renders": null,
+     "balances": null,
+     "overflow": false
+    },
+    "lowerRevision": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $3.00"
+     },
+     "cargoButtons": [
+      "$1.00 allocated",
+      "$1.00 allocated",
+      "$1.00 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "hard",
+     "bet": "3.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "This browser is now using a different demo session. Its current balance is shown.",
+     "renders": null,
+     "balances": null,
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200",
+     "GET /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-02 unchanged poll keeps input; same-session change is synchronised",
+   "adapter": "worker",
+   "view": "desktop",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "unchanged poll: no re-render, typed bet and focus kept, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "same-session change: new balance shown as a synchronisation, typed bet and focus kept",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "typing": {
+     "balance": "$1,000.90",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSamePoll": {
+     "balance": "$1,000.90",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSameSessionChange": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "Voyage synchronized.",
+     "renders": 1,
+     "balances": [
+      "$1,000.00"
+     ],
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "POST /api/rounds/:id/advance 200",
+     "POST /api/rounds/:id/collect 200",
+     "GET /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-03 removed session stays quarantined; explicit recovery works",
+   "adapter": "worker",
+   "view": "desktop",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: newest read 200 before the removal, older read a genuine 404 after it",
+     "pass": true
+    },
+    {
+     "assertion": "validity: only the two scripted reads were sent",
+     "pass": true
+    },
+    {
+     "assertion": "after closing the dialog: balance \"—\", no enabled control, \"not found\" labels",
+     "pass": true
+    },
+    {
+     "assertion": "after closing the dialog: recovery control present and visible, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "after the delayed success: balance \"—\", no enabled control, \"not found\" labels",
+     "pass": true
+    },
+    {
+     "assertion": "after the delayed success: recovery control present and visible, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "A's $970.00 is never shown again after the 404",
+     "pass": true
+    },
+    {
+     "assertion": "explicit recovery: one POST, one new session, loaded and saved",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "read2Status": 200,
+    "read1Status": 404,
+    "closed": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "statusText": "Session not found",
+     "stage": "SESSION NOT FOUND",
+     "round": "ROUND FE319FDB",
+     "sail": {
+      "disabled": true,
+      "text": "Session not found"
+     },
+     "cargoButtons": [
+      "Unavailable",
+      "Unavailable",
+      "Unavailable"
+     ],
+     "enabledControls": [],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "",
+     "renders": 0,
+     "balances": [
+      "—"
+     ],
+     "overflow": false
+    },
+    "afterStaleSuccess": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "statusText": "Session not found",
+     "stage": "SESSION NOT FOUND",
+     "round": "ROUND FE319FDB",
+     "sail": {
+      "disabled": true,
+      "text": "Session not found"
+     },
+     "cargoButtons": [
+      "Unavailable",
+      "Unavailable",
+      "Unavailable"
+     ],
+     "enabledControls": [],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "",
+     "renders": 0,
+     "balances": [
+      "—"
+     ],
+     "overflow": false
+    },
+    "recovered": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $30.00"
+     },
+     "cargoButtons": [
+      "$10.00 allocated",
+      "$10.00 allocated",
+      "$10.00 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "New demo session started.",
+     "renders": 1,
+     "balances": [
+      "—",
+      "$1,000.00"
+     ],
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 404",
+     "GET /api/session 200",
+     "POST /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "C-01 confirmation overtaken by a newer unchanged poll (A → B → A)",
+   "adapter": "worker",
+   "view": "phone",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: A and B are separate sessions, both at revision 1, with different balances and rounds",
+     "pass": true
+    },
+    {
+     "assertion": "setup: the browser displays A",
+     "pass": true
+    },
+    {
+     "assertion": "the page detected B and sent a confirmation read; the server answered it with B and its delivery is held",
+     "pass": true
+    },
+    {
+     "assertion": "while the confirmation is pending, A is still displayed",
+     "pass": true
+    },
+    {
+     "assertion": "the newer natural poll returned unchanged A and was accepted with no re-render and no notice",
+     "pass": true
+    },
+    {
+     "assertion": "validity: exactly three reads (detection, confirmation, poll), confirmation still within the request limit",
+     "pass": true
+    },
+    {
+     "assertion": "A remains displayed: balance $970.00",
+     "pass": true
+    },
+    {
+     "assertion": "A's round, difficulty and stake remain",
+     "pass": true
+    },
+    {
+     "assertion": "A's controls remain: Sail to stop 01, saved status",
+     "pass": true
+    },
+    {
+     "assertion": "no replacement or synchronisation notice",
+     "pass": true
+    },
+    {
+     "assertion": "B's $997.00 was never displayed",
+     "pass": true
+    },
+    {
+     "assertion": "Sail advanced A's own round, with no 404",
+     "pass": true
+    },
+    {
+     "assertion": "session B is unchanged on the server",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "sessions": {
+     "a": {
+      "revision": 1,
+      "balanceCents": 97000,
+      "round": "ROUND 737D918D"
+     },
+     "b": {
+      "revision": 1,
+      "balanceCents": 99700,
+      "round": "ROUND C48F4479"
+     }
+    },
+    "initial": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 737D918D",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "detectStatus": 200,
+    "confirmStatus": 200,
+    "whileConfirming": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 737D918D",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "pollStatus": 200,
+    "pollAfterMs": 11964,
+    "afterPoll": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 737D918D",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterConfirmation": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 737D918D",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSail": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "STOP 01 OF 19",
+     "round": "ROUND 737D918D",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 02"
+     },
+     "cargoButtons": [
+      "Collect $10.30",
+      "Collect $10.30",
+      "Collect $10.30"
+     ],
+     "enabledControls": [
+      "sail-button",
+      "collect-all",
+      "cargo-A",
+      "cargo-B",
+      "cargo-C"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 2,
+     "balances": [
+      "$970.00",
+      "$970.00"
+     ],
+     "overflow": false
+    },
+    "serverAfterSail": {
+     "aStep": 1,
+     "aRevision": 2,
+     "bStep": 0,
+     "bRevision": 1,
+     "bBalanceCents": 99700
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200"
+    ]
+   }
+  },
+  {
+   "scenario": "C-02 overlapping confirmations overtaken by a newer unchanged poll",
+   "adapter": "worker",
+   "view": "phone",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: two detection reads and two confirmations, both answered with B, both held",
+     "pass": true
+    },
+    {
+     "assertion": "the newer natural poll returned unchanged A with no re-render",
+     "pass": true
+    },
+    {
+     "assertion": "validity: exactly five reads, confirmations still within the request limit",
+     "pass": true
+    },
+    {
+     "assertion": "A remains displayed: balance $970.00",
+     "pass": true
+    },
+    {
+     "assertion": "A's round, difficulty and stake remain",
+     "pass": true
+    },
+    {
+     "assertion": "A's controls remain: Sail to stop 01, saved status",
+     "pass": true
+    },
+    {
+     "assertion": "no replacement or synchronisation notice",
+     "pass": true
+    },
+    {
+     "assertion": "B's $997.00 was never displayed",
+     "pass": true
+    },
+    {
+     "assertion": "Sail advanced A's own round, with no 404",
+     "pass": true
+    },
+    {
+     "assertion": "session B is unchanged on the server",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "c1Status": 200,
+    "c2Status": 200,
+    "pollStatus": 200,
+    "afterPoll": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 73E85CE3",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterConfirmation": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 73E85CE3",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSail": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "STOP 01 OF 19",
+     "round": "ROUND 73E85CE3",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 02"
+     },
+     "cargoButtons": [
+      "Collect $10.30",
+      "Collect $10.30",
+      "Collect $10.30"
+     ],
+     "enabledControls": [
+      "sail-button",
+      "collect-all",
+      "cargo-A",
+      "cargo-B",
+      "cargo-C"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 2,
+     "balances": [
+      "$970.00",
+      "$970.00"
+     ],
+     "overflow": false
+    },
+    "serverAfterSail": {
+     "aStep": 1,
+     "aRevision": 2,
+     "bStep": 0,
+     "bRevision": 1,
+     "bBalanceCents": 99700
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-01 equal- and lower-revision replacements are still shown",
+   "adapter": "worker",
+   "view": "phone",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "equal revision: B is shown with its round and the replacement notice",
+     "pass": true
+    },
+    {
+     "assertion": "equal revision: Sail advances B on the server, A untouched",
+     "pass": true
+    },
+    {
+     "assertion": "lower revision: the new session is shown with the replacement notice",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "equalRevision": {
+     "balance": "$997.00",
+     "status": "Your voyage is saved",
+     "statusText": "Voyage in progress",
+     "stage": "READY TO DEPART",
+     "round": "ROUND 876294DD",
+     "sail": {
+      "disabled": false,
+      "text": "Sail to stop 01"
+     },
+     "cargoButtons": [
+      "Ready to sail",
+      "Ready to sail",
+      "Ready to sail"
+     ],
+     "enabledControls": [
+      "sail-button"
+     ],
+     "mode": "hard",
+     "bet": "3.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "This browser is now using a different demo session. Its current balance is shown.",
+     "renders": null,
+     "balances": null,
+     "overflow": false
+    },
+    "lowerRevision": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $3.00"
+     },
+     "cargoButtons": [
+      "$1.00 allocated",
+      "$1.00 allocated",
+      "$1.00 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "hard",
+     "bet": "3.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "This browser is now using a different demo session. Its current balance is shown.",
+     "renders": null,
+     "balances": null,
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 200",
+     "POST /api/rounds/:id/advance 200",
+     "GET /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-02 unchanged poll keeps input; same-session change is synchronised",
+   "adapter": "worker",
+   "view": "phone",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "unchanged poll: no re-render, typed bet and focus kept, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "same-session change: new balance shown as a synchronisation, typed bet and focus kept",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "typing": {
+     "balance": "$1,000.90",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSamePoll": {
+     "balance": "$1,000.90",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "",
+     "renders": 0,
+     "balances": [],
+     "overflow": false
+    },
+    "afterSameSessionChange": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $45.67"
+     },
+     "cargoButtons": [
+      "$15.23 allocated",
+      "$15.22 allocated",
+      "$15.22 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "45.67",
+     "focus": "bet-amount",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "How to play",
+     "toast": "Voyage synchronized.",
+     "renders": 1,
+     "balances": [
+      "$1,000.00"
+     ],
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "POST /api/rounds/:id/advance 200",
+     "POST /api/rounds/:id/collect 200",
+     "GET /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  },
+  {
+   "scenario": "G-03 removed session stays quarantined; explicit recovery works",
+   "adapter": "worker",
+   "view": "phone",
+   "ok": true,
+   "failed": [],
+   "checks": [
+    {
+     "assertion": "setup: newest read 200 before the removal, older read a genuine 404 after it",
+     "pass": true
+    },
+    {
+     "assertion": "validity: only the two scripted reads were sent",
+     "pass": true
+    },
+    {
+     "assertion": "after closing the dialog: balance \"—\", no enabled control, \"not found\" labels",
+     "pass": true
+    },
+    {
+     "assertion": "after closing the dialog: recovery control present and visible, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "after the delayed success: balance \"—\", no enabled control, \"not found\" labels",
+     "pass": true
+    },
+    {
+     "assertion": "after the delayed success: recovery control present and visible, no notice",
+     "pass": true
+    },
+    {
+     "assertion": "A's $970.00 is never shown again after the 404",
+     "pass": true
+    },
+    {
+     "assertion": "explicit recovery: one POST, one new session, loaded and saved",
+     "pass": true
+    },
+    {
+     "assertion": "no console or page errors",
+     "pass": true
+    }
+   ],
+   "observations": {
+    "read2Status": 200,
+    "read1Status": 404,
+    "closed": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "statusText": "Session not found",
+     "stage": "SESSION NOT FOUND",
+     "round": "ROUND 15AE68D4",
+     "sail": {
+      "disabled": true,
+      "text": "Session not found"
+     },
+     "cargoButtons": [
+      "Unavailable",
+      "Unavailable",
+      "Unavailable"
+     ],
+     "enabledControls": [],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "",
+     "renders": 0,
+     "balances": [
+      "—"
+     ],
+     "overflow": false
+    },
+    "afterStaleSuccess": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "statusText": "Session not found",
+     "stage": "SESSION NOT FOUND",
+     "round": "ROUND 15AE68D4",
+     "sail": {
+      "disabled": true,
+      "text": "Session not found"
+     },
+     "cargoButtons": [
+      "Unavailable",
+      "Unavailable",
+      "Unavailable"
+     ],
+     "enabledControls": [],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "",
+     "renders": 0,
+     "balances": [
+      "—"
+     ],
+     "overflow": false
+    },
+    "recovered": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "statusText": "Ready to sail",
+     "stage": "READY AT THE HARBOR",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sail": {
+      "disabled": false,
+      "text": "Set sail · $30.00"
+     },
+     "cargoButtons": [
+      "$10.00 allocated",
+      "$10.00 allocated",
+      "$10.00 allocated"
+     ],
+     "enabledControls": [
+      "bet-amount",
+      "half-bet",
+      "double-bet",
+      "cargo-easy",
+      "cargo-medium",
+      "cargo-hard",
+      "cargo-expert",
+      "sail-button",
+      "refill-button"
+     ],
+     "mode": "easy",
+     "bet": "30.00",
+     "focus": "",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "Saved session not found",
+     "toast": "New demo session started.",
+     "renders": 1,
+     "balances": [
+      "—",
+      "$1,000.00"
+     ],
+     "overflow": false
+    },
+    "log": [
+     "GET /api/session 200",
+     "POST /api/rounds 200",
+     "GET /api/session 200",
+     "GET /api/session 404",
+     "GET /api/session 200",
+     "POST /api/session 200",
+     "GET /api/session 200"
+    ]
+   }
+  }
+ ]
+}

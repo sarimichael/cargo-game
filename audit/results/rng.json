@@ -2,8 +2,8 @@
  "meta": {
   "script": "audit/validate-rng.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-08T05:02:36.554Z",
-  "runtimeMs": 9513
+  "generatedAt": "2026-10-08T19:43:28.206Z",
+  "runtimeMs": 9303
  },
  "summary": {
   "checks": 8,
@@ -20,7 +20,7 @@
    "pass": true,
    "compared": 14400,
    "mismatches": [],
-   "ms": 7411
+   "ms": 7234
   },
   {
    "id": "R02",
@@ -30,7 +30,7 @@
    "pass": true,
    "verified": 192,
    "failures": [],
-   "ms": 661
+   "ms": 654
   },
   {
    "id": "R03",
@@ -159,7 +159,7 @@
    "firstRejectedBound20Value": 4294967280,
    "pAnyRejectionPerDeck": 1.6065314412117004e-8,
    "note": "Natural rejections occur with probability ≈ 1.607e-8 per deck, so they cannot be observed in practical samples; equivalence on natural data (R01) plus this forced-input test cover the path.",
-   "ms": 1
+   "ms": 0
   },
   {
    "id": "R04",
@@ -221,7 +221,7 @@
    "prefixMultiplicity": [
     720
    ],
-   "ms": 35
+   "ms": 34
   },
   {
    "id": "R05",
@@ -244,7 +244,7 @@
    "newSeedSamples": 10000,
    "allFormatOk": true,
    "allUnique": true,
-   "ms": 28
+   "ms": 27
   },
   {
    "id": "R07",
@@ -255,7 +255,7 @@
    "tuples": 1000,
    "nested": 1000,
    "implication": "Safe only because each committed server seed is consumed by exactly one round with one locked difficulty (verified in validate-system S05/S06). Any future feature that lets the same seed/nonce be replayed under a different difficulty would leak information across difficulties.",
-   "ms": 943
+   "ms": 932
   },
   {
    "id": "R08",
@@ -266,7 +266,7 @@
    "activeSnapshots": 3369,
    "leaks": [],
    "settledRevealed": 400,
-   "ms": 401
+   "ms": 385
   }
  ]
 }

@@ -2,21 +2,21 @@
  "meta": {
   "script": "audit/measure-storage.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-08T05:03:22.599Z",
+  "generatedAt": "2026-10-08T19:44:12.649Z",
   "note": "Timings are medians of 15 requests on this machine and only indicative; the in-memory SQLite stand-in has no network latency."
  },
  "composition": {
   "rounds": 200,
-  "totalBytes": 434432,
-  "bytesPerRound": 2172,
+  "totalBytes": 434843,
+  "bytesPerRound": 2174,
   "shares": {
    "rounds": {
-    "bytes": 210496,
-    "share": 0.485
+    "bytes": 210521,
+    "share": 0.484
    },
    "ledger": {
-    "bytes": 146427,
-    "share": 0.337
+    "bytes": 146813,
+    "share": 0.338
    },
    "receipts": {
     "bytes": 77201,
@@ -28,11 +28,11 @@
    }
   },
   "receiptsPerRound": 3,
-  "ledgerEntriesPerRound": 3.84,
-  "exampleRoundBytes": 1013,
+  "ledgerEntriesPerRound": 3.85,
+  "exampleRoundBytes": 1014,
   "exampleRoundParts": {
    "events": 253,
-   "hazards": 26,
+   "hazards": 27,
    "containers": 292,
    "seedsAndProof": 143
   },
@@ -41,56 +41,56 @@
    "every ledger entry",
    "every idempotency receipt"
   ],
-  "snapshotResponseBytes": 5367
+  "snapshotResponseBytes": 5352
  },
  "latency": [
   {
    "adapter": "worker",
-   "sessionBytes": 19261,
-   "getSessionMs": 0.21,
-   "postActionMs": 0.29
+   "sessionBytes": 19279,
+   "getSessionMs": 0.25,
+   "postActionMs": 0.38
   },
   {
    "adapter": "worker",
-   "sessionBytes": 249868,
-   "getSessionMs": 1.06,
-   "postActionMs": 1.78
+   "sessionBytes": 249051,
+   "getSessionMs": 1.12,
+   "postActionMs": 1.76
   },
   {
    "adapter": "worker",
-   "sessionBytes": 999604,
-   "getSessionMs": 3.59,
-   "postActionMs": 6.58
+   "sessionBytes": 999499,
+   "getSessionMs": 3.71,
+   "postActionMs": 6.5
   },
   {
    "adapter": "worker",
-   "sessionBytes": 1899919,
-   "getSessionMs": 6.87,
-   "postActionMs": 12.11
+   "sessionBytes": 1899615,
+   "getSessionMs": 7.1,
+   "postActionMs": 13.41
   },
   {
    "adapter": "local",
-   "sessionBytes": 19261,
-   "getSessionMs": 0.85,
-   "postActionMs": 2.2
+   "sessionBytes": 19279,
+   "getSessionMs": 0.94,
+   "postActionMs": 1.85
   },
   {
    "adapter": "local",
-   "sessionBytes": 249868,
-   "getSessionMs": 0.85,
-   "postActionMs": 4.56
+   "sessionBytes": 249051,
+   "getSessionMs": 0.84,
+   "postActionMs": 4.28
   },
   {
    "adapter": "local",
-   "sessionBytes": 999604,
-   "getSessionMs": 0.93,
-   "postActionMs": 12.25
+   "sessionBytes": 999499,
+   "getSessionMs": 0.83,
+   "postActionMs": 12.09
   },
   {
    "adapter": "local",
-   "sessionBytes": 1899919,
-   "getSessionMs": 1.16,
-   "postActionMs": 22.29
+   "sessionBytes": 1899615,
+   "getSessionMs": 1.19,
+   "postActionMs": 23.82
   }
  ]
 }

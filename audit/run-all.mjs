@@ -22,8 +22,8 @@ const AUDITED_COMMIT = '25d5181fbd82abbd22aaea4b32f546e94f9c3602';
 const INTENDED_CHANGES = ['server/app.js', 'server/worker.js', 'server/protocol.js', 'public/math.js', 'public/fairness.js', 'docs/API.md', 'docs/FAIRNESS.md', 'README.md',
   // Phase 4A (CARGO_PHASE4A_REMEDIATION_REPORT.md): F07 folder lock, P3-02 client recovery, documentation.
   'server/lock.js', 'server/store.js', 'server/index.js', 'public/app.js', 'docs/INTEGRATION.md'];
-// Phase 4A.1 (CARGO_PHASE4A1_CORRECTION_REPORT.md), 4A.2 (CARGO_PHASE4A2_CORRECTION_REPORT.md) and 4A.3
-// (CARGO_PHASE4A3_CORRECTION_REPORT.md) changed only files already listed above.
+// Phase 4A.1 (CARGO_PHASE4A1_CORRECTION_REPORT.md), 4A.2 (CARGO_PHASE4A2_CORRECTION_REPORT.md), 4A.3
+// (CARGO_PHASE4A3_CORRECTION_REPORT.md) and 4A.4 (CARGO_PHASE4A4_CORRECTION_REPORT.md) changed only files already listed above.
 const MUST_BE_IDENTICAL = ['server/fairness.js', 'server/game.js', 'public/collision.js', 'db/schema.ts', '.openai/hosting.json'];
 // Payout tables, settlement engine, RNG, proof verifier and collision mapping must also be unchanged
 // since the Phase 4A base commit (they were last changed, deliberately, in phase 2).
@@ -59,7 +59,8 @@ run('Audit regression tests', ['--test', ...fs.readdirSync(path.join(root, 'audi
 // Optional real-browser check: runs only when Playwright can be resolved (PLAYWRIGHT_MODULE or a normal install).
 const playwright = process.env.PLAYWRIGHT_MODULE || (() => { try { return createRequire(import.meta.url).resolve('playwright'); } catch { return null; } })();
 const browserSteps = [['Real browser (desktop + phone)', 'audit/browser-check.mjs'], ['Real browser: state reliability M1–M3 (desktop + phone)', 'audit/browser-phase4a2.mjs'],
-  ['Real browser: state consistency M-01, M-02 (desktop + phone)', 'audit/browser-phase4a3.mjs']];
+  ['Real browser: state consistency M-01, M-02 (desktop + phone)', 'audit/browser-phase4a3.mjs'],
+  ['Real browser: confirmation ordering, local and Worker (desktop + phone)', 'audit/browser-phase4a4.mjs']];
 for (const [label, command] of browserSteps) if (playwright) run(label, [command]); else steps.push({ label, command, exitCode: null, skipped: 'Playwright not found; set PLAYWRIGHT_MODULE', optional: true });
 run('Existing: npm test', ['npm', 'test']);
 run('Existing: npm run test:hosted', ['npm', 'run', 'test:hosted']);

@@ -26,6 +26,7 @@ Node.js 24 or newer, as declared in `package.json`. Node 22.22 also runs everyth
 | `PLAYWRIGHT_MODULE=… node audit/browser-check.mjs` | Real Chromium against the local server, desktop and 390 px phone: UI verification, browser-loaded verifier, frozen table, layout → `results/browser.json`. Optional; needs Playwright | ~30 s |
 | `PLAYWRIGHT_MODULE=… node audit/browser-phase4a2.mjs [--root <checkout>]` | Real Chromium, desktop and phone: delayed reads vs newer actions (M1), a session vanishing during an action (M2), retrying an unconfirmed start (M3) → `results/browser-phase4a2.json`. `--root` runs another checkout's server and client (red baseline). Optional; needs Playwright | ~90 s |
 | `PLAYWRIGHT_MODULE=… node audit/browser-phase4a3.mjs [--root <checkout>]` | Real Chromium, desktop and phone, against the real server run in-process: a session genuinely removed from storage while reads are outstanding, including the newest (M-01), and a different session at an equal revision reached by the natural poll (M-02) → `results/browser-phase4a3.json`. Every assertion is recorded by name. `--root` runs another checkout's server and client (red baseline). Optional; needs Playwright | ~2.5 min |
+| `PLAYWRIGHT_MODULE=… node audit/browser-phase4a4.mjs [--root <checkout>] [--adapter local\|worker\|both]` | Real Chromium, desktop and phone, against the local server and the hosted Worker (on the harness's node:sqlite D1 stand-in, behind an HTTP bridge): a confirmation read overtaken by a newer unchanged poll (A → B → A), overlapping confirmations, and guards for replacements, unchanged polls and M-01 quarantine → `results/browser-phase4a4.json`. `--root` runs another checkout's server and client (red baseline). Optional; needs Playwright | ~4 min |
 
 \*Measured on a 4-vCPU container.
 
@@ -52,6 +53,7 @@ audit/
   browser-check.mjs       optional real-browser check (Playwright)
   browser-phase4a2.mjs    optional real-browser state-reliability checks, phase 4A.2 (Playwright)
   browser-phase4a3.mjs    optional real-browser state-consistency checks, phase 4A.3 (Playwright)
+  browser-phase4a4.mjs    optional real-browser confirmation-ordering checks, local and Worker, phase 4A.4 (Playwright)
   run-all.mjs             one-command reproduction plus manifest and production-change allowlist
   tests/*.test.js         node:test regression tests:
                             remediation.test.js   protective tests for defects fixed in phase 2
@@ -60,6 +62,7 @@ audit/
                                                   input fuzz, session lifecycle, configuration versions
                             restart.test.js       phase 3: real server processes killed with SIGKILL; F07
                             phase4a3.test.js      phase 4A.3: server premises of the browser's equal-revision check
+                                                  (coverage rule independent of voyage length since 4A.4)
   results/                committed outputs of the run recorded in the reports
 ```
 

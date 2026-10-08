@@ -6,12 +6,24 @@
 **Branch:** `claude/cargo-phase4a3-browser-consistency`, created from that exact SHA
 **Status:** local commit only. Not pushed, merged or deployed, and no pull request. `main` and every earlier branch are unchanged. The live private site was not touched, and the phone link still serves the previously published version.
 
+> **Correction notice (Phase 4A.4, 8 October 2026, branch `claude/cargo-phase4a4-ordering-correction`).** The independent
+> Codex review of `d157909` returned **NO-GO**; this checkpoint was **not** accepted. M-01 was confirmed fixed and the
+> original M-02 scenario passed, but two claims here were broader than the evidence:
+> - **M-02 ordering.** An unchanged poll was accepted without advancing `appliedTicket`. An older confirmation read
+>   could therefore still be applied after it and display another session (A → B → A, reproduced by Codex and again
+>   in CARGO_PHASE4A4_CORRECTION_REPORT.md, local server and Worker, desktop and phone).
+> - **Test determinism.** The `compared >= 10` assertion in `audit/tests/phase4a3.test.js` depended on random voyage
+>   length. It failed 6 times in 1,000 runs of this commit's test file, although every equality assertion held.
+>
+> Codex also reproduced a pre-existing session-start timeout classification defect, which is out of scope and unchanged.
+> The original text is kept; the affected sentences are marked **[4A.4]**.
+
 ## 1. Summary
 
 | ID | Finding (independent review, NO-GO for 4A.2) | Phase 4A.3 status |
 | --- | --- | --- |
 | **M-01** | Outstanding reads could resurrect a quarantined session | **FIXED** in `public/app.js` (one statement). Reproduced on `9937de1` with a genuine removal from server storage: after the 404, a late success brought back **$970.00**, the round, "Voyage in progress", an enabled **Sail**, and removed the recovery control. Verified fixed on desktop and phone. |
-| **M-02** | A different session with an equal revision was ignored by the poll | **FIXED** in `public/app.js` (one helper, one condition). Reproduced on `9937de1`: with the cookie switched from A ($970.00, revision 1) to B ($997.00, revision 1), the natural poll kept A's wallet and round, and **Sail** failed with "Voyage not found.". Verified fixed on desktop and phone. |
+| **M-02** | A different session with an equal revision was ignored by the poll | **FIXED** in `public/app.js` (one helper, one condition). **[4A.4] Overbroad: the reproduced scenario passed, but a delayed confirmation read could still display the other session after a newer unchanged poll (§5.2).** Reproduced on `9937de1`: with the cookie switched from A ($970.00, revision 1) to B ($997.00, revision 1), the natural poll kept A's wallet and round, and **Sail** failed with "Voyage not found.". Verified fixed on desktop and phone. |
 
 **Not changed:** every server file, the API contract, the database schema, payouts, settlement, RNG, the proof verifier, wallet calculations, collision mapping, `package*.json`, the build and the hosting manifest. `public/app.js` is the only production code changed. No session identifier, cookie, credential or seed is exposed. Both fixes are client-side; neither is server-side idempotency (R5 remains deferred).
 
@@ -118,7 +130,7 @@ The complete production diff is 9 insertions and 5 deletions. Three of the chang
   2. `commit()` with `replaced`;
   3. per-session view state reset;
   4. the notice "This browser is now using a different demo session. Its current balance is shown."
-- **The poll needed no change.** It already applies `read.replaced`.
+- **The poll needed no change.** It already applies `read.replaced`. **[4A.4] Incorrect: the poll accepted an unchanged read without advancing `appliedTicket`, so an older pending confirmation stayed eligible and could later be applied.**
 - **What is compared.** `session`, `round` and `history`: everything the page displays or sends back (revision, seed commitment, round ID).
   - `replayed` is excluded because action responses may add it.
   - `config` is excluded because it is not displayed.
@@ -166,7 +178,7 @@ The suite runs the real `server/app.js` and `server/store.js` in-process on a te
 **Validity checks.** Each scenario that uses holds asserts that only the scripted reads were sent in the window: no natural poll interfered, and the window stayed under 11.5 s. The poll scenario instead asserts exactly two reads, its own and one poll. A violation fails the scenario; it is not treated as a pass.
 
 **`audit/tests/phase4a3.test.js`: 5 `node:test` tests.** The extracted `sameState` expression is checked on both adapters:
-- action responses, a replay and repeated reads of one session compare equal (≥10 states per adapter);
+- action responses, a replay and repeated reads of one session compare equal (≥10 states per adapter); **[4A.4] the count depended on random voyage length and failed 6 times in 1,000 runs; the rule now requires each kind of change instead;**
 - two different sessions at revision 0 and at revision 1 compare different.
 
 ### 6.3 Red → green
@@ -196,7 +208,7 @@ The suite runs the real `server/app.js` and `server/store.js` in-process on a te
 **Environmental anomalies:**
 - **`npm ci` under npm 11.19.0** printed `install-scripts` warnings: esbuild's `postinstall` was not run. The build completed; the platform binary package `@esbuild/linux-x64` was installed. `package.json` and `package-lock.json` are unchanged.
 - **Timing.** The suite's timing windows are guarded by validity checks; none was violated in any recorded run. One timing problem was found and fixed before those runs. In the first exploratory baseline run, the poll guard held a read for about 12 s, past the page's own 7-second request timeout. That was a test-design error, fixed as described in §10.
-- **Nondeterminism.** No test failed nondeterministically in any run.
+- **Nondeterminism.** No test failed nondeterministically in any run. **[4A.4] True of the runs recorded here, but the `compared >= 10` assertion is nondeterministic (measured failure rate 0.6%).**
 
 ### 6.5 Protected files
 
@@ -214,7 +226,7 @@ The suite runs the real `server/app.js` and `server/store.js` in-process on a te
 | --- | --- | --- |
 | 1 | Old async responses cannot restore state invalidated by quarantine | §5.1 ticket argument; M-01 newest read, stale read during recovery, delayed failures, delayed poll, removal via action (14/14) |
 | 2 | New, legitimate recovery reads remain eligible | **Try again** loads B after quarantine; keyboard reopen and explicit start in every M-01 scenario; 4A.2 M3 scenarios (read after an unknown start) |
-| 3 | Accepted authoritative reads synchronise the correct wallet and round | M-02 equal revision (poll); 4A.2 "legitimate replacement" (lower revision); M-02 guard (same-session refill) |
+| 3 | Accepted authoritative reads synchronise the correct wallet and round | M-02 equal revision (poll); 4A.2 "legitimate replacement" (lower revision); M-02 guard (same-session refill). **[4A.4] Not held: a stale confirmation could overwrite a newer accepted read** |
 | 4 | Equal revisions do not conceal session replacement | M-02 equal revision, desktop and phone; `phase4a3.test.js` (sessions at equal revisions compare different) |
 | 5 | An older read cannot overwrite a newer acknowledged action | 4A.2 M1 delayed read and delayed poll (12/12); the ordering rule is unchanged |
 | 6 | Quarantined sessions cannot execute play-money actions | No enabled control in every quarantine snapshot. `action()` requires `data`. In all 10 M-01 runs, the request log shows no POST between the 404 and the player's explicit recovery |

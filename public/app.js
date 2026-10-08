@@ -12,8 +12,10 @@ let data=null,selectedMode='easy',busy=false,connected=true,hiddenRoundId=null,c
 // startUnconfirmed: a start failed without a server answer, so it may have succeeded. Starting again is blocked
 // until a completed read shows this browser still has no session. This is a client safeguard, not idempotency.
 // Response ordering: every session request takes a ticket. A response is used only if no later response has been
-// applied and no action or start began after it was sent, so a delayed read never replaces newer state. quarantine()
-// takes a ticket too, so no read sent before the server reported the session missing can bring it back.
+// accepted and no action or start began after it was sent, so a delayed read never replaces newer state. A read that
+// arrives in order is accepted even when it changes nothing on screen, so it still supersedes older reads, including a
+// pending confirmation. quarantine() takes a ticket too, so no read sent before the server reported the session missing
+// can bring it back.
 let ticket=0,appliedTicket=0,actionTicket=0;
 const superseded=t=>t<appliedTicket||t<actionTicket;
 // What the page shows of a snapshot. Action responses may add `replayed`; `config` is not displayed.
@@ -100,17 +102,22 @@ async function readSession(confirming=false){
  try{next=await api('/api/session');}
  catch(e){if(superseded(t))return null;if(e.code==='SESSION_NOT_FOUND')sessionNotFound();throw e;}
  if(superseded(t))return null;
+ appliedTicket=t; // accepted, whether or not the caller re-renders
  const replaced=!!data&&(next.session.revision<data.session.revision||next.session.revision===data.session.revision&&!sameState(next,data));
  if(replaced&&!confirming)return readSession(true);
  return {t,next,replaced};
 }
+// Applies an accepted read. Returns false if a newer response was accepted since readSession() checked this one: the
+// caller resumes after at least one await, so the check is repeated where the state is replaced.
 function commit({t,next,replaced}){
+ if(superseded(t))return false;
  appliedTicket=t;data=next;recovery=null;startUnconfirmed=false;connected=true;
  if(!clientSeed)clientSeed=localStorage.getItem('cargo-client-seed')||data.session.clientSeed;
  if(replaced){hiddenRoundId=null;toast('This browser is now using a different demo session. Its current balance is shown.');}
  const r=visibleRound();if(r)selectedMode=r.difficulty;
+ return true;
 }
-async function sync(){const read=await readSession();if(!read)return false;commit(read);render();return true;}
+async function sync(){const read=await readSession();if(!read||!commit(read))return false;render();return true;}
 // The saved session no longer exists on the server. Explain it and wait for an explicit choice:
 // nothing is created or funded automatically.
 function sessionNotFound(){
@@ -242,7 +249,7 @@ $('refill-button').addEventListener('click',()=>{
 function downloadRound(round){if(!round||round.status!=='settled')return;const url=URL.createObjectURL(new Blob([JSON.stringify(round,null,2)],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='cargo-round-'+round.id+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 $('export-round').addEventListener('click',()=>downloadRound(visibleRound()));
 document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&!busy&&!recovery)try{await sync();}catch{offline();}});
-setInterval(async()=>{if(!busy&&!document.hidden&&data&&!recovery)try{const read=await readSession();if(read&&(read.replaced||read.next.session.revision!==data.session.revision||!connected)){commit(read);render();if(!read.replaced)toast('Voyage synchronized.');}}catch{offline();}},12000);
+setInterval(async()=>{if(!busy&&!document.hidden&&data&&!recovery)try{const read=await readSession();if(read&&(read.replaced||read.next.session.revision!==data.session.revision||!connected)&&commit(read)){render();if(!read.replaced)toast('Voyage synchronized.');}}catch{offline();}},12000);
 document.body.classList.add('loading');sync().catch(e=>{offline();if(e.code!=='SESSION_NOT_FOUND')toast('Could not connect. Please refresh the page in a moment.',true);});
 
 // Structured access uses the same visible, play-money actions.
