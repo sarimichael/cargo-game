@@ -12,9 +12,12 @@ let data=null,selectedMode='easy',busy=false,connected=true,hiddenRoundId=null,c
 // startUnconfirmed: a start failed without a server answer, so it may have succeeded. Starting again is blocked
 // until a completed read shows this browser still has no session. This is a client safeguard, not idempotency.
 // Response ordering: every session request takes a ticket. A response is used only if no later response has been
-// applied and no action or start began after it was sent, so a delayed read never replaces newer state.
+// applied and no action or start began after it was sent, so a delayed read never replaces newer state. quarantine()
+// takes a ticket too, so no read sent before the server reported the session missing can bring it back.
 let ticket=0,appliedTicket=0,actionTicket=0;
 const superseded=t=>t<appliedTicket||t<actionTicket;
+// What the page shows of a snapshot. Action responses may add `replayed`; `config` is not displayed.
+const sameState=(a,b)=>JSON.stringify([a.session,a.round,a.history])===JSON.stringify([b.session,b.round,b.history]);
 const scene=new OceanScene($('ocean'));
 let soundEnabled=localStorage.getItem('cargo-sound')==='on',audio=null;
 function sound(type){
@@ -89,14 +92,15 @@ async function api(path,options={}){
  if(!response.ok){const error=new Error(result.error||'The game could not complete this action.');error.code=result.code;throw error;}return result;
 }
 // Reads GET /api/session. Resolves to null when the response was superseded (it is then ignored, success or failure).
-// Revisions of one session only increase, so an in-order read with a lower revision means this browser's cookie now
-// names a different session (for example one started in another tab). That is confirmed by a second read first.
+// Every change to a session increases its revision, so an in-order read with a lower revision, or with an equal
+// revision but different contents, means this browser's cookie now names a different session (for example one
+// started in another tab). Snapshots carry no session identifier, so contents are compared. A second read confirms it.
 async function readSession(confirming=false){
  const t=++ticket;let next;
  try{next=await api('/api/session');}
  catch(e){if(superseded(t))return null;if(e.code==='SESSION_NOT_FOUND')sessionNotFound();throw e;}
  if(superseded(t))return null;
- const replaced=!!data&&next.session.revision<data.session.revision;
+ const replaced=!!data&&(next.session.revision<data.session.revision||next.session.revision===data.session.revision&&!sameState(next,data));
  if(replaced&&!confirming)return readSession(true);
  return {t,next,replaced};
 }
@@ -118,7 +122,7 @@ function sessionNotFound(){
 // Drop the vanished session's snapshot so nothing (render(), a delayed read) can show its balance again, and lock
 // the controls that act on it. render() restores them once a session is loaded.
 function quarantine(){
- data=null;hiddenRoundId=null;appliedTicket=ticket; // reads already in flight carry the old session
+ data=null;hiddenRoundId=null;appliedTicket=++ticket; // discards every read already sent, the newest included: they carry the old session
  $('balance').textContent='—';$('secured').textContent='—';$('onboard').textContent='—'; // no wallet exists until the player starts one
  for(const id of ['bet-amount','half-bet','double-bet','refill-button','sail-button','collect-all'])$(id).disabled=true;
  document.querySelectorAll('#difficulty button,[data-collect]').forEach(b=>b.disabled=true);

@@ -12,7 +12,7 @@
    "seedDerivation": "serverSeed=SHA256(\"cargo-audit-v1|sim|<mode>|<i>\") hex; clientSeed=\"audit-sim-<mode>\"; nonce=i",
    "note": "Lag-1 statistics and adjacent repeats are computed within chunks only; chunk boundaries are excluded."
   },
-  "generatedAt": "2026-10-08T03:34:45.473Z",
+  "generatedAt": "2026-10-08T05:02:36.602Z",
   "caveats": [
    "Stops within a mode reuse the same sampled routes, so per-stop statistics are correlated, not independent tests.",
    "Rare final-stop tails are under-powered; analytical results (validate-math.mjs) govern them.",

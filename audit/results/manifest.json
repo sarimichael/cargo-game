@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-08T03:37:35.219Z",
+ "generatedAt": "2026-10-08T05:07:07.359Z",
  "node": "v24.21.0",
  "platform": "linux-x64",
- "gitHead": "806a93f250eac975b0aa8a76b2de1fd95ffdeff4",
- "gitBranch": "claude/cargo-phase4a2-browser-reliability",
+ "gitHead": "9937de16a55c14f78111a31e48161ac792203e58",
+ "gitBranch": "claude/cargo-phase4a3-browser-consistency",
  "auditedCommit": "25d5181fbd82abbd22aaea4b32f546e94f9c3602",
  "productionIntegrity": {
   "filesCompared": 42,
@@ -62,13 +62,13 @@
    "label": "Exact mathematics",
    "command": "audit/validate-math.mjs",
    "exitCode": 0,
-   "seconds": 3.4,
+   "seconds": 2.6,
    "tail": [
-    "PASS M09 Joint three-container Bellman optimum equals the factorised optimum (53 ms)",
-    "PASS M10 Strategy comparison at a $30 wager ($10 per container) (1 ms)",
-    "PASS M11 Maximum exposure and final-stop probabilities (0 ms)",
+    "PASS M09 Joint three-container Bellman optimum equals the factorised optimum (37 ms)",
+    "PASS M10 Strategy comparison at a $30 wager ($10 per container) (0 ms)",
+    "PASS M11 Maximum exposure and final-stop probabilities (1 ms)",
     "PASS M12 Theoretical variance of return/wager at the final stop (equal stakes, no rounding) (0 ms)",
-    "PASS M13 Rounding effect bound (1 ms)",
+    "PASS M13 Rounding effect bound (0 ms)",
     "13/13 math checks passed → /home/user/cargo-game/audit/results/math.json"
    ],
    "optional": false
@@ -89,13 +89,13 @@
    "label": "RNG structure",
    "command": "audit/validate-rng.mjs",
    "exitCode": 0,
-   "seconds": 13.5,
+   "seconds": 9.6,
    "tail": [
-    "PASS R04 Fisher–Yates form is a bijection between draw sequences and permutations (47 ms)",
+    "PASS R04 Fisher–Yates form is a bijection between draw sequences and permutations (35 ms)",
     "PASS R05 HMAC message serialization is canonical and injective over stress inputs (0 ms)",
-    "PASS R06 Seed commitment is SHA-256 over raw bytes; newSeed() emits 64 lowercase hex (40 ms)",
-    "PASS R07 Difficulty is not part of the HMAC message: decks are nested across difficulties (1346 ms)",
-    "PASS R08 Active-round responses never contain the server seed or hazard decks (658 ms)",
+    "PASS R06 Seed commitment is SHA-256 over raw bytes; newSeed() emits 64 lowercase hex (28 ms)",
+    "PASS R07 Difficulty is not part of the HMAC message: decks are nested across difficulties (943 ms)",
+    "PASS R08 Active-round responses never contain the server seed or hazard decks (401 ms)",
     "8/8 RNG checks passed; 108 known-answer vectors → /home/user/cargo-game/audit/results/rng.json"
    ],
    "optional": false
@@ -104,7 +104,7 @@
    "label": "Simulation statistics",
    "command": "audit/analyze-simulation.mjs",
    "exitCode": 0,
-   "seconds": 0.1,
+   "seconds": 0,
    "tail": [
     "analysed 107 p-values; min p=5.320e-3 (hard survival stop 1); Bonferroni rejections: 0; invalid decks: 0; reference mismatches: 0 → /home/user/cargo-game/audit/results/simulation.json"
    ],
@@ -114,13 +114,13 @@
    "label": "System / adversarial",
    "command": "audit/validate-system.mjs",
    "exitCode": 0,
-   "seconds": 42,
+   "seconds": 31.3,
    "tail": [
     "PASS S17 [remediated] F07 fixed: a second Store on the same directory cannot overwrite an acknowledged debit (2 ms)",
-    "PASS S18 [remediated] F08 fixed: verifyRound() rejects altered metadata and malformed structure (17 ms)",
+    "PASS S18 [remediated] F08 fixed: verifyRound() rejects altered metadata and malformed structure (16 ms)",
     "PASS S19 [defect] F11: a deployment that changes the payout table alters settlement of an accepted wager (8 ms)",
-    "PASS S20 [remediated] N01 fixed: UTF-8 characters split across request body chunks are decoded intact; invalid UTF-8 is refused (73 ms)",
-    "PASS S21 [observation] \"Refill\" sets the balance to $1,000 even when the balance is higher (18 ms)",
+    "PASS S20 [remediated] N01 fixed: UTF-8 characters split across request body chunks are decoded intact; invalid UTF-8 is refused (70 ms)",
+    "PASS S21 [observation] \"Refill\" sets the balance to $1,000 even when the balance is higher (14 ms)",
     "21/21 system checks passed → /home/user/cargo-game/audit/results/system.json"
    ],
    "optional": false
@@ -129,9 +129,9 @@
    "label": "Storage growth and request cost (F03)",
    "command": "audit/measure-storage.mjs",
    "exitCode": 0,
-   "seconds": 20.4,
+   "seconds": 14.7,
    "tail": [
-    "composition: 2174 B/round (rounds 0.484, receipts 0.178, ledger 0.338); latency rows: 8 → /home/user/cargo-game/audit/results/storage.json"
+    "composition: 2172 B/round (rounds 0.485, receipts 0.178, ledger 0.337); latency rows: 8 → /home/user/cargo-game/audit/results/storage.json"
    ],
    "optional": false
   },
@@ -147,16 +147,16 @@
   },
   {
    "label": "Audit regression tests",
-   "command": "--test audit/tests/adapters.test.js audit/tests/known-defects.test.js audit/tests/math.test.js audit/tests/phase4a.test.js audit/tests/phase4a1.test.js audit/tests/reliability.test.js audit/tests/remediation.test.js audit/tests/restart.test.js audit/tests/rng.test.js audit/tests/statemachine.test.js",
+   "command": "--test audit/tests/adapters.test.js audit/tests/known-defects.test.js audit/tests/math.test.js audit/tests/phase4a.test.js audit/tests/phase4a1.test.js audit/tests/phase4a3.test.js audit/tests/reliability.test.js audit/tests/remediation.test.js audit/tests/restart.test.js audit/tests/rng.test.js audit/tests/statemachine.test.js",
    "exitCode": 0,
-   "seconds": 44.8,
+   "seconds": 43.9,
    "tail": [
-    "ℹ pass 111",
+    "ℹ pass 116",
     "ℹ fail 0",
     "ℹ cancelled 0",
     "ℹ skipped 0",
     "ℹ todo 0",
-    "ℹ duration_ms 44756.350929"
+    "ℹ duration_ms 43865.375977"
    ],
    "optional": false
   },
@@ -164,7 +164,7 @@
    "label": "Real browser (desktop + phone)",
    "command": "audit/browser-check.mjs",
    "exitCode": 0,
-   "seconds": 11,
+   "seconds": 10.5,
    "tail": [
     "PASS browser check (desktop:ok, phone:ok, desktop-missing-session:ok, phone-missing-session:ok, desktop-recovery-edge-cases:ok, phone-recovery-edge-cases:ok) → /home/user/cargo-game/audit/results/browser.json"
    ],
@@ -174,7 +174,7 @@
    "label": "Real browser: state reliability M1–M3 (desktop + phone)",
    "command": "audit/browser-phase4a2.mjs",
    "exitCode": 0,
-   "seconds": 40.9,
+   "seconds": 41.2,
    "tail": [
     "ok   M1 delayed poll after a newer action (phone)",
     "ok   M1 legitimate session replacement is shown (phone)",
@@ -186,17 +186,32 @@
    "optional": false
   },
   {
+   "label": "Real browser: state consistency M-01, M-02 (desktop + phone)",
+   "command": "audit/browser-phase4a3.mjs",
+   "exitCode": 0,
+   "seconds": 118.6,
+   "tail": [
+    "ok   M-01 delayed failures after quarantine change nothing (phone)",
+    "ok   M-01 delayed poll response after quarantine (phone)",
+    "ok   M-01 genuine removal reported by an action (phone)",
+    "ok   M-02 equal-revision session replacement through the natural poll (phone)",
+    "ok   M-02 same-session polling keeps the page and the player's input (phone)",
+    "PASS phase 4A.3 browser checks: 14/14 → /home/user/cargo-game/audit/results/browser-phase4a3.json"
+   ],
+   "optional": false
+  },
+  {
    "label": "Existing: npm test",
    "command": "npm test",
    "exitCode": 0,
-   "seconds": 0.4,
+   "seconds": 0.5,
    "tail": [
     "ℹ pass 12",
     "ℹ fail 0",
     "ℹ cancelled 0",
     "ℹ skipped 0",
     "ℹ todo 0",
-    "ℹ duration_ms 231.271662"
+    "ℹ duration_ms 229.884787"
    ],
    "optional": false
   },
@@ -217,7 +232,7 @@
    "label": "Existing: npm run test:collisions",
    "command": "npm run test:collisions",
    "exitCode": 0,
-   "seconds": 0.2,
+   "seconds": 0.1,
    "tail": [
     "> cargo-game@1.1.0 test:collisions",
     "> node build/check-collision.mjs",
@@ -229,10 +244,11 @@
  ],
  "allPassed": true,
  "sha256": {
-  "audit/README.md": "0bf820b8c3dea884250c01f34f8ac63e462c0dca590031c34076cb857aae8be4",
+  "audit/README.md": "0727571873063e40c245b10383fa706d0863dc94b7b59185d0eb0258087355b0",
   "audit/analyze-simulation.mjs": "05a8172edad08e34fc17479266f4c36cff4b9b5cc1aee924b0a3e390337750f5",
   "audit/browser-check.mjs": "88f3058013ddfdb751d991b650e2785ca062b0c29d85f042b827c8978c8cdbff",
   "audit/browser-phase4a2.mjs": "42db6c9db075dc639d2d0d21cdb9b78805125e3251be94eb0aaa54cb8804b6da",
+  "audit/browser-phase4a3.mjs": "d20f2c01cb11070dea7a5ee2a6b7e638e4404dfa0e637a4660385dc8bb0e0f8d",
   "audit/fixtures/lock-contender.mjs": "d9519f6bd8a66ac809b5d9ef6e57c8adcd355d1e46488dbc85750dfb4c4dbc27",
   "audit/fixtures/lock-crash.mjs": "fc0fa9f40518a24bfb1c7f38b1a8416a16178310e513f46a425d576affcd5680",
   "audit/lib/engine-variant.mjs": "b1b6c74a2bc404a1872b337aab189e8d8e7e2287adca8403e11841de7bfcaf5e",
@@ -242,24 +258,26 @@
   "audit/lib/seeds.mjs": "cca96294ab18e2794839240d8e0d2108dc0fc2c393368505f9bae565980f54af",
   "audit/lib/stats.mjs": "c2ae783ce1ff28b48ddcd98075b265b6fe095ea1414d0fb1eb787396be48cc73",
   "audit/measure-storage.mjs": "f1f0ec018cbd4dc967b2fa12444a5f53769771fd90a2d4f8078cf40185bae1be",
-  "audit/results/browser-phase4a2.json": "20b1072228675f667aaa75e5a3a974e909dc1cac0acae3684eee01bee990c2c5",
-  "audit/results/browser.json": "2ddc2cff14380021f306d9bc532359794f424fe78b63e399ff8357d71c9e123d",
-  "audit/results/claims.json": "232cf3c4b23fe93690f31077fd7fa4cb16480aa54252fec95fe9e64615c25cdc",
+  "audit/results/browser-phase4a2.json": "6c32e7d1111a746654b651245829c41c7d46e5f1ecfe1459d4144179532a6e83",
+  "audit/results/browser-phase4a3.json": "19ae303b66325813205a8222c0be065c380f54ce786691e0911868d6264124ac",
+  "audit/results/browser.json": "65d532a01428ccb2c1ecbaaaf6b50d8be50d037fc2ffecaba15677806bb4bca4",
+  "audit/results/claims.json": "1ba0d4f33e26f7fb9c152146f73e2925d84ae6485709067a4dbb0656d1464a7f",
   "audit/results/lock-stress-node22.json": "539a1a3adaf44c2e38a646bd16d2a2d643eb273c03dff301e0099cc58986eaec",
   "audit/results/lock-stress-node24.json": "f859a96c5c0c57134ac8e1bcb67ab08ad93bf5e6e2ea6d8e93f3c3aca73e64de",
   "audit/results/lock-stress-phase4a-base-12.json": "8beda7eab48b9148de32ba723062d7921186161dcb646c1ee6267446f45b8342",
   "audit/results/lock-stress-phase4a-base-3.json": "4c21892c6989042cc5608374f77eb1f01a8f70b30b24fc628a1462713e03a85d",
-  "audit/results/lock-stress.json": "3e2672b7976f08562d9d7a7d2e408798c883485b29201540440d75eeb3189299",
-  "audit/results/math.json": "8f24ab883e1ad76eba03f4170be032f6b9e708c3062db6266eb43ace950d7cad",
+  "audit/results/lock-stress.json": "71e87a55f03a6e4e0abc697d05c1451a4e75055ddb10481328468be1bd99f891",
+  "audit/results/math.json": "9b4c616a80413138eed1c1080c8a83a2b13c5481eca9aaee710bc1048234e269",
   "audit/results/phase4a1-red-baseline.txt": "cf92d4bfad5730e79b180e472b07a04dba9199eac89b1ccc1116a1f4f4bc2f30",
   "audit/results/phase4a2-red-baseline.json": "c33def6110c531bad3e7afa616389c24dad894b0d9b5dc3006dfb3176cff5e18",
+  "audit/results/phase4a3-red-baseline.json": "5b9d37d83776e9085e5714ce11e31c05c0b5b6ad3c66594ced5a719f4acbd3bb",
   "audit/results/rng-vectors.json": "2baf946eeecd03bc23772c66673c205da630fa2a205d18c7c58f98fe4570b27b",
-  "audit/results/rng.json": "47dc74c1f7da9c1f8df6d91f5b568010dc3911158da990bae171995bb6d4be90",
+  "audit/results/rng.json": "3aa2df3c497de2ff4f79b0e23b4a8a83d48c4bbe4faae880b8afbf4461c052f4",
   "audit/results/simulation-raw.json": "4b30b40d4982b49fe3af070d86a634046a8162f87fa89699cfb305be8717c927",
-  "audit/results/simulation.json": "8195807c5098455681177f3441aea3815e1e2c459c8a5ce01325e722a6ccbf26",
-  "audit/results/storage.json": "545b2752961d12f4d935254e14fc4423b32b3a185e3fd5e8ddc0ddb403278b11",
-  "audit/results/system.json": "02a0ad6676d54ff32406d8476e5c4b15c5f3dd0a587bb144001147bab87b9085",
-  "audit/run-all.mjs": "fa0e25421b17d517b879348f57e8539f56316c92f721e4f252245957a818ac60",
+  "audit/results/simulation.json": "fec63b6dea727666e410a80279dcd51d147ac4f8e8b00d109eefc6c1b68e8dae",
+  "audit/results/storage.json": "43fa0ce3f475a323391d70ae965bfa035d2144c8e27537283a666bd0da5798c5",
+  "audit/results/system.json": "586324ba9036e682dc455d150fe6840d8846fe6cd148e54c55a0c36cbfe6aae2",
+  "audit/run-all.mjs": "fef961e6eefb12897d6b0da174476ef9becc078534a76960f6ac77956d0e9e79",
   "audit/simulate.mjs": "c177c0c7b4416279151b771c138ec5e39333cd64070c0b22bee5adc08d233b88",
   "audit/stress-lock.mjs": "e94dbf343eb57792e946d4fada88c16f228c7368f60f6d8b8ca4b062d6055b83",
   "audit/tests/adapters.test.js": "03591712bfc2fe392629415419af2c2412e6ef3c795077319e749581031a0e52",
@@ -267,6 +285,7 @@
   "audit/tests/math.test.js": "1e6601988072f9fe6c8f466d260ae82c0226045a2aece43da2fdc9613597648b",
   "audit/tests/phase4a.test.js": "41abd63b67a73903d50f184d042d6bbda59d5bc83147abc846afc6c99ba70504",
   "audit/tests/phase4a1.test.js": "6c94814ddb5f1e33970f105fd314e42272a68a1982ec65b1af4d30040ad16143",
+  "audit/tests/phase4a3.test.js": "ce373a7dc85550c0d6068174058b70b43fd38be960271e33453371da69b0ce4a",
   "audit/tests/reliability.test.js": "39452f80e3acbce7a8ab533ac9aba8436346c946f3b3be74c20152c05b9b46c0",
   "audit/tests/remediation.test.js": "813fd005ca52c436069258d84a6a20d6a7893cfcd3da19ec8c2e5a1b86c98f8e",
   "audit/tests/restart.test.js": "c1da4b760461131a056f10a03357d1d14d019a58be246cbae311a2c16762520a",

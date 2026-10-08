@@ -4,12 +4,24 @@
 **Branch:** `claude/cargo-phase4a2-browser-reliability`, created from `806a93f250eac975b0aa8a76b2de1fd95ffdeff4` (`claude/cargo-phase4a1-corrections`).
 **Status:** local commit only. Not pushed, merged or deployed, and no pull request. `main` and all earlier branches are unchanged. The live private site was not touched.
 
+> **Correction notice (Phase 4A.3, 8 October 2026, branch `claude/cargo-phase4a3-browser-consistency`).** An independent
+> review reproduced two defects that this report's claims did not cover. Both are reproduced again against `9937de1` in
+> CARGO_PHASE4A3_CORRECTION_REPORT.md.
+> - **Quarantine:** `appliedTicket = ticket` discarded every read in flight *except the most recently sent one*. A late
+>   success for that read restored the removed session's balance, round, status and enabled controls, and removed the
+>   recovery control.
+> - **Equal-revision replacement:** the revision guard recognised a different session only by a *lower* revision. The
+>   12-second poll ignored a different session whose revision was equal to the one on screen, so the old wallet and
+>   round stayed displayed.
+>
+> The original text is kept; the affected sentences are marked **[4A.3]**.
+
 ## 1. Summary
 
 | ID | Finding | Phase 4A.2 status |
 | --- | --- | --- |
-| **M1** | A delayed `GET /api/session` response overwrote a newer acknowledged action in browser memory | **FIXED** in `public/app.js`. Responses are ordered by request tickets, and a revision guard covers session replacement. Reproduced on 4A.1 (stale $1,000.00 shown after a $970.00 bet) and verified fixed in Chromium on desktop and phone. |
-| **M2** | A loaded session that disappeared during an action had its old balance restored by `render()`, and unrelated input removed the recovery control | **FIXED** in `public/app.js`. The vanished session is quarantined and its controls are locked. The recovery control survives dialog closure, input and focus events, and works from the keyboard. Nothing is created automatically. Verified on desktop and phone. |
+| **M1** | A delayed `GET /api/session` response overwrote a newer acknowledged action in browser memory | **FIXED** in `public/app.js`. Responses are ordered by request tickets, and a revision guard covers session replacement. **[4A.3] Only partly: the guard detected a replacement only by a lower revision, and the poll ignored one with an equal revision.** Reproduced on 4A.1 (stale $1,000.00 shown after a $970.00 bet) and verified fixed in Chromium on desktop and phone. |
+| **M2** | A loaded session that disappeared during an action had its old balance restored by `render()`, and unrelated input removed the recovery control | **FIXED** in `public/app.js`. The vanished session is quarantined and its controls are locked. The recovery control survives dialog closure, input and focus events, and works from the keyboard. Nothing is created automatically. Verified on desktop and phone. **[4A.3] Incomplete: the most recently sent read was not discarded, and its late success restored the old balance and removed the recovery control.** |
 | **M3** | Documentation claimed the browser reads before every second start; it did not | **Documentation corrected.** A conservative client-side safeguard was added: after a start with an unknown outcome, another start needs a completed read first. This is **not idempotency**, and R5 server-side idempotency remains **deferred**. The database schema and the Worker session-creation contract are unchanged. |
 | **L1** | `Store` serves reads before acquisition and after release | **Investigated, not changed. Approval requested (§6).** The production server is not exposed. A correct fix changes the `Store` API used by seven direct callers, so it is broader than this phase allows. The behaviour is characterised by two new tests. |
 
@@ -61,7 +73,7 @@ node audit/browser-phase4a2.mjs --root <scratch>/base-4a1 --out audit/results/ph
 - **Tickets.** Every session request takes a number from one counter (`ticket`): each read, each action and each explicit start. Two values are kept: `appliedTicket`, for the response currently shown, and `actionTicket`, for the latest action or start.
 - **The ordering rule.** A read is *superseded* if `t < appliedTicket || t < actionTicket`. A superseded response is ignored completely, success and failure alike. It never changes `data`, never calls `offline()` and never opens a recovery dialog.
 - **Why this is enough within one tab.** A read is sent only when no action request is outstanding: the load, visibility and poll paths check `!busy`, and the read after a failed action is sent once that action's request has settled. Any action that starts afterwards supersedes it. So an applied read was always sent after every earlier action's response had arrived, and the server had already processed those actions. Ignoring a response only costs freshness; the next read or poll restores it.
-- **Revision guard.** Within one session, revisions only increase. An *in-order* read with a lower revision than the one shown therefore means the cookie now names a different session, for example one started in another tab. The client sends **one confirmation read** before showing it. If the confirmation also has the lower revision, the replacement is accepted, per-session view state is reset, and the player is told: "This browser is now using a different demo session. Its current balance is shown." The poll uses the same path, so "Voyage synchronized." no longer announces a stale reversion.
+- **Revision guard.** Within one session, revisions only increase. An *in-order* read with a lower revision than the one shown therefore means the cookie now names a different session, for example one started in another tab. The client sends **one confirmation read** before showing it. If the confirmation also has the lower revision, the replacement is accepted, per-session view state is reset, and the player is told: "This browser is now using a different demo session. Its current balance is shown." The poll uses the same path, so "Voyage synchronized." no longer announces a stale reversion. **[4A.3] Two sessions can have the same revision. The guard did not detect that case, and the poll applied a read only when the revision changed, so a different session at an equal revision was never shown by the poll.**
 - **Legitimate replacement still works.** An explicit **Start a new demo session** begins from a quarantined state (`data === null`), so its revision 0 is accepted directly. The cross-tab replacement scenario passes on both versions.
 - **Actions.** Results from `POST` actions are authoritative and are applied as before. They also record `appliedTicket`.
 
@@ -69,11 +81,11 @@ node audit/browser-phase4a2.mjs --root <scratch>/base-4a1 --out audit/results/ph
 
 - **`quarantine()`.** Called from `sessionNotFound()`. It:
   - sets `data = null` and clears `hiddenRoundId`;
-  - sets `appliedTicket = ticket`, so reads already in flight, which may carry the old session, are discarded;
+  - sets `appliedTicket = ticket`, so reads already in flight, which may carry the old session, are discarded; **[4A.3] False for the most recently sent read: its ticket equals `ticket`, and `superseded()` rejects only smaller tickets;**
   - shows "—" for the balance, secured payout and on-board value;
   - disables the bet field, ½, 2×, the difficulty buttons, Refill, Sail, Collect all and the per-cargo buttons;
   - replaces the labels left by the interrupted action ("Sailing…", "VOYAGE UNDERWAY", "Your action is being saved.").
-- **Why the balance cannot come back.** `render()` already returns at once when `data` is null, so no input event can bring back the old balance or overwrite the status line holding the recovery control. `render()` restores every control once a session is loaded.
+- **Why the balance cannot come back.** `render()` already returns at once when `data` is null, so no input event can bring back the old balance or overwrite the status line holding the recovery control. `render()` restores every control once a session is loaded. **[4A.3] Input events could not, but `commit()` of the undiscarded newest read could: it set `data` back to the removed session.**
 - **Action errors.** A `SESSION_NOT_FOUND` from an action now quarantines immediately and shows the recovery dialog. It does not re-read and re-render first. **Try again** in the dialog still re-reads.
 - **Small guards.** The difficulty click handler uses `data?.round`, and Refill returns when there is no session.
 - **No automatic creation.** Unchanged: only the explicit button sends `POST /api/session`. The browser test counts sessions on disk before and after every step.
@@ -224,11 +236,11 @@ The claim cross-check reports 2 mismatches, the same as on the base. These are p
 | --- | --- |
 | **R5** server-side idempotency of `POST /api/session` | **DEFERRED** (unchanged). The M3 safeguard narrows the window in one tab only (§5.3) |
 | **L1** store lifecycle | **OPEN, approval requested** (§6). No production path found |
-| Cross-tab use | Ordering is per tab. The revision guard detects a replacement only when the new session's revision is lower. One with an equal or higher revision is shown as the current session, which is the server's truth for that cookie. An action sent from a tab that has not yet seen the replacement is rejected by the existing revision and seed-commitment checks in almost all cases. A refill whose revision happens to match is the exception (play money only, pre-existing). |
+| Cross-tab use | Ordering is per tab. The revision guard detects a replacement only when the new session's revision is lower. One with an equal or higher revision is shown as the current session, which is the server's truth for that cookie. **[4A.3] Not for an equal revision: the poll ignored it, and only a visibility or explicit read showed it, without a notice.** An action sent from a tab that has not yet seen the replacement is rejected by the existing revision and seed-commitment checks in almost all cases. A refill whose revision happens to match is the exception (play money only, pre-existing). |
 | Cookie removed rather than session deleted | A request without any cookie still makes `GET /api/session` create a new session. This is the documented new-visitor contract and was left unchanged. The new session appears through the replacement path with a notice. |
 | Phone layout | The recovery control lives in the footer status line, as in 4A.1. On a 390 px phone it is below the fold: visible after scrolling and reachable by keyboard, which was tested. The red connection dot in the header is the only above-the-fold indicator once the dialog is closed. |
 | Old round visuals | After quarantine, the previous round's ship and container cards stay drawn but locked ("Unavailable"). No balance from the vanished session is shown. |
-| Test method for M2 | The disappearance is simulated by pointing the cookie at a nonexistent session. The server cannot tell this apart from a deleted row, but a real deletion of a live row was not exercised in the browser. |
+| Test method for M2 | The disappearance is simulated by pointing the cookie at a nonexistent session. The server cannot tell this apart from a deleted row, but a real deletion of a live row was not exercised in the browser. **[4A.3] Real removal from server storage is now exercised (audit/browser-phase4a3.mjs).** |
 | Platforms | Chromium only, on Linux. Firefox, Safari/WebKit, and real iOS or Android devices were not run. |
 | Live site | **Not deployed.** The phone link still serves the previously published version. |
 
