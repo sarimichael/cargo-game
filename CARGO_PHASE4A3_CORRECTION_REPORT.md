@@ -178,7 +178,7 @@ The suite runs the real `server/app.js` and `server/store.js` in-process on a te
 **Validity checks.** Each scenario that uses holds asserts that only the scripted reads were sent in the window: no natural poll interfered, and the window stayed under 11.5 s. The poll scenario instead asserts exactly two reads, its own and one poll. A violation fails the scenario; it is not treated as a pass.
 
 **`audit/tests/phase4a3.test.js`: 5 `node:test` tests.** The extracted `sameState` expression is checked on both adapters:
-- action responses, a replay and repeated reads of one session compare equal (≥10 states per adapter); **[4A.4] the count depended on random voyage length and failed 6 times in 1,000 runs; the rule now requires each kind of change instead;**
+- action responses, a replay and repeated reads of one session compare equal (≥10 states per adapter); **[4A.4] the count depended on random voyage length and failed 6 times in 1,000 runs; the voyages are now fixed by seed fixtures, with exact expected outcomes and counts;**
 - two different sessions at revision 0 and at revision 1 compare different.
 
 ### 6.3 Red → green

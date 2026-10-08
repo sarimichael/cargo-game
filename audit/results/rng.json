@@ -2,8 +2,8 @@
  "meta": {
   "script": "audit/validate-rng.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-08T19:43:28.206Z",
-  "runtimeMs": 9303
+  "generatedAt": "2026-10-08T20:43:57.898Z",
+  "runtimeMs": 9378
  },
  "summary": {
   "checks": 8,
@@ -20,7 +20,7 @@
    "pass": true,
    "compared": 14400,
    "mismatches": [],
-   "ms": 7234
+   "ms": 7270
   },
   {
    "id": "R02",
@@ -30,7 +30,7 @@
    "pass": true,
    "verified": 192,
    "failures": [],
-   "ms": 654
+   "ms": 674
   },
   {
    "id": "R03",
@@ -221,7 +221,7 @@
    "prefixMultiplicity": [
     720
    ],
-   "ms": 34
+   "ms": 36
   },
   {
    "id": "R05",
@@ -232,7 +232,7 @@
    "distinctMessages": 216,
    "loneSurrogateSerializedAs": "[\"cargo-v1\",\"\\ud800\",0,\"A\",0]",
    "note": "Unpaired surrogates are escaped by JSON.stringify (ES2019 well-formed stringify), so Node createHmac and browser TextEncoder hash identical bytes.",
-   "ms": 0
+   "ms": 1
   },
   {
    "id": "R06",
@@ -255,7 +255,7 @@
    "tuples": 1000,
    "nested": 1000,
    "implication": "Safe only because each committed server seed is consumed by exactly one round with one locked difficulty (verified in validate-system S05/S06). Any future feature that lets the same seed/nonce be replayed under a different difficulty would leak information across difficulties.",
-   "ms": 932
+   "ms": 942
   },
   {
    "id": "R08",
@@ -266,7 +266,7 @@
    "activeSnapshots": 3369,
    "leaks": [],
    "settledRevealed": 400,
-   "ms": 385
+   "ms": 393
   }
  ]
 }

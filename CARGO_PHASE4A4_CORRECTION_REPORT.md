@@ -8,6 +8,8 @@
 
 **Phase 4A.3 was not accepted.** The independent Codex review of `d157909` returned NO-GO. This phase corrects the blocking finding and the test defect from that review. It has not itself been independently reviewed.
 
+**Follow-up revision (same scope).** The first 4A.4 commit, `a26da3b`, repaired the `phase4a3.test.js` assertion with a loop whose coverage and termination still depended on random voyage outcomes. The Technical Lead review required deterministic coverage. The follow-up commit replaces that loop with seed fixtures (§9), and `public/app.js` is unchanged since `a26da3b`. §14 states which results apply to the final HEAD.
+
 ## 1. Summary
 
 | Codex finding on `d157909` | Severity | Phase 4A.4 status |
@@ -15,7 +17,7 @@
 | M-01 deleted-session quarantine resurrection | — | Confirmed fixed by Codex. Re-verified here: 4A.3 suite and guard G-03, local and Worker |
 | M-02 original equal-revision replacement | — | Passed in Codex's review. Re-verified here: 4A.3 suite and guard G-01 |
 | **M-02 confirmation-ordering race (A → B → A)** | Medium, **blocking** | **FIXED** in `public/app.js` (4 code lines). Reproduced on `d157909` on the local server and the Worker, desktop and phone (8 of 8 runs fail). All 8 pass after the fix |
-| Nondeterministic `compared >= 10` in `audit/tests/phase4a3.test.js` | Low | **FIXED.** The old assertion failed 6 times in 1,000 runs; the repaired test passed 1,000 of 1,000 |
+| Nondeterministic `compared >= 10` in `audit/tests/phase4a3.test.js` | Low | **FIXED, deterministically.** The old assertion failed 6 times in 1,000 runs. Seed fixtures now fix every voyage outcome; the test asserts each state and the exact comparison counts (1,000 of 1,000 runs pass with the identical sequence). The first repair in `a26da3b` was probabilistic and is superseded |
 | Session-start timeout classification | Medium, pre-existing | **Out of scope, unchanged** (§11) |
 
 **Not changed:** every server file, the API, the database schema, payouts, settlement, RNG, the proof verifier, wallet calculations, collision mapping, `package*.json`, the build and the hosting manifest. `public/app.js` is the only production file changed. No session identifier, credential or seed is exposed.
@@ -160,19 +162,36 @@ In every corrected C-01 and C-02 run, the same checks that failed on `d157909` p
 
 - **Defect.** The test played exactly two voyages, Easy then Expert. Each voyage was 2–5 actions depending on random losses, and the test then asserted `compared >= 10`. Legitimate early settlement could leave 8 or 9.
 - **Baseline.** 1,000 runs of the unmodified 4A.3 file, with `node --test audit/tests/phase4a3.test.js`, Node 24.21.0 and a fresh process per run: **994 pass, 6 fail**. All six failures were this assertion, with "compared 8 states" or "compared 9 states", 3 on each adapter (runs 154, 449, 510, 546, 616, 740). No equality assertion failed.
-- **Repair.** The count is replaced by a coverage rule based on what actually happened:
-  - **Every kind compared at least once.** Each kind of state change (bet, sail, single collection, collection of all remaining cargo, refill, replay, first read) must be compared at least once.
-  - **Two settled voyages.** At least two voyages (one Easy, one Expert with an uneven split) must be settled in the history.
-  - **More voyages if needed.** Voyages, alternating Easy and Expert, continue until the collection kinds have occurred, up to 40.
-- **Unchanged.** The equality assertions are identical. No outcome is forced, and the game's randomness, payouts and hazard rules are untouched.
-- **Why coverage is guaranteed:**
-  - **Every voyage:** bets and sails happen in every voyage, and the refill, replay and first read happen in every run.
-  - **Easy voyages:** only the two collection kinds depend on surviving cargo. Easy has independent decks and loss chances of 1/20 then 1/19, so a voyage provides both kinds with probability 1 − (0.000125 + 0.007125 + 0.135375/19 + 0.857375/361) ≈ 0.98325.
-  - **Failure bound:** among the 40 voyages allowed, 20 are Easy, so the test can fail only if all 20 miss, with probability below 0.01675²⁰ ≈ 3×10⁻³⁶. Expert voyages only add chances.
-  - **No fixed count left:** early settlement leads to another voyage, never to a failed count.
-- **After repair.** 1,000 runs, same command: **1,000 pass, 0 fail.** The test file's other three tests (the comparison is taken from `public/app.js`, and two sessions at equal revisions compare different) are unchanged.
+- **First repair (`a26da3b`), superseded.** That commit replaced the count with a loop that kept playing voyages, up to 40, until each kind of change had occurred. It passed 1,000 of 1,000 runs. But its coverage and its termination still depended on random outcomes: its failure probability was below 3×10⁻³⁶, not zero. The Technical Lead review required deterministic coverage, so the loop was replaced. That 1,000-run result applies to `a26da3b` only.
+- **Final repair: seed fixtures.**
+  - **The fixture write.** Before each bet, the test writes a derived server seed into the session's stored `nextSeed`. The seed is SHA-256 of a labelled counter (`audit/lib/seeds.mjs`, the suite's existing convention). This is a test-only write to stored state, of the same kind as the forced hazards already used in four audit test files.
+  - **Production path untouched.** The bet then consumes that seed through the production `beginRound()` and `hazardDeck()`. With a fixed client seed (`p4a3-coverage`) and nonce, every hazard deck, and therefore every outcome, is fixed. Production code, the RNG, its probabilities, payouts and rules are unchanged.
+  - **Fixtures.** The indices were found once by searching with the production `hazardDeck()`:
+
+    | Voyage | Seed | Nonce | Decks |
+    | --- | --- | --- | --- |
+    | Easy, $30.00 | `derivedSeed('phase4a3-coverage-easy', 3)` | 0 | A [11], B [2], C [8] |
+    | Expert, $3.01 | `derivedSeed('phase4a3-coverage-expert', 0)` | 1 | every deck contains stop 1 |
+
+  - **Fixed script, the same on both adapters.** The container states are asserted after every step:
+    1. First read.
+    2. Easy fixture: read again; bet; sail (`onboard onboard onboard`); collect A (`collected@1 onboard onboard`); sail (`collected@1 lost@2 onboard`, a partial loss); collect all (`collected@1 lost@2 collected@2`, settled).
+    3. Expert fixture: read again; bet (split 101/100/100); sail (`lost@1 lost@1 lost@1`, settled at once, $0.00 returned).
+    4. History holds two settled voyages; refill; replay of the refill (`replayed: true`).
+  - **Exact coverage.** `assert.deepEqual(compared, { read: 3, bet: 2, advance: 3, collect: 1, collectAll: 1, reset: 1, replay: 1 })`: 12 comparisons, each with two reads. There is no loop, and the request sequence is the same in every run.
+  - **Equality assertions unchanged.** Each comparison still checks `sameState(read1, response)` and `sameState(read2, read1)` with the expression taken from `public/app.js`, and the revision step of +1 per action.
+  - **Coverage compared with before.** The same kinds of change are covered, plus a partial loss (B lost while C survives) and an immediate full loss. Before, those appeared only by chance.
+  - **Fixture check.** A new test, `[4A.4] the voyage fixtures give the required outcomes through the production hazard decks`, recomputes the decks with the production `hazardDeck()`. If the RNG or the seed derivation ever changed, it would fail by name instead of silently losing coverage. Mutation check: a throwaway copy with the Easy index changed from 3 to 4 failed this test and both adapter tests (3 of 6). The copy was deleted.
+  - **Proofs still verify.** Both settled voyages are checked with the independent verifier (`verifyRound` from `public/fairness.js`). The fixture seeds are genuine inputs to settlement, not edits made afterwards.
+  - **Second adapter test.** Two sessions at the same revision must compare different. Distinct derived seeds are now written into both sessions before the revision-0 comparison, so they differ by construction rather than by random seeds. At revision 1 they also differ by balance ($30.00 and $3.00 stakes).
+- **After the final repair.**
+  - 1,000 runs with `node --test audit/tests/phase4a3.test.js` on Node 24.21.0, a fresh process each time: **1,000 pass, 0 fail**. Every outcome and count is asserted exactly, so every passing run executed the identical sequence.
+  - Node 22.22.0: 6/6 standalone, and inside `run-all --quick`.
+  - The file now has 6 tests instead of 5, so the regression total is 117.
 
 ## 10. Complete regression results
+
+**Scope of this section.** These runs were made on the first 4A.4 commit, `a26da3b`, before the test follow-up. The production code (`public/app.js` `28a3dfb0…bc18`) and every browser suite are identical at the final HEAD. Results re-run on the final tree are in §14.
 
 **Environment:**
 - Linux 6.18.44 x86_64 cloud container.
@@ -198,7 +217,7 @@ In every corrected C-01 and C-02 run, the same checks that failed on `d157909` p
 | Storage (F03) and save-folder lock stress (F07) | F03 measured; lock stress 6+6 rounds, 0 lost while held, 0 wrongly acquired | skipped in `--quick` by design |
 | `node audit/run-all.mjs` | **ALL PASSED**, twice (full); the second run produced the committed results | `--quick`: **1 of 2 runs ALL PASSED**; the other failed on the cleanup anomaly below |
 | `npm ci && npm run build` | **Build OK**; `dist/client/app.js` is byte-identical to `public/app.js` | — |
-| `phase4a3.test.js` repeated (§9) | Old: 994/1,000; repaired: **1,000/1,000** | — |
+| `phase4a3.test.js` repeated (§9) | 4A.3 file: 994/1,000. First repair (`a26da3b`, probabilistic, superseded): 1,000/1,000 | — |
 
 **Production integrity** (every `run-all`):
 - 42 production files compared; 0 unexpected changes;
@@ -239,7 +258,7 @@ In every corrected C-01 and C-02 run, the same checks that failed on `d157909` p
 | --- | --- |
 | `public/app.js` | Accepted reads advance `appliedTicket`; `commit()` re-checks and reports; `sync()` and the poll render only after a successful commit; comments |
 | `audit/browser-phase4a4.mjs` | **New** browser regression suite: C-01, C-02 and G-01 to G-03; local and Worker; desktop and phone; `--root` |
-| `audit/tests/phase4a3.test.js` | Coverage rule made independent of random voyage length; equality assertions unchanged |
+| `audit/tests/phase4a3.test.js` | Deterministic voyages via seed fixtures (written to stored `nextSeed`), exact expected states and comparison counts, proof verification of both settled voyages, fixture precondition test (+1 test), deterministic revision-0 difference in the two-session test; equality assertions unchanged |
 | `audit/results/phase4a4-red-baseline.json`, `browser-phase4a4.json` | **New** evidence: red baseline on `d157909`, corrected run |
 | `audit/run-all.mjs`, `audit/README.md` | Run and document the new suite; integrity lists unchanged |
 | `docs/API.md` | Read-ordering rule: an accepted read supersedes older pending reads even when nothing changes |
@@ -249,7 +268,7 @@ In every corrected C-01 and C-02 run, the same checks that failed on `d157909` p
 
 **Evidence integrity:**
 - **Red baseline:** `phase4a4-red-baseline.json` records `rootHead` `d157909…`, an empty uncommitted list, and `public/app.js` `285a90c3…446e`.
-- **Corrected run:** `browser-phase4a4.json` records `rootHead` `d157909…` with the working-tree changes listed, because it was produced before the commit, and `public/app.js` `28a3dfb0…bc18`, the committed file.
+- **Corrected run:** `browser-phase4a4.json` (final tree) records `rootHead` `a26da3b…` with the working-tree changes listed, because it was produced before the follow-up commit, and `public/app.js` `28a3dfb0…bc18`, the committed file. On `a26da3b` the earlier version of the same evidence recorded `rootHead` `d157909…` and the same `public/app.js` hash.
 - **Server files:** both runs record the same hashes, because they did not change: `server/app.js` `0fdba910…`, `server/worker.js` `3d92e74c…`, `server/store.js` `7fdf4f20…`, `server/game.js` `c2bde58a…`.
 
 ## 13. Recommendation
@@ -260,3 +279,36 @@ Suggested review order:
 1. `public/app.js`: `readSession()`, `commit()`, `sync()` and the poll, against every caller and the table in §6.
 2. Re-run the red baseline: `node audit/browser-phase4a4.mjs --root <checkout of d157909>`.
 3. The repaired coverage rule in `audit/tests/phase4a3.test.js` (§9).
+
+## 14. Results that apply to the final HEAD
+
+The final HEAD is the follow-up commit on top of `a26da3b`. Every run below was made on the final working tree immediately before that commit, which has identical content. `run-all` therefore records `gitHead` `a26da3b` and lists the uncommitted test change. The tested code is identified by hash: `public/app.js` `28a3dfb03f860d598c9626e6bdb49c0276cd4dd60a7bbc12d9b7ea9753fabc18`. The server files are unchanged since `d157909`.
+
+| Check (final tree) | Node 24.21.0 | Node 22.22.0 |
+| --- | --- | --- |
+| `node audit/run-all.mjs` | Full: **ALL PASSED**; produced the committed `audit/results/*` | `--quick`: **ALL PASSED** |
+| Browser `browser-phase4a4.mjs` (C-01, C-02, G-01 to G-03; local and Worker; desktop and phone) | **20/20** | **20/20** |
+| Browser `browser-phase4a3.mjs` | **14/14** | **14/14** |
+| Browser `browser-phase4a2.mjs` | **12/12** | **12/12** |
+| Browser `browser-check.mjs` | **6/6** | **6/6** |
+| `node --test audit/tests/*.test.js` | **117/117** pass, 0 fail, 0 skipped, 0 todo | **117/117** pass, 0 fail, 0 skipped, 0 todo |
+| `npm test` | **12/12** | **12/12** |
+| `npm run test:hosted`, `npm run test:collisions` | pass, pass | pass, pass |
+| Maths, RNG, simulation statistics, system | 13/13; 8/8 with 108 vectors; 107 p-values with 0 rejections; 21/21 | same |
+| F03 storage, F07 lock stress | measured; 6+6 rounds, 0 lost while held, 0 wrongly acquired | skipped by design in `--quick` |
+| Production integrity | 42 files compared; 0 unexpected, 0 protected, 0 payout/RNG/proof/collision changes since `fca90c6` | same |
+| `phase4a3.test.js` ×1,000 (deterministic version) | **1,000/1,000** | 6/6 standalone |
+| `npm ci && npm run build` | **Build OK**; `dist/client/app.js` byte-identical to `public/app.js`; esbuild `postinstall` again not run by npm 11.19.0 | — |
+
+**Results recorded on `a26da3b` that remain valid:**
+- **Red baseline.** `audit/results/phase4a4-red-baseline.json` (12/20 on `d157909`) is unchanged; neither the suite script nor its target changed.
+- **Other runs.** The other browser and standalone runs in §8 and §10 were made with the same `public/app.js` and server files.
+
+**Results that do not apply to the final HEAD:**
+- the first repair's 1,000-run result (it tested the superseded loop);
+- the 116-test regression counts (the final file has one more test).
+
+**Unchanged and still open:**
+- **Cleanup race.** The Node 22 cleanup race in `browser-phase4a2.mjs` (§10) did not recur in this run, but its cause is unchanged.
+- **Deferred items.** The session-start timeout classification, R5, F11, F03, F09, F05, F01 and L1, and every limitation in §11.
+

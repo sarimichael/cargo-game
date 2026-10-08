@@ -2,25 +2,25 @@
  "meta": {
   "script": "audit/measure-storage.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-08T19:44:12.649Z",
+  "generatedAt": "2026-10-08T20:44:45.869Z",
   "note": "Timings are medians of 15 requests on this machine and only indicative; the in-memory SQLite stand-in has no network latency."
  },
  "composition": {
   "rounds": 200,
-  "totalBytes": 434843,
-  "bytesPerRound": 2174,
+  "totalBytes": 432343,
+  "bytesPerRound": 2162,
   "shares": {
    "rounds": {
-    "bytes": 210521,
-    "share": 0.484
+    "bytes": 210337,
+    "share": 0.487
    },
    "ledger": {
-    "bytes": 146813,
-    "share": 0.338
+    "bytes": 144497,
+    "share": 0.334
    },
    "receipts": {
     "bytes": 77201,
-    "share": 0.178
+    "share": 0.179
    },
    "other": {
     "bytes": 308,
@@ -28,7 +28,7 @@
    }
   },
   "receiptsPerRound": 3,
-  "ledgerEntriesPerRound": 3.85,
+  "ledgerEntriesPerRound": 3.79,
   "exampleRoundBytes": 1014,
   "exampleRoundParts": {
    "events": 253,
@@ -41,56 +41,56 @@
    "every ledger entry",
    "every idempotency receipt"
   ],
-  "snapshotResponseBytes": 5352
+  "snapshotResponseBytes": 5366
  },
  "latency": [
   {
    "adapter": "worker",
    "sessionBytes": 19279,
-   "getSessionMs": 0.25,
-   "postActionMs": 0.38
+   "getSessionMs": 0.2,
+   "postActionMs": 0.32
   },
   {
    "adapter": "worker",
    "sessionBytes": 249051,
-   "getSessionMs": 1.12,
-   "postActionMs": 1.76
+   "getSessionMs": 1.39,
+   "postActionMs": 2.14
   },
   {
    "adapter": "worker",
    "sessionBytes": 999499,
-   "getSessionMs": 3.71,
-   "postActionMs": 6.5
+   "getSessionMs": 3.65,
+   "postActionMs": 6.46
   },
   {
    "adapter": "worker",
    "sessionBytes": 1899615,
-   "getSessionMs": 7.1,
-   "postActionMs": 13.41
+   "getSessionMs": 6.57,
+   "postActionMs": 12.12
   },
   {
    "adapter": "local",
    "sessionBytes": 19279,
-   "getSessionMs": 0.94,
-   "postActionMs": 1.85
+   "getSessionMs": 0.98,
+   "postActionMs": 2.18
   },
   {
    "adapter": "local",
    "sessionBytes": 249051,
-   "getSessionMs": 0.84,
-   "postActionMs": 4.28
+   "getSessionMs": 0.91,
+   "postActionMs": 4.44
   },
   {
    "adapter": "local",
    "sessionBytes": 999499,
-   "getSessionMs": 0.83,
-   "postActionMs": 12.09
+   "getSessionMs": 0.89,
+   "postActionMs": 12.06
   },
   {
    "adapter": "local",
    "sessionBytes": 1899615,
-   "getSessionMs": 1.19,
-   "postActionMs": 23.82
+   "getSessionMs": 1.22,
+   "postActionMs": 23.54
   }
  ]
 }

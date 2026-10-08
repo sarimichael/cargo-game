@@ -2,12 +2,13 @@
  "meta": {
   "script": "audit/browser-phase4a4.mjs",
   "root": "/home/user/cargo-game",
-  "rootHead": "d157909576426a14a3c82a54cfaaa9a6f619fef3",
+  "rootHead": "a26da3b3575c4bf91d482a1dfd49a5e44216d4b5",
   "rootUncommitted": [
    "M CARGO_PHASE4A3_CORRECTION_REPORT.md",
-   " M audit/README.md",
+   " M CARGO_PHASE4A4_CORRECTION_REPORT.md",
    " M audit/results/browser-phase4a2.json",
    " M audit/results/browser-phase4a3.json",
+   " M audit/results/browser-phase4a4.json",
    " M audit/results/browser.json",
    " M audit/results/claims.json",
    " M audit/results/lock-stress.json",
@@ -17,10 +18,7 @@
    " M audit/results/simulation.json",
    " M audit/results/storage.json",
    " M audit/results/system.json",
-   " M audit/run-all.mjs",
-   " M audit/tests/phase4a3.test.js",
-   " M docs/API.md",
-   " M public/app.js"
+   " M audit/tests/phase4a3.test.js"
   ],
   "sha256": {
    "public/app.js": "28a3dfb03f860d598c9626e6bdb49c0276cd4dd60a7bbc12d9b7ea9753fabc18",
@@ -35,7 +33,7 @@
   ],
   "node": "v24.21.0",
   "chromium": "141.0.7390.37",
-  "generatedAt": "2026-10-08T19:51:36.384Z",
+  "generatedAt": "2026-10-08T20:52:10.651Z",
   "reducedMotion": true,
   "views": [
    {
@@ -126,12 +124,12 @@
      "a": {
       "revision": 1,
       "balanceCents": 97000,
-      "round": "ROUND BF0806CF"
+      "round": "ROUND 031BFBDF"
      },
      "b": {
       "revision": 1,
       "balanceCents": 99700,
-      "round": "ROUND AF4E98E6"
+      "round": "ROUND C7389115"
      }
     },
     "initial": {
@@ -139,7 +137,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND BF0806CF",
+     "round": "ROUND 031BFBDF",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -171,7 +169,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND BF0806CF",
+     "round": "ROUND 031BFBDF",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -197,13 +195,13 @@
      "overflow": false
     },
     "pollStatus": 200,
-    "pollAfterMs": 11909,
+    "pollAfterMs": 11930,
     "afterPoll": {
      "balance": "$970.00",
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND BF0806CF",
+     "round": "ROUND 031BFBDF",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -233,7 +231,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND BF0806CF",
+     "round": "ROUND 031BFBDF",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -263,7 +261,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "STOP 01 OF 19",
-     "round": "ROUND BF0806CF",
+     "round": "ROUND 031BFBDF",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 02"
@@ -374,7 +372,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 15FE1BC1",
+     "round": "ROUND 86C95579",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -404,7 +402,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 15FE1BC1",
+     "round": "ROUND 86C95579",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -434,20 +432,19 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "STOP 01 OF 19",
-     "round": "ROUND 15FE1BC1",
+     "round": "ROUND 86C95579",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 02"
      },
      "cargoButtons": [
-      "Collect $10.30",
+      "Container lost",
       "Collect $10.30",
       "Collect $10.30"
      ],
      "enabledControls": [
       "sail-button",
       "collect-all",
-      "cargo-A",
       "cargo-B",
       "cargo-C"
      ],
@@ -516,7 +513,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND C449FA6B",
+     "round": "ROUND 88D391FF",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -789,7 +786,7 @@
      "status": "Saved session not found · Choose an option",
      "statusText": "Session not found",
      "stage": "SESSION NOT FOUND",
-     "round": "ROUND 5DB777E1",
+     "round": "ROUND 0DFFB989",
      "sail": {
       "disabled": true,
       "text": "Session not found"
@@ -819,7 +816,7 @@
      "status": "Saved session not found · Choose an option",
      "statusText": "Session not found",
      "stage": "SESSION NOT FOUND",
-     "round": "ROUND 5DB777E1",
+     "round": "ROUND 0DFFB989",
      "sail": {
       "disabled": true,
       "text": "Session not found"
@@ -965,12 +962,12 @@
      "a": {
       "revision": 1,
       "balanceCents": 97000,
-      "round": "ROUND AEC9A590"
+      "round": "ROUND 132F1F22"
      },
      "b": {
       "revision": 1,
       "balanceCents": 99700,
-      "round": "ROUND 38F29492"
+      "round": "ROUND B353AF66"
      }
     },
     "initial": {
@@ -978,7 +975,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND AEC9A590",
+     "round": "ROUND 132F1F22",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1010,7 +1007,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND AEC9A590",
+     "round": "ROUND 132F1F22",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1036,13 +1033,13 @@
      "overflow": false
     },
     "pollStatus": 200,
-    "pollAfterMs": 11963,
+    "pollAfterMs": 11970,
     "afterPoll": {
      "balance": "$970.00",
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND AEC9A590",
+     "round": "ROUND 132F1F22",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1072,7 +1069,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND AEC9A590",
+     "round": "ROUND 132F1F22",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1102,21 +1099,20 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "STOP 01 OF 19",
-     "round": "ROUND AEC9A590",
+     "round": "ROUND 132F1F22",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 02"
      },
      "cargoButtons": [
       "Collect $10.30",
-      "Collect $10.30",
+      "Container lost",
       "Collect $10.30"
      ],
      "enabledControls": [
       "sail-button",
       "collect-all",
       "cargo-A",
-      "cargo-B",
       "cargo-C"
      ],
      "mode": "easy",
@@ -1213,7 +1209,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 0BA14BDB",
+     "round": "ROUND 5D8CDFCB",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1243,7 +1239,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 0BA14BDB",
+     "round": "ROUND 5D8CDFCB",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1273,7 +1269,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "STOP 01 OF 19",
-     "round": "ROUND 0BA14BDB",
+     "round": "ROUND 5D8CDFCB",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 02"
@@ -1355,7 +1351,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND BC3884DE",
+     "round": "ROUND 2AB35067",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1451,7 +1447,7 @@
    ],
    "observations": {
     "typing": {
-     "balance": "$1,000.90",
+     "balance": "$990.60",
      "status": "Your voyage is saved",
      "statusText": "Ready to sail",
      "stage": "READY AT THE HARBOR",
@@ -1489,7 +1485,7 @@
      "overflow": false
     },
     "afterSamePoll": {
-     "balance": "$1,000.90",
+     "balance": "$990.60",
      "status": "Your voyage is saved",
      "statusText": "Ready to sail",
      "stage": "READY AT THE HARBOR",
@@ -1628,7 +1624,7 @@
      "status": "Saved session not found · Choose an option",
      "statusText": "Session not found",
      "stage": "SESSION NOT FOUND",
-     "round": "ROUND 4F3C1BD3",
+     "round": "ROUND 1E9E42C5",
      "sail": {
       "disabled": true,
       "text": "Session not found"
@@ -1658,7 +1654,7 @@
      "status": "Saved session not found · Choose an option",
      "statusText": "Session not found",
      "stage": "SESSION NOT FOUND",
-     "round": "ROUND 4F3C1BD3",
+     "round": "ROUND 1E9E42C5",
      "sail": {
       "disabled": true,
       "text": "Session not found"
@@ -1804,12 +1800,12 @@
      "a": {
       "revision": 1,
       "balanceCents": 97000,
-      "round": "ROUND 5353C6E0"
+      "round": "ROUND B2210EC7"
      },
      "b": {
       "revision": 1,
       "balanceCents": 99700,
-      "round": "ROUND 40660F76"
+      "round": "ROUND 0CDE38D1"
      }
     },
     "initial": {
@@ -1817,7 +1813,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 5353C6E0",
+     "round": "ROUND B2210EC7",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1849,7 +1845,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 5353C6E0",
+     "round": "ROUND B2210EC7",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1875,13 +1871,13 @@
      "overflow": false
     },
     "pollStatus": 200,
-    "pollAfterMs": 11943,
+    "pollAfterMs": 11924,
     "afterPoll": {
      "balance": "$970.00",
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 5353C6E0",
+     "round": "ROUND B2210EC7",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1911,7 +1907,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 5353C6E0",
+     "round": "ROUND B2210EC7",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -1941,7 +1937,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "STOP 01 OF 19",
-     "round": "ROUND 5353C6E0",
+     "round": "ROUND B2210EC7",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 02"
@@ -2052,7 +2048,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 0245AA8A",
+     "round": "ROUND 5412F035",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -2082,7 +2078,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 0245AA8A",
+     "round": "ROUND 5412F035",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -2112,7 +2108,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "STOP 01 OF 19",
-     "round": "ROUND 0245AA8A",
+     "round": "ROUND 5412F035",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 02"
@@ -2194,7 +2190,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 0AA00A50",
+     "round": "ROUND 3688373F",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -2467,7 +2463,7 @@
      "status": "Saved session not found · Choose an option",
      "statusText": "Session not found",
      "stage": "SESSION NOT FOUND",
-     "round": "ROUND FE319FDB",
+     "round": "ROUND 69D2C71B",
      "sail": {
       "disabled": true,
       "text": "Session not found"
@@ -2497,7 +2493,7 @@
      "status": "Saved session not found · Choose an option",
      "statusText": "Session not found",
      "stage": "SESSION NOT FOUND",
-     "round": "ROUND FE319FDB",
+     "round": "ROUND 69D2C71B",
      "sail": {
       "disabled": true,
       "text": "Session not found"
@@ -2643,12 +2639,12 @@
      "a": {
       "revision": 1,
       "balanceCents": 97000,
-      "round": "ROUND 737D918D"
+      "round": "ROUND 443B2C1F"
      },
      "b": {
       "revision": 1,
       "balanceCents": 99700,
-      "round": "ROUND C48F4479"
+      "round": "ROUND 558DDB5E"
      }
     },
     "initial": {
@@ -2656,7 +2652,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 737D918D",
+     "round": "ROUND 443B2C1F",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -2688,7 +2684,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 737D918D",
+     "round": "ROUND 443B2C1F",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -2714,13 +2710,13 @@
      "overflow": false
     },
     "pollStatus": 200,
-    "pollAfterMs": 11964,
+    "pollAfterMs": 11962,
     "afterPoll": {
      "balance": "$970.00",
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 737D918D",
+     "round": "ROUND 443B2C1F",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -2750,7 +2746,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 737D918D",
+     "round": "ROUND 443B2C1F",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -2780,7 +2776,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "STOP 01 OF 19",
-     "round": "ROUND 737D918D",
+     "round": "ROUND 443B2C1F",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 02"
@@ -2891,7 +2887,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 73E85CE3",
+     "round": "ROUND DABED4D7",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -2921,7 +2917,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 73E85CE3",
+     "round": "ROUND DABED4D7",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -2951,7 +2947,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "STOP 01 OF 19",
-     "round": "ROUND 73E85CE3",
+     "round": "ROUND DABED4D7",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 02"
@@ -3033,7 +3029,7 @@
      "status": "Your voyage is saved",
      "statusText": "Voyage in progress",
      "stage": "READY TO DEPART",
-     "round": "ROUND 876294DD",
+     "round": "ROUND A844CE00",
      "sail": {
       "disabled": false,
       "text": "Sail to stop 01"
@@ -3306,7 +3302,7 @@
      "status": "Saved session not found · Choose an option",
      "statusText": "Session not found",
      "stage": "SESSION NOT FOUND",
-     "round": "ROUND 15AE68D4",
+     "round": "ROUND A559F7C9",
      "sail": {
       "disabled": true,
       "text": "Session not found"
@@ -3336,7 +3332,7 @@
      "status": "Saved session not found · Choose an option",
      "statusText": "Session not found",
      "stage": "SESSION NOT FOUND",
-     "round": "ROUND 15AE68D4",
+     "round": "ROUND A559F7C9",
      "sail": {
       "disabled": true,
       "text": "Session not found"

@@ -2,8 +2,8 @@
  "meta": {
   "script": "audit/validate-system.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-08T19:43:57.786Z",
-  "runtimeMs": 29482
+  "generatedAt": "2026-10-08T20:44:30.778Z",
+  "runtimeMs": 32770
  },
  "summary": {
   "checks": 21,
@@ -71,7 +71,7 @@
      "balance": 97000
     }
    },
-   "ms": 138
+   "ms": 140
   },
   {
    "id": "S02",
@@ -94,7 +94,7 @@
      "ledgerEntries": 1
     }
    },
-   "ms": 52
+   "ms": 54
   },
   {
    "id": "S03",
@@ -119,7 +119,7 @@
      ]
     }
    },
-   "ms": 36
+   "ms": 44
   },
   {
    "id": "S04",
@@ -142,7 +142,7 @@
      "expected": 3091
     }
    },
-   "ms": 98
+   "ms": 107
   },
   {
    "id": "S05",
@@ -165,7 +165,7 @@
      "bad": 0
     }
    },
-   "ms": 482
+   "ms": 527
   },
   {
    "id": "S06",
@@ -186,7 +186,7 @@
      "expected": 100090
     }
    },
-   "ms": 9
+   "ms": 12
   },
   {
    "id": "S07",
@@ -209,7 +209,7 @@
      "failures": []
     }
    },
-   "ms": 29
+   "ms": 34
   },
   {
    "id": "S08",
@@ -230,7 +230,7 @@
      "mismatches": []
     }
    },
-   "ms": 28
+   "ms": 35
   },
   {
    "id": "S09",
@@ -242,16 +242,16 @@
    "adapters": {
     "local": {
      "ok": true,
-     "inspectedActiveResponses": 978,
+     "inspectedActiveResponses": 1066,
      "leaks": []
     },
     "worker": {
      "ok": true,
-     "inspectedActiveResponses": 998,
+     "inspectedActiveResponses": 1050,
      "leaks": []
     }
    },
-   "ms": 1942
+   "ms": 2285
   },
   {
    "id": "S10",
@@ -264,16 +264,16 @@
     "local": {
      "ok": true,
      "rounds": 80,
-     "sails": 326,
-     "icebergs": 33,
-     "debris": 86,
+     "sails": 353,
+     "icebergs": 20,
+     "debris": 89,
      "proofsVerified": 80,
      "ledger": {
       "ok": true,
       "start": 100000,
-      "sum": -56171,
-      "balance": 43829,
-      "entries": 173,
+      "sum": 18834,
+      "balance": 118834,
+      "entries": 192,
       "refills": 0
      },
      "issues": []
@@ -281,22 +281,22 @@
     "worker": {
      "ok": true,
      "rounds": 80,
-     "sails": 367,
-     "icebergs": 28,
-     "debris": 96,
+     "sails": 391,
+     "icebergs": 26,
+     "debris": 93,
      "proofsVerified": 80,
      "ledger": {
       "ok": true,
       "start": 100000,
-      "sum": -72674,
-      "balance": 27326,
-      "entries": 173,
+      "sum": -422,
+      "balance": 99578,
+      "entries": 176,
       "refills": 0
      },
      "issues": []
     }
    },
-   "ms": 2651
+   "ms": 3047
   },
   {
    "id": "S11",
@@ -367,7 +367,7 @@
      "betEntries": 1
     }
    ],
-   "ms": 277
+   "ms": 283
   },
   {
    "id": "S12",
@@ -425,7 +425,7 @@
      "creditsAfter": 3
     }
    },
-   "ms": 16
+   "ms": 18
   },
   {
    "id": "S14",
@@ -448,7 +448,7 @@
      "newSessionsFrom25Gets": 25
     }
    },
-   "ms": 37
+   "ms": 44
   },
   {
    "id": "S15",
@@ -457,19 +457,19 @@
    "assumption": "Cloudflare D1 documents a 2,000,000-byte maximum string/BLOB/row; emulated in the SQLite stand-in. Root cause (unbounded session growth) is still open.",
    "method": "Play minimum-stake Easy rounds through the real Worker under the emulated limit. Once within two reserves of the limit, switch to worst-case rounds (19 stops, three separate collections, 80-character action IDs). Continue until a bet is refused; require that no request ever fails with 500, the refusal is 409 SESSION_STORAGE_FULL, and every accepted round settled. Separately measure bytes per round on the local store.",
    "pass": true,
-   "completedRounds": 870,
+   "completedRounds": 868,
    "worstCaseRoundsNearLimit": 8,
    "refusal": {
     "status": 409,
     "code": "SESSION_STORAGE_FULL",
-    "bytes": 1941188,
-    "headroomBytes": 58812
+    "bytes": 1941925,
+    "headroomBytes": 58075
    },
    "serverErrors": [],
    "unsettledRounds": [],
-   "localStoreBytesPerRound": 2170.12,
+   "localStoreBytesPerRound": 2165.82,
    "stillOpen": "Once refused, the play session cannot start new voyages; normalised storage (F03 root fix) is deferred.",
-   "ms": 23369
+   "ms": 25807
   },
   {
    "id": "S16",
@@ -538,7 +538,7 @@
      ]
     }
    },
-   "ms": 190
+   "ms": 193
   },
   {
    "id": "S17",
@@ -549,7 +549,7 @@
    "pass": true,
    "secondWriterRefusedWith": "DATA_DIRECTORY_LOCKED",
    "balanceOnDiskAfterSecondAttempt": 99900,
-   "ms": 3
+   "ms": 5
   },
   {
    "id": "S18",
@@ -583,7 +583,7 @@
    "expectedUnderAcceptedRules": 103,
    "inProcessMutationBlocked": true,
    "roundStoresMathVersion": [],
-   "ms": 7
+   "ms": 13
   },
   {
    "id": "S20",
@@ -606,7 +606,7 @@
      "invalidUtf8Status": 400
     }
    },
-   "ms": 71
+   "ms": 74
   },
   {
    "id": "S21",
@@ -633,7 +633,7 @@
      "zeroAmountEntry": true
     }
    },
-   "ms": 14
+   "ms": 17
   }
  ]
 }
