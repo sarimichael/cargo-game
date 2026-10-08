@@ -2,7 +2,7 @@
  "meta": {
   "script": "audit/validate-claims.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-08T00:21:21.680Z",
+  "generatedAt": "2026-10-08T03:34:31.932Z",
   "source": "CARGO_SAYCOVE_AUDIT.md"
  },
  "summary": {

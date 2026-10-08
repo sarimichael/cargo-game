@@ -87,3 +87,33 @@ test('KNOWN DEFECT F11: a deployment that changes the payout table alters settle
   assert.equal(persisted.rounds[r.id].containers[0].payoutCents, 104); // accepted at 1.03×, paid at 1.04×
   assert.equal(MODES.easy.payouts[0], 103); // the running engine itself is unaffected (N02 fix)
 });
+
+// Phase 4A.2 finding L1 (store lifecycle). Not corrected: the fix changes the Store API used by seven direct callers,
+// so it awaits approval (CARGO_PHASE4A2_CORRECTION_REPORT.md §6). The production server is not exposed: server/index.js
+// awaits store.acquire() before it listens and only releases on exit, and a lost lock fences every read (R4).
+test('KNOWN DEFECT L1: a Store that never acquired the folder serves its construction-time snapshot', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cargo-l1-'));
+  try {
+    const owner = new Store(dir); owner.transaction(st => { st.sessions.x = { n: 1 }; });
+    const early = new Store(dir); // constructed while another store owns the folder; never acquired
+    owner.transaction(st => { st.sessions.x.n = 2; }); // an acknowledged write by the owner
+    assert.equal(early.lock, null);
+    assert.equal(early.get('x').n, 1); // stale, and served without holding the lock
+    assert.throws(() => early.transaction(st => { st.sessions.x.n = 9; }), e => e.code === 'DATA_DIRECTORY_LOCKED'); // writes stay safe
+    owner.release();
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('KNOWN DEFECT L1: a released Store keeps answering reads from memory; a later write re-acquires and reloads', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'cargo-l1-'));
+  try {
+    const s = new Store(dir); s.transaction(st => { st.sessions.x = { n: 1 }; }); s.release();
+    const next = new Store(dir); next.transaction(st => { st.sessions.x.n = 2; }); // a new owner writes
+    assert.equal(s.get('x').n, 1); // stale read after release
+    assert.throws(() => s.transaction(st => { st.sessions.x.n = 3; }), e => e.code === 'DATA_DIRECTORY_LOCKED'); // refused while owned
+    next.release();
+    s.transaction(st => { st.sessions.x.n += 10; }); // the lazy path re-acquires and reloads from disk: no lost update
+    assert.equal(new Store(dir).get('x').n, 12);
+    s.release();
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});

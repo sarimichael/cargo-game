@@ -6,9 +6,15 @@ import { verifyRound } from './fairness.js';
 const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const PORTS=['Breakwater','Buoy One','Sheltered Cove','Sandbar','Beacon Port','Outer Reef','Blue Channel','Open Strait','Headland','Deep Bay','Crosswind','Reef Passage','High Seas','Storm Line','Darkwater','Maelstrom','Narrow Reach','Last Beacon','Final Port'];
 const colors=['#5ce6bb','#edc175','#a99be9'];
-let data=null,selectedMode='easy',busy=false,connected=true,hiddenRoundId=null,clientSeed='',toastTimer,eventTimer,modalRound=null,recovery=null,recoveryOpen=false,recoveryDismissed=false;
+let data=null,selectedMode='easy',busy=false,connected=true,hiddenRoundId=null,clientSeed='',toastTimer,eventTimer,modalRound=null,recovery=null,recoveryOpen=false,recoveryDismissed=false,startUnconfirmed=false;
 // recovery: null, 'missing' (the server reports this browser's saved session is gone), 'starting' (an explicit
 // start request is in flight) or 'unloaded' (a new session was created but could not be read back yet).
+// startUnconfirmed: a start failed without a server answer, so it may have succeeded. Starting again is blocked
+// until a completed read shows this browser still has no session. This is a client safeguard, not idempotency.
+// Response ordering: every session request takes a ticket. A response is used only if no later response has been
+// applied and no action or start began after it was sent, so a delayed read never replaces newer state.
+let ticket=0,appliedTicket=0,actionTicket=0;
+const superseded=t=>t<appliedTicket||t<actionTicket;
 const scene=new OceanScene($('ocean'));
 let soundEnabled=localStorage.getItem('cargo-sound')==='on',audio=null;
 function sound(type){
@@ -40,7 +46,7 @@ function render(){
  const stakes=splitStake(stake);$('bet-help').textContent=valid||active?stakes.every(x=>x===stakes[0])?'3 containers · '+money(stakes[0])+' each':stakes.map((n,i)=>CONTAINERS[i]+' '+money(n)).join(' · '):stake>data.session.balanceCents?'Not enough play money.':'Bet between $3.00 and $3,000.00.';
  $('bet-help').classList.toggle('invalid',!valid&&!active);
  $('difficulty').innerHTML=Object.entries(MODES).map(([k,m])=>`<button class="difficulty-button" data-mode="${k}" aria-pressed="${mode===k}" ${active||busy?'disabled':''}><span><i></i>${m.name}<b>✓</b></span><small>${m.payouts.length} stops</small></button>`).join('');
- for(const b of $('difficulty').children){b.style.setProperty('--mode-color',MODES[b.dataset.mode].color);b.addEventListener('click',()=>{selectedMode=b.dataset.mode;hiddenRoundId=data.round?.id||null;$('scene-event').hidden=true;sound('click');render();});}
+ for(const b of $('difficulty').children){b.style.setProperty('--mode-color',MODES[b.dataset.mode].color);b.addEventListener('click',()=>{selectedMode=b.dataset.mode;hiddenRoundId=data?.round?.id||null;$('scene-event').hidden=true;sound('click');render();});}
  $('mode-hint').textContent=active?'LOCKED FOR THIS VOYAGE':'CHOOSE YOUR SEAS';
  const risk=nextRisk(mode,r?.step||0),final=r?.step===info.payouts.length;
  $('risk-label').textContent=r&&!active?'VOYAGE RESULT':final?'FINAL PORT':r?'NEXT STOP RISK':'FIRST STOP RISK';$('risk-percent').textContent=r&&!active?'Settled':final?'Reached':(risk*100).toFixed(1)+'%';$('risk-percent').style.color=riskColor(risk);
@@ -82,17 +88,48 @@ async function api(path,options={}){
  const response=await fetch(path,{...options,signal:AbortSignal.timeout(7000)}),result=await response.json();
  if(!response.ok){const error=new Error(result.error||'The game could not complete this action.');error.code=result.code;throw error;}return result;
 }
-async function sync(){try{data=await api('/api/session');}catch(e){if(e.code==='SESSION_NOT_FOUND')sessionNotFound();throw e;}recovery=null;connected=true;if(!clientSeed)clientSeed=localStorage.getItem('cargo-client-seed')||data.session.clientSeed;const r=visibleRound();if(r)selectedMode=r.difficulty;render();}
+// Reads GET /api/session. Resolves to null when the response was superseded (it is then ignored, success or failure).
+// Revisions of one session only increase, so an in-order read with a lower revision means this browser's cookie now
+// names a different session (for example one started in another tab). That is confirmed by a second read first.
+async function readSession(confirming=false){
+ const t=++ticket;let next;
+ try{next=await api('/api/session');}
+ catch(e){if(superseded(t))return null;if(e.code==='SESSION_NOT_FOUND')sessionNotFound();throw e;}
+ if(superseded(t))return null;
+ const replaced=!!data&&next.session.revision<data.session.revision;
+ if(replaced&&!confirming)return readSession(true);
+ return {t,next,replaced};
+}
+function commit({t,next,replaced}){
+ appliedTicket=t;data=next;recovery=null;startUnconfirmed=false;connected=true;
+ if(!clientSeed)clientSeed=localStorage.getItem('cargo-client-seed')||data.session.clientSeed;
+ if(replaced){hiddenRoundId=null;toast('This browser is now using a different demo session. Its current balance is shown.');}
+ const r=visibleRound();if(r)selectedMode=r.difficulty;
+}
+async function sync(){const read=await readSession();if(!read)return false;commit(read);render();return true;}
 // The saved session no longer exists on the server. Explain it and wait for an explicit choice:
 // nothing is created or funded automatically.
 function sessionNotFound(){
- $('balance').textContent='—'; // no wallet exists until the player starts one
+ quarantine();
  if(recovery==='starting')return; // a start is in flight: never rebuild the dialog or re-enable its buttons
- recovery='missing';if(!recoveryDismissed)showRecovery();
+ recovery='missing';startUnconfirmed=false; // this answer was read after any failed start, so starting is safe again
+ if(!recoveryDismissed)showRecovery();
+}
+// Drop the vanished session's snapshot so nothing (render(), a delayed read) can show its balance again, and lock
+// the controls that act on it. render() restores them once a session is loaded.
+function quarantine(){
+ data=null;hiddenRoundId=null;appliedTicket=ticket; // reads already in flight carry the old session
+ $('balance').textContent='—';$('secured').textContent='—';$('onboard').textContent='—'; // no wallet exists until the player starts one
+ for(const id of ['bet-amount','half-bet','double-bet','refill-button','sail-button','collect-all'])$(id).disabled=true;
+ document.querySelectorAll('#difficulty button,[data-collect]').forEach(b=>b.disabled=true);
+ $('status-text').textContent='Session not found';$('export-round').hidden=true;
+ // Labels left by an interrupted action ("Sailing…") would suggest it is still running.
+ $('stage-badge').textContent='SESSION NOT FOUND';$('sail-button').textContent='Session not found';$('action-help').textContent='Your saved session could not be found.';document.querySelectorAll('[data-collect]').forEach(b=>b.textContent='Unavailable');
 }
 function showRecovery(){
  recoveryDismissed=false;
- if(recovery==='missing')openModal('Saved session not found',`<p>This browser has a saved Cargo demo session, but the server can no longer find it. It may have been removed from the server's storage.</p><p>Nothing has been changed and no new session has been created. A new demo session starts with a fresh play-money balance; earlier voyages cannot be restored.</p><div class="modal-actions"><button id="start-new-session" class="primary">Start a new demo session</button><button id="retry-session" class="secondary">Try again</button></div>`);
+ if(recovery==='missing'&&startUnconfirmed)openModal('Saved session not found',`<p>The game could not confirm whether your new demo session was started. To avoid creating a second one, check first.</p><p>Choose <strong>Try again</strong>: if the new session exists it loads; otherwise you can start one.</p><div class="modal-actions"><button id="start-new-session" class="primary" disabled>Start a new demo session</button><button id="retry-session" class="secondary">Try again</button></div>`);
+ else if(recovery==='missing')openModal('Saved session not found',`<p>This browser has a saved Cargo demo session, but the server can no longer find it. It may have been removed from the server's storage.</p><p>Nothing has been changed and no new session has been created. A new demo session starts with a fresh play-money balance; earlier voyages cannot be restored.</p><div class="modal-actions"><button id="start-new-session" class="primary">Start a new demo session</button><button id="retry-session" class="secondary">Try again</button></div>`);
  else if(recovery==='starting')openModal('Starting a new demo session',`<p>Your new play-money session is being created. This only takes a moment.</p><div class="modal-actions"><button id="start-new-session" class="primary" disabled>Starting…</button></div>`);
  else if(recovery==='unloaded')openModal('New demo session started',`<p>Your new demo session was created, but the game could not load it. Check your connection and load it again. No further session will be created.</p><div class="modal-actions"><button id="load-new-session" class="primary">Load my new session</button></div>`);
  else return;
@@ -103,20 +140,26 @@ function showRecovery(){
 }
 function recoveryButtons(label){for(const id of ['start-new-session','retry-session','load-new-session']){const b=$(id);if(b)b.disabled=true;}const b=$('start-new-session')||$('load-new-session');if(b&&label)b.textContent=label;}
 async function retrySession(){
- if(recovery!=='missing')return;recoveryButtons();
- try{await sync();$('modal').close();}
+ if(recovery!=='missing')return;const afterUnknownStart=startUnconfirmed;recoveryButtons();
+ try{if(await sync()){if(recoveryOpen)$('modal').close();if(afterUnknownStart)toast('New demo session started.');}else if(recoveryOpen)showRecovery();}
  catch(e){if(e.code!=='SESSION_NOT_FOUND'){toast('Could not reach the game server, so your saved session was not checked. Try again in a moment.',true);if(recoveryOpen)showRecovery();offline();}}
 }
 async function startNewSession(){
- if(recovery!=='missing')return; // one start at a time: a pending start disables the controls until it settles
- recovery='starting';recoveryButtons('Starting…');offline();
+ if(recovery!=='missing'||startUnconfirmed)return; // one start at a time, and none while an earlier one is unconfirmed
+ recovery='starting';actionTicket=++ticket;recoveryButtons('Starting…');offline();
  try{await api('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});}
- catch(e){if(e.code!=='SESSION_EXISTS'){recovery='missing';toast(e.code?e.message:'The game could not confirm whether a new session was started. Choose "Try again" to check before starting another.',true);if(recoveryOpen)showRecovery();offline();return;}}
+ catch(e){if(e.code!=='SESSION_EXISTS'){
+  recovery='missing';
+  if(e.code){toast(e.message,true);if(recoveryOpen)showRecovery();offline();return;} // the server answered: nothing was started
+  // No answer: the session may have been created, and its cookie may even have arrived. Read before any new start.
+  startUnconfirmed=true;toast('The game could not confirm whether a new session was started. Checking before allowing another start.',true);
+  if(recoveryOpen)showRecovery();offline();await retrySession();return;
+ }}
  recovery='unloaded';await loadNewSession();
 }
 async function loadNewSession(){
  if(recovery!=='unloaded')return;recoveryButtons('Loading…');
- try{await sync();if(recoveryOpen)$('modal').close();toast('New demo session started.');}
+ try{if(await sync()){if(recoveryOpen)$('modal').close();toast('New demo session started.');}else if(recoveryOpen)showRecovery();}
  catch(e){if(e.code!=='SESSION_NOT_FOUND'&&(recoveryOpen||!recoveryDismissed))showRecovery();offline();}
 }
 function offline(){connected=false;document.body.classList.remove('loading');
@@ -127,7 +170,7 @@ function offline(){connected=false;document.body.classList.remove('loading');
  else status.textContent='Connection lost · refresh to reconnect';
  $('connection').style.background='var(--red)';$('sail-button').disabled=true;$('collect-all').disabled=true;document.querySelectorAll('[data-collect]').forEach(b=>b.disabled=true);}
 async function action(path,extra={},animation=null){
- if(busy||!data)return;busy=true;const old=visibleRound(),payload={...extra,actionId:crypto.randomUUID(),revision:data.session.revision};render();
+ if(busy||!data)return;busy=true;const t=actionTicket=++ticket,old=visibleRound(),payload={...extra,actionId:crypto.randomUUID(),revision:data.session.revision};render();
  if(animation==='sail'){$('sail-button').textContent='Sailing…';$('stage-badge').textContent='VOYAGE UNDERWAY';document.querySelectorAll('[data-collect]').forEach(b=>b.textContent='Sailing…');}
  try{
   let result;for(let attempt=0;attempt<2;attempt++){try{result=await api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});break;}catch(e){if(e.code||attempt===1)throw e;}}
@@ -136,11 +179,15 @@ async function action(path,extra={},animation=null){
    sound(kind);$('stage-badge').textContent=kind==='iceberg'?'ICEBERG COLLISION':'FLOATING DEBRIS';$('stage-title').textContent=kind==='iceberg'?'Brace for impact!':'A glancing hit.';$('stage-description').textContent=kind==='iceberg'?'The ship is taking on water.':'Cargo has slipped overboard.';
    showEvent(kind==='iceberg'?'Iceberg hit · all cargo lost':'Debris hit · Cargo '+collision.lost.join(' + ')+' overboard',true);
   });}
-  data=result;connected=true;hiddenRoundId=null;if(result.round)selectedMode=result.round.difficulty;
+  data=result;appliedTicket=t;connected=true;hiddenRoundId=null;if(result.round)selectedMode=result.round.difficulty;
   if(animation==='sail'){const event=result.round.events.at(-1);if(event.lost?.length){showEvent(collision?.kind==='iceberg'?'Iceberg collision · all cargo lost':'Debris hit · Cargo '+event.lost.join(' + ')+' lost at stop '+result.round.step,true);}else{sound('arrive');showEvent('Stop '+result.round.step+' reached · '+mult(result.round.multiplier100));}}
   if(animation==='collect'){const event=result.round.events.at(-1),amount=Object.values(event.credits).reduce((a,b)=>a+b,0);sound('collect');showEvent(money(amount)+' secured');}
   if(path==='/api/reset'){hiddenRoundId=data.round?.id||null;toast('Play balance refilled to $1,000.00.');}
- }catch(e){toast(e.message,true);try{await sync();}catch{offline();}}
+ }catch(e){
+  // The server says this session no longer exists: quarantine it at once rather than re-reading and re-rendering it.
+  if(e.code==='SESSION_NOT_FOUND'){sessionNotFound();offline();}
+  else{toast(e.message,true);try{await sync();}catch{offline();}}
+ }
  finally{busy=false;render();}
 }
 async function collect(id){const r=visibleRound();if(r?.status==='active')await action('/api/rounds/'+r.id+'/collect',{containerId:id},'collect');}
@@ -184,14 +231,14 @@ $('history-button').addEventListener('click',()=>{
  document.querySelectorAll('[data-round]').forEach(b=>b.addEventListener('click',async()=>{try{const result=await api('/api/rounds/'+b.dataset.round);fairness(result.round);}catch(e){toast(e.message,true)}}));
 });
 $('refill-button').addEventListener('click',()=>{
- if(isActive())return toast('Finish your voyage before refilling.',true);
+ if(!data)return;if(isActive())return toast('Finish your voyage before refilling.',true);
  openModal('Refill your play balance',`<p>Set your play balance to <strong>$1,000.00</strong>. Your completed voyages and fairness proofs stay saved.</p><div class="modal-actions"><button id="confirm-refill" class="primary">Refill to $1,000.00</button><button id="cancel-refill" class="secondary">Keep current balance</button></div>`);
  $('cancel-refill').addEventListener('click',()=>$('modal').close());$('confirm-refill').addEventListener('click',async()=>{$('modal').close();await action('/api/reset');});
 });
 function downloadRound(round){if(!round||round.status!=='settled')return;const url=URL.createObjectURL(new Blob([JSON.stringify(round,null,2)],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='cargo-round-'+round.id+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 $('export-round').addEventListener('click',()=>downloadRound(visibleRound()));
 document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&!busy&&!recovery)try{await sync();}catch{offline();}});
-setInterval(async()=>{if(!busy&&!document.hidden&&data&&!recovery)try{const next=await api('/api/session');if(next.session.revision!==data.session.revision||!connected){data=next;connected=true;render();toast('Voyage synchronized.');}}catch(e){if(e.code==='SESSION_NOT_FOUND')sessionNotFound();offline();}},12000);
+setInterval(async()=>{if(!busy&&!document.hidden&&data&&!recovery)try{const read=await readSession();if(read&&(read.replaced||read.next.session.revision!==data.session.revision||!connected)){commit(read);render();if(!read.replaced)toast('Voyage synchronized.');}}catch{offline();}},12000);
 document.body.classList.add('loading');sync().catch(e=>{offline();if(e.code!=='SESSION_NOT_FOUND')toast('Could not connect. Please refresh the page in a moment.',true);});
 
 // Structured access uses the same visible, play-money actions.

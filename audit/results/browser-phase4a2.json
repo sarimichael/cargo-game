@@ -1,0 +1,805 @@
+{
+ "meta": {
+  "script": "audit/browser-phase4a2.mjs",
+  "root": "/home/user/cargo-game",
+  "node": "v24.21.0",
+  "chromium": "141.0.7390.37",
+  "generatedAt": "2026-10-08T03:37:34.372Z",
+  "reducedMotion": true
+ },
+ "pass": true,
+ "results": [
+  {
+   "scenario": "M1 delayed read after a newer action",
+   "view": "desktop",
+   "afterAction": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND 1326DD16",
+    "sailDisabled": false,
+    "toast": "",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "afterStaleRead": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND 1326DD16",
+    "sailDisabled": false,
+    "toast": "",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "afterAction2": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND 1326DD16",
+    "sailDisabled": false,
+    "toast": "",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "afterStaleFailure": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND 1326DD16",
+    "sailDisabled": false,
+    "toast": "",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "ok": true,
+   "log": [
+    "GET /api/session 200",
+    "POST /api/rounds 200",
+    "GET /api/session 200",
+    "POST /api/rounds/:id/advance 200",
+    "GET /api/session failed"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M1 delayed poll after a newer action",
+   "view": "desktop",
+   "afterStalePoll": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND 11EEBE72",
+    "sailDisabled": false,
+    "toast": "",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "ok": true,
+   "log": [
+    "GET /api/session 200",
+    "POST /api/rounds 200",
+    "GET /api/session 200"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M1 legitimate session replacement is shown",
+   "view": "desktop",
+   "replaced": {
+    "balance": "$1,000.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "PLAY-MONEY PROTOTYPE",
+    "sailDisabled": false,
+    "toast": "This browser is now using a different demo session. Its current balance is shown.",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "usable": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND 4EE49BC2",
+    "sailDisabled": false,
+    "toast": "This browser is now using a different demo session. Its current balance is shown.",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "ok": true,
+   "log": [
+    "GET /api/session 200",
+    "POST /api/rounds 200",
+    "GET /api/session 200",
+    "GET /api/session 200",
+    "POST /api/rounds 200"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M2 session disappears during an action",
+   "view": "desktop",
+   "checks": {
+    "afterAction": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": true,
+     "title": "Saved session not found",
+     "round": "ROUND 3DCF13CD",
+     "sailDisabled": true,
+     "toast": "",
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false
+    },
+    "afterClose": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "round": "ROUND 3DCF13CD",
+     "sailDisabled": true,
+     "toast": "",
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false
+    },
+    "afterInputs": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "round": "ROUND 3DCF13CD",
+     "sailDisabled": true,
+     "toast": "",
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false,
+     "extraGets": 0,
+     "sessions": 5
+    },
+    "reopened": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": true,
+     "title": "Saved session not found",
+     "round": "ROUND 3DCF13CD",
+     "sailDisabled": true,
+     "toast": "",
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false
+    },
+    "recovered": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "Saved session not found",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sailDisabled": false,
+     "toast": "New demo session started.",
+     "start": {
+      "disabled": true,
+      "text": "Loading…"
+     },
+     "retry": {
+      "disabled": true
+     },
+     "overflow": false,
+     "posts": 1,
+     "sessions": 6
+    },
+    "usable": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "Saved session not found",
+     "round": "ROUND C7367031",
+     "sailDisabled": false,
+     "toast": "New demo session started.",
+     "start": {
+      "disabled": true,
+      "text": "Loading…"
+     },
+     "retry": {
+      "disabled": true
+     },
+     "overflow": false
+    },
+    "balanceTexts": [
+     "$970.00",
+     "—",
+     "$1,000.00",
+     "$1,000.00",
+     "$1,000.00",
+     "$970.00"
+    ]
+   },
+   "sessionsBefore": 5,
+   "ok": true,
+   "log": [
+    "GET /api/session 200",
+    "POST /api/rounds 200",
+    "POST /api/rounds/:id/advance 404",
+    "POST /api/session 200",
+    "GET /api/session 200",
+    "POST /api/rounds 200"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M3 second start only after a completed read",
+   "view": "desktop",
+   "checks": {
+    "afterUnknownStart": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": true,
+     "title": "Saved session not found",
+     "round": "LOCAL PLAY-MONEY GAME",
+     "sailDisabled": true,
+     "toast": "Could not reach the game server, so your saved session was not checked. Try again in a moment.",
+     "start": {
+      "disabled": true,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false
+    },
+    "postsAfterEarlyClick": 1,
+    "afterConfirmedMissing": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": true,
+     "title": "Saved session not found",
+     "round": "LOCAL PLAY-MONEY GAME",
+     "sailDisabled": true,
+     "toast": "Could not reach the game server, so your saved session was not checked. Try again in a moment.",
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false
+    },
+    "final": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "Saved session not found",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sailDisabled": false,
+     "toast": "New demo session started.",
+     "start": {
+      "disabled": true,
+      "text": "Loading…"
+     },
+     "retry": {
+      "disabled": true
+     },
+     "overflow": false,
+     "posts": 2,
+     "sessions": 7
+    }
+   },
+   "sessionsBefore": 6,
+   "ok": true,
+   "order": [
+    "GET /api/session 404",
+    "POST /api/session failed",
+    "GET /api/session failed",
+    "GET /api/session 404",
+    "POST /api/session 200",
+    "GET /api/session 200"
+   ],
+   "log": [
+    "GET /api/session 404",
+    "POST /api/session failed",
+    "GET /api/session failed",
+    "GET /api/session 404",
+    "POST /api/session 200",
+    "GET /api/session 200"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M3 lost start response is found by a read, not a second start",
+   "view": "desktop",
+   "sessionsBefore": 7,
+   "final": {
+    "balance": "$1,000.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "Saved session not found",
+    "round": "PLAY-MONEY PROTOTYPE",
+    "sailDisabled": false,
+    "toast": "New demo session started.",
+    "start": {
+     "disabled": true,
+     "text": "Start a new demo session"
+    },
+    "retry": {
+     "disabled": true
+    },
+    "overflow": false,
+    "posts": 1,
+    "sessions": 8
+   },
+   "ok": true,
+   "log": [
+    "GET /api/session 404",
+    "POST /api/session 200",
+    "GET /api/session 200"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M1 delayed read after a newer action",
+   "view": "phone",
+   "afterAction": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND 5A865B45",
+    "sailDisabled": false,
+    "toast": "",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "afterStaleRead": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND 5A865B45",
+    "sailDisabled": false,
+    "toast": "",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "afterAction2": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND 5A865B45",
+    "sailDisabled": false,
+    "toast": "",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "afterStaleFailure": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND 5A865B45",
+    "sailDisabled": false,
+    "toast": "",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "ok": true,
+   "log": [
+    "GET /api/session 200",
+    "POST /api/rounds 200",
+    "GET /api/session 200",
+    "POST /api/rounds/:id/advance 200",
+    "GET /api/session failed"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M1 delayed poll after a newer action",
+   "view": "phone",
+   "afterStalePoll": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND A97C7728",
+    "sailDisabled": false,
+    "toast": "",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "ok": true,
+   "log": [
+    "GET /api/session 200",
+    "POST /api/rounds 200",
+    "GET /api/session 200"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M1 legitimate session replacement is shown",
+   "view": "phone",
+   "replaced": {
+    "balance": "$1,000.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "PLAY-MONEY PROTOTYPE",
+    "sailDisabled": false,
+    "toast": "This browser is now using a different demo session. Its current balance is shown.",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "usable": {
+    "balance": "$970.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "How to play",
+    "round": "ROUND A47CE91B",
+    "sailDisabled": false,
+    "toast": "This browser is now using a different demo session. Its current balance is shown.",
+    "start": null,
+    "retry": null,
+    "overflow": false
+   },
+   "ok": true,
+   "log": [
+    "GET /api/session 200",
+    "POST /api/rounds 200",
+    "GET /api/session 200",
+    "GET /api/session 200",
+    "POST /api/rounds 200"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M2 session disappears during an action",
+   "view": "phone",
+   "checks": {
+    "afterAction": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": true,
+     "title": "Saved session not found",
+     "round": "ROUND F780CCE0",
+     "sailDisabled": true,
+     "toast": "",
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false
+    },
+    "afterClose": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "round": "ROUND F780CCE0",
+     "sailDisabled": true,
+     "toast": "",
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false
+    },
+    "afterInputs": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": false,
+     "title": "Saved session not found",
+     "round": "ROUND F780CCE0",
+     "sailDisabled": true,
+     "toast": "",
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false,
+     "extraGets": 0,
+     "sessions": 13
+    },
+    "reopened": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": true,
+     "title": "Saved session not found",
+     "round": "ROUND F780CCE0",
+     "sailDisabled": true,
+     "toast": "",
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false
+    },
+    "recovered": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "Saved session not found",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sailDisabled": false,
+     "toast": "New demo session started.",
+     "start": {
+      "disabled": true,
+      "text": "Loading…"
+     },
+     "retry": {
+      "disabled": true
+     },
+     "overflow": false,
+     "posts": 1,
+     "sessions": 14
+    },
+    "usable": {
+     "balance": "$970.00",
+     "status": "Your voyage is saved",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "Saved session not found",
+     "round": "ROUND D0ABA03B",
+     "sailDisabled": false,
+     "toast": "New demo session started.",
+     "start": {
+      "disabled": true,
+      "text": "Loading…"
+     },
+     "retry": {
+      "disabled": true
+     },
+     "overflow": false
+    },
+    "balanceTexts": [
+     "$970.00",
+     "—",
+     "$1,000.00",
+     "$1,000.00",
+     "$1,000.00",
+     "$970.00"
+    ]
+   },
+   "sessionsBefore": 13,
+   "ok": true,
+   "log": [
+    "GET /api/session 200",
+    "POST /api/rounds 200",
+    "POST /api/rounds/:id/advance 404",
+    "POST /api/session 200",
+    "GET /api/session 200",
+    "POST /api/rounds 200"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M3 second start only after a completed read",
+   "view": "phone",
+   "checks": {
+    "afterUnknownStart": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": true,
+     "title": "Saved session not found",
+     "round": "LOCAL PLAY-MONEY GAME",
+     "sailDisabled": true,
+     "toast": "Could not reach the game server, so your saved session was not checked. Try again in a moment.",
+     "start": {
+      "disabled": true,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false
+    },
+    "postsAfterEarlyClick": 1,
+    "afterConfirmedMissing": {
+     "balance": "—",
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "reopenVisible": true,
+     "open": true,
+     "title": "Saved session not found",
+     "round": "LOCAL PLAY-MONEY GAME",
+     "sailDisabled": true,
+     "toast": "Could not reach the game server, so your saved session was not checked. Try again in a moment.",
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "retry": {
+      "disabled": false
+     },
+     "overflow": false
+    },
+    "final": {
+     "balance": "$1,000.00",
+     "status": "Your voyage is saved",
+     "reopen": false,
+     "reopenVisible": false,
+     "open": false,
+     "title": "Saved session not found",
+     "round": "PLAY-MONEY PROTOTYPE",
+     "sailDisabled": false,
+     "toast": "New demo session started.",
+     "start": {
+      "disabled": true,
+      "text": "Loading…"
+     },
+     "retry": {
+      "disabled": true
+     },
+     "overflow": false,
+     "posts": 2,
+     "sessions": 15
+    }
+   },
+   "sessionsBefore": 14,
+   "ok": true,
+   "order": [
+    "GET /api/session 404",
+    "POST /api/session failed",
+    "GET /api/session failed",
+    "GET /api/session 404",
+    "POST /api/session 200",
+    "GET /api/session 200"
+   ],
+   "log": [
+    "GET /api/session 404",
+    "POST /api/session failed",
+    "GET /api/session failed",
+    "GET /api/session 404",
+    "POST /api/session 200",
+    "GET /api/session 200"
+   ],
+   "consoleProblems": []
+  },
+  {
+   "scenario": "M3 lost start response is found by a read, not a second start",
+   "view": "phone",
+   "sessionsBefore": 15,
+   "final": {
+    "balance": "$1,000.00",
+    "status": "Your voyage is saved",
+    "reopen": false,
+    "reopenVisible": false,
+    "open": false,
+    "title": "Saved session not found",
+    "round": "PLAY-MONEY PROTOTYPE",
+    "sailDisabled": false,
+    "toast": "New demo session started.",
+    "start": {
+     "disabled": true,
+     "text": "Start a new demo session"
+    },
+    "retry": {
+     "disabled": true
+    },
+    "overflow": false,
+    "posts": 1,
+    "sessions": 16
+   },
+   "ok": true,
+   "log": [
+    "GET /api/session 404",
+    "POST /api/session 200",
+    "GET /api/session 200"
+   ],
+   "consoleProblems": []
+  }
+ ]
+}

@@ -2,8 +2,8 @@
  "meta": {
   "script": "audit/validate-rng.mjs",
   "node": "v24.21.0",
-  "generatedAt": "2026-10-08T00:21:33.631Z",
-  "runtimeMs": 11906
+  "generatedAt": "2026-10-08T03:34:45.416Z",
+  "runtimeMs": 13440
  },
  "summary": {
   "checks": 8,
@@ -20,7 +20,7 @@
    "pass": true,
    "compared": 14400,
    "mismatches": [],
-   "ms": 9237
+   "ms": 10531
   },
   {
    "id": "R02",
@@ -30,7 +30,7 @@
    "pass": true,
    "verified": 192,
    "failures": [],
-   "ms": 869
+   "ms": 768
   },
   {
    "id": "R03",
@@ -159,7 +159,7 @@
    "firstRejectedBound20Value": 4294967280,
    "pAnyRejectionPerDeck": 1.6065314412117004e-8,
    "note": "Natural rejections occur with probability ≈ 1.607e-8 per deck, so they cannot be observed in practical samples; equivalence on natural data (R01) plus this forced-input test cover the path.",
-   "ms": 1
+   "ms": 0
   },
   {
    "id": "R04",
@@ -221,7 +221,7 @@
    "prefixMultiplicity": [
     720
    ],
-   "ms": 49
+   "ms": 47
   },
   {
    "id": "R05",
@@ -232,7 +232,7 @@
    "distinctMessages": 216,
    "loneSurrogateSerializedAs": "[\"cargo-v1\",\"\\ud800\",0,\"A\",0]",
    "note": "Unpaired surrogates are escaped by JSON.stringify (ES2019 well-formed stringify), so Node createHmac and browser TextEncoder hash identical bytes.",
-   "ms": 1
+   "ms": 0
   },
   {
    "id": "R06",
@@ -244,7 +244,7 @@
    "newSeedSamples": 10000,
    "allFormatOk": true,
    "allUnique": true,
-   "ms": 41
+   "ms": 40
   },
   {
    "id": "R07",
@@ -255,7 +255,7 @@
    "tuples": 1000,
    "nested": 1000,
    "implication": "Safe only because each committed server seed is consumed by exactly one round with one locked difficulty (verified in validate-system S05/S06). Any future feature that lets the same seed/nonce be replayed under a different difficulty would leak information across difficulties.",
-   "ms": 1179
+   "ms": 1346
   },
   {
    "id": "R08",
@@ -266,7 +266,7 @@
    "activeSnapshots": 3369,
    "leaks": [],
    "settledRevealed": 400,
-   "ms": 488
+   "ms": 658
   }
  ]
 }

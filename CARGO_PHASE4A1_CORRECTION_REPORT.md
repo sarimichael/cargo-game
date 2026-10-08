@@ -4,6 +4,13 @@
 **Branch:** `claude/cargo-phase4a1-corrections`, created from `a786d9958440b2245e237b7b90c00c58e6ca17a6` (`claude/cargo-phase4a-reliability-fixes`).
 **Status:** local commit only. Not pushed, merged or deployed, and no pull request. `main` and all earlier branches are unchanged.
 
+> **Correction notice (Phase 4A.2, 8 October 2026, branch `claude/cargo-phase4a2-browser-reliability`).** The statements about
+> retrying a start were stronger than the code. The Phase 4A.1 browser did **not** require a read before a second start:
+> after a start failed without an answer, the rebuilt dialog re-enabled **Start a new demo session** at once, and the
+> reproduction in CARGO_PHASE4A2_CORRECTION_REPORT.md sends a second `POST /api/session` with no read in between. The
+> original text is kept; the affected sentences are marked **[4A.2]**. Phase 4A.2 adds a client-side safeguard (a read must
+> complete before another start); that is still not idempotency, and R5 remains deferred.
+
 ## 1. Executive summary
 
 Phase 4A.1 corrects the defects that the independent review found in Phase 4A. The main mission was exclusive ownership of the local demo server's save folder (F07, review findings R1–R4). The secondary work covered browser session recovery (P3-02 edge cases R6–R8) and the retry behaviour of `POST /api/session` (R5).
@@ -15,7 +22,7 @@ Phase 4A.1 corrects the defects that the independent review found in Phase 4A. T
 | R2 | Concurrent stale-lock recovery could produce two owners | **FIXED.** Recovery is serialized by an exclusive `state.lock.recover`, is re-confirmed under it, and never removes a lock it did not confirm dead. Tested with 3- and 12-way barrier races and 80 stress rounds. |
 | R3 | A worker thread could take its own process's lock | **FIXED.** Ownership no longer depends on per-isolate memory. |
 | R4 | A fenced-out server kept serving stale balances | **FIXED.** Every read and write is fenced. A server that loses ownership returns 503 `SERVER_UNAVAILABLE` with no state, then exits. |
-| R5 | `POST /api/session` is not idempotent | **DEFERRED, with a proposal for separate approval (§5).** The client now re-reads before any second start. |
+| R5 | `POST /api/session` is not idempotent | **DEFERRED, with a proposal for separate approval (§5).** The client now re-reads before any second start. **[4A.2] Inaccurate: the 4A.1 client only advised a re-read; the Start button was re-enabled immediately. Phase 4A.2 enforces a completed read in the same tab, which is still not idempotency.** |
 | R6–R8 | Browser recovery edge cases | **FIXED** in `public/app.js`, verified in real Chromium on desktop and phone. |
 | R9 | Deep Phase 4A receipts are not replayable | **Unchanged (INFO).** P3-01 is preserved as instructed. A bounded property test was added. |
 
@@ -130,7 +137,7 @@ The recovery state is explicit: `missing`, `starting` or `unloaded`.
 The extra session is unused, and the browser keeps whichever cookie it received last. No money is involved, but the same pattern would duplicate funding in a real-wallet integration.
 
 **Mitigation in 4A.1.**
-- After a failed start, the dialog tells the player that the outcome is unknown and to choose **Try again**. That only re-reads, and finds the new session if its cookie arrived.
+- After a failed start, the dialog tells the player that the outcome is unknown and to choose **Try again**. That only re-reads, and finds the new session if its cookie arrived. **[4A.2] The same dialog also re-enabled Start, so a second start without any read was possible.**
 - Buttons stay disabled while a start is pending.
 - Nothing is created automatically.
 

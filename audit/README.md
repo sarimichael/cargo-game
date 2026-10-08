@@ -24,6 +24,7 @@ Node.js 24 or newer, as declared in `package.json`. Node 22.22 also runs everyth
 | `node audit/validate-system.mjs [--skip-capacity]` | Both real adapters: races, idempotency, validation, faults and defect reproductions (S01–S21) → `results/system.json` | ~1 min |
 | `node audit/measure-storage.mjs` | F03 evidence: session composition per round and request cost vs stored size, both adapters → `results/storage.json` (timings indicative) | ~20 s |
 | `PLAYWRIGHT_MODULE=… node audit/browser-check.mjs` | Real Chromium against the local server, desktop and 390 px phone: UI verification, browser-loaded verifier, frozen table, layout → `results/browser.json`. Optional; needs Playwright | ~30 s |
+| `PLAYWRIGHT_MODULE=… node audit/browser-phase4a2.mjs [--root <checkout>]` | Real Chromium, desktop and phone: delayed reads vs newer actions (M1), a session vanishing during an action (M2), retrying an unconfirmed start (M3) → `results/browser-phase4a2.json`. `--root` runs another checkout's server and client (red baseline). Optional; needs Playwright | ~90 s |
 
 \*Measured on a 4-vCPU container.
 
@@ -48,6 +49,7 @@ audit/
   simulate.mjs, analyze-simulation.mjs
   lib/engine-variant.mjs  isolated engine copy with a modified table (models a later deployment, F11)
   browser-check.mjs       optional real-browser check (Playwright)
+  browser-phase4a2.mjs    optional real-browser state-reliability checks, phase 4A.2 (Playwright)
   run-all.mjs             one-command reproduction plus manifest and production-change allowlist
   tests/*.test.js         node:test regression tests:
                             remediation.test.js   protective tests for defects fixed in phase 2
