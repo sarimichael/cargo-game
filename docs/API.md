@@ -40,7 +40,9 @@ Public round fields include `id`, `difficulty`, `stakeCents`, `step`, `status`, 
 
 While active, `proof` contains the commitment hash, client seed and nonce. Only settled rounds reveal `serverSeed` and all three hazard decks.
 
-Errors return `{ "error": "readable message", "code": "ERROR_CODE" }`. Invalid fields or invalid UTF-8 are 400; JSON nested more than 32 levels deep is 400 `JSON_TOO_DEEP`; no session cookie 401 (`SESSION_EXPIRED`); forbidden origin/host 403; missing routes/rounds 404; a missing saved session 404 (`SESSION_NOT_FOUND`); invalid state or revision 409; oversized request 413; wrong content type 415. Unexpected save errors are 500 and leave the in-memory state unchanged.
+Errors return `{ "error": "readable message", "code": "ERROR_CODE" }`. Invalid fields or invalid UTF-8 are 400; JSON nested more than 32 levels deep is 400 `JSON_TOO_DEEP`; no session cookie 401 (`SESSION_EXPIRED`); forbidden origin/host 403; missing routes/rounds 404; a missing saved session 404 (`SESSION_NOT_FOUND`); invalid state or revision 409; oversized request 413; wrong content type 415. Unexpected save errors are 500 and leave the in-memory state unchanged. If the local server has lost ownership of its save folder, every route that reads or writes saved state returns **503 `SERVER_UNAVAILABLE`** (no balance or voyage is included) and the server exits; restart it.
+
+**Retrying `POST /api/session`.** The request is not idempotent. If its response is lost, the browser first re-reads `GET /api/session` ("Try again"); starting again after a lost response can create a second, unused demo session. See CARGO_PHASE4A1_CORRECTION_REPORT.md (R5) for the proposed fix, which awaits approval.
 
 **Hosted only:** each session is stored as one database row with a 2,000,000-byte limit. When fewer than 64 KiB would remain, `POST /api/rounds` returns 409 with code `SESSION_STORAGE_FULL` and changes nothing. This guarantees that a voyage that was accepted can still be settled. Reads, collections on an active voyage, and replays keep working.
 

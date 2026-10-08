@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-07T22:54:32.804Z",
+ "generatedAt": "2026-10-08T00:23:40.704Z",
  "node": "v24.21.0",
  "platform": "linux-x64",
- "gitHead": "fca90c6b0da2ecabe3339db81c00fc3145dfbdcd",
- "gitBranch": "claude/cargo-phase4a-reliability-fixes",
+ "gitHead": "a786d9958440b2245e237b7b90c00c58e6ca17a6",
+ "gitBranch": "claude/cargo-phase4a1-corrections",
  "auditedCommit": "25d5181fbd82abbd22aaea4b32f546e94f9c3602",
  "productionIntegrity": {
   "filesCompared": 42,
@@ -62,11 +62,11 @@
    "label": "Exact mathematics",
    "command": "audit/validate-math.mjs",
    "exitCode": 0,
-   "seconds": 3.8,
+   "seconds": 3.1,
    "tail": [
-    "PASS M09 Joint three-container Bellman optimum equals the factorised optimum (50 ms)",
-    "PASS M10 Strategy comparison at a $30 wager ($10 per container) (1 ms)",
-    "PASS M11 Maximum exposure and final-stop probabilities (0 ms)",
+    "PASS M09 Joint three-container Bellman optimum equals the factorised optimum (40 ms)",
+    "PASS M10 Strategy comparison at a $30 wager ($10 per container) (0 ms)",
+    "PASS M11 Maximum exposure and final-stop probabilities (1 ms)",
     "PASS M12 Theoretical variance of return/wager at the final stop (equal stakes, no rounding) (0 ms)",
     "PASS M13 Rounding effect bound (0 ms)",
     "13/13 math checks passed → /home/user/cargo-game/audit/results/math.json"
@@ -89,13 +89,13 @@
    "label": "RNG structure",
    "command": "audit/validate-rng.mjs",
    "exitCode": 0,
-   "seconds": 13.9,
+   "seconds": 12,
    "tail": [
-    "PASS R04 Fisher–Yates form is a bijection between draw sequences and permutations (53 ms)",
-    "PASS R05 HMAC message serialization is canonical and injective over stress inputs (0 ms)",
-    "PASS R06 Seed commitment is SHA-256 over raw bytes; newSeed() emits 64 lowercase hex (42 ms)",
-    "PASS R07 Difficulty is not part of the HMAC message: decks are nested across difficulties (1405 ms)",
-    "PASS R08 Active-round responses never contain the server seed or hazard decks (583 ms)",
+    "PASS R04 Fisher–Yates form is a bijection between draw sequences and permutations (49 ms)",
+    "PASS R05 HMAC message serialization is canonical and injective over stress inputs (1 ms)",
+    "PASS R06 Seed commitment is SHA-256 over raw bytes; newSeed() emits 64 lowercase hex (41 ms)",
+    "PASS R07 Difficulty is not part of the HMAC message: decks are nested across difficulties (1179 ms)",
+    "PASS R08 Active-round responses never contain the server seed or hazard decks (488 ms)",
     "8/8 RNG checks passed; 108 known-answer vectors → /home/user/cargo-game/audit/results/rng.json"
    ],
    "optional": false
@@ -114,13 +114,13 @@
    "label": "System / adversarial",
    "command": "audit/validate-system.mjs",
    "exitCode": 0,
-   "seconds": 44.3,
+   "seconds": 40.7,
    "tail": [
-    "PASS S17 [remediated] F07 fixed: a second Store on the same directory cannot overwrite an acknowledged debit (3 ms)",
+    "PASS S17 [remediated] F07 fixed: a second Store on the same directory cannot overwrite an acknowledged debit (2 ms)",
     "PASS S18 [remediated] F08 fixed: verifyRound() rejects altered metadata and malformed structure (19 ms)",
-    "PASS S19 [defect] F11: a deployment that changes the payout table alters settlement of an accepted wager (8 ms)",
-    "PASS S20 [remediated] N01 fixed: UTF-8 characters split across request body chunks are decoded intact; invalid UTF-8 is refused (76 ms)",
-    "PASS S21 [observation] \"Refill\" sets the balance to $1,000 even when the balance is higher (21 ms)",
+    "PASS S19 [defect] F11: a deployment that changes the payout table alters settlement of an accepted wager (10 ms)",
+    "PASS S20 [remediated] N01 fixed: UTF-8 characters split across request body chunks are decoded intact; invalid UTF-8 is refused (100 ms)",
+    "PASS S21 [observation] \"Refill\" sets the balance to $1,000 even when the balance is higher (23 ms)",
     "21/21 system checks passed → /home/user/cargo-game/audit/results/system.json"
    ],
    "optional": false
@@ -129,24 +129,34 @@
    "label": "Storage growth and request cost (F03)",
    "command": "audit/measure-storage.mjs",
    "exitCode": 0,
-   "seconds": 21.5,
+   "seconds": 19.9,
    "tail": [
-    "composition: 2178 B/round (rounds 0.483, receipts 0.177, ledger 0.339); latency rows: 8 → /home/user/cargo-game/audit/results/storage.json"
+    "composition: 2172 B/round (rounds 0.485, receipts 0.178, ledger 0.337); latency rows: 8 → /home/user/cargo-game/audit/results/storage.json"
+   ],
+   "optional": false
+  },
+  {
+   "label": "Save-folder lock stress (F07)",
+   "command": "audit/stress-lock.mjs --rounds 12",
+   "exitCode": 0,
+   "seconds": 9.8,
+   "tail": [
+    "PASS lock stress: {\"crashRecovery\":{\"rounds\":6,\"ownersPerRound\":{\"1\":6},\"lostWhileHeld\":0,\"errors\":[]},\"liveOwner\":{\"rounds\":6,\"wronglyAcquired\":0,\"ownerLost\":0,\"errors\":[]},\"debris\":[]} → /home/user/cargo-game/audit/results/lock-stress.json"
    ],
    "optional": false
   },
   {
    "label": "Audit regression tests",
-   "command": "--test audit/tests/adapters.test.js audit/tests/known-defects.test.js audit/tests/math.test.js audit/tests/phase4a.test.js audit/tests/reliability.test.js audit/tests/remediation.test.js audit/tests/restart.test.js audit/tests/rng.test.js audit/tests/statemachine.test.js",
+   "command": "--test audit/tests/adapters.test.js audit/tests/known-defects.test.js audit/tests/math.test.js audit/tests/phase4a.test.js audit/tests/phase4a1.test.js audit/tests/reliability.test.js audit/tests/remediation.test.js audit/tests/restart.test.js audit/tests/rng.test.js audit/tests/statemachine.test.js",
    "exitCode": 0,
-   "seconds": 18.7,
+   "seconds": 44.7,
    "tail": [
-    "ℹ pass 94",
+    "ℹ pass 109",
     "ℹ fail 0",
     "ℹ cancelled 0",
     "ℹ skipped 0",
     "ℹ todo 0",
-    "ℹ duration_ms 18699.757456"
+    "ℹ duration_ms 44698.564866"
    ],
    "optional": false
   },
@@ -154,9 +164,9 @@
    "label": "Real browser (desktop + phone)",
    "command": "audit/browser-check.mjs",
    "exitCode": 0,
-   "seconds": 10.3,
+   "seconds": 11.2,
    "tail": [
-    "PASS browser check (desktop:ok, phone:ok, desktop-missing-session:ok, phone-missing-session:ok) → /home/user/cargo-game/audit/results/browser.json"
+    "PASS browser check (desktop:ok, phone:ok, desktop-missing-session:ok, phone-missing-session:ok, desktop-recovery-edge-cases:ok, phone-recovery-edge-cases:ok) → /home/user/cargo-game/audit/results/browser.json"
    ],
    "optional": false
   },
@@ -171,7 +181,7 @@
     "ℹ cancelled 0",
     "ℹ skipped 0",
     "ℹ todo 0",
-    "ℹ duration_ms 204.583496"
+    "ℹ duration_ms 196.002699"
    ],
    "optional": false
   },
@@ -192,7 +202,7 @@
    "label": "Existing: npm run test:collisions",
    "command": "npm run test:collisions",
    "exitCode": 0,
-   "seconds": 0.2,
+   "seconds": 0.1,
    "tail": [
     "> cargo-game@1.1.0 test:collisions",
     "> node build/check-collision.mjs",
@@ -206,7 +216,9 @@
  "sha256": {
   "audit/README.md": "0af31cd177ff05f1b20170bbe7664949455ef2ba99e1ffebf96326a4fedc0e1f",
   "audit/analyze-simulation.mjs": "05a8172edad08e34fc17479266f4c36cff4b9b5cc1aee924b0a3e390337750f5",
-  "audit/browser-check.mjs": "63c8d89af594f49eeb7c47992a56e95b97114a51b635402d3bbcf90c17ce8404",
+  "audit/browser-check.mjs": "88f3058013ddfdb751d991b650e2785ca062b0c29d85f042b827c8978c8cdbff",
+  "audit/fixtures/lock-contender.mjs": "d9519f6bd8a66ac809b5d9ef6e57c8adcd355d1e46488dbc85750dfb4c4dbc27",
+  "audit/fixtures/lock-crash.mjs": "fc0fa9f40518a24bfb1c7f38b1a8416a16178310e513f46a425d576affcd5680",
   "audit/lib/engine-variant.mjs": "b1b6c74a2bc404a1872b337aab189e8d8e7e2287adca8403e11841de7bfcaf5e",
   "audit/lib/exact.mjs": "e4e612e73b12a7712264b220f21d6afc8a806ff4ac9a2554f7e4e74cf5ef3138",
   "audit/lib/harness.mjs": "215e5c86175bd1c92859b065f60cc2bbc4f178b02b35c5c972a861590f24f289",
@@ -214,21 +226,29 @@
   "audit/lib/seeds.mjs": "cca96294ab18e2794839240d8e0d2108dc0fc2c393368505f9bae565980f54af",
   "audit/lib/stats.mjs": "c2ae783ce1ff28b48ddcd98075b265b6fe095ea1414d0fb1eb787396be48cc73",
   "audit/measure-storage.mjs": "f1f0ec018cbd4dc967b2fa12444a5f53769771fd90a2d4f8078cf40185bae1be",
-  "audit/results/browser.json": "27a062ea437f8e1b929872a68ad8ad36e9b8aecf6ec85d8e696901c6e041be90",
-  "audit/results/claims.json": "89248420be3422faf7ad98cd6b2f00f1a1b827ed94e559319951457d8bd82680",
-  "audit/results/math.json": "3b7a49e228a619582703ae99da05045bdb9e4707c170d474fada3faa291cd381",
+  "audit/results/browser.json": "fe753c113abfb057940ff60de0b0262737680d0acd44a77482215f6dbe6893f6",
+  "audit/results/claims.json": "554f5fa3a6b29b0d25c7a745f503d3a3e6912eecc53404445fe5fdf7c16aec17",
+  "audit/results/lock-stress-node22.json": "539a1a3adaf44c2e38a646bd16d2a2d643eb273c03dff301e0099cc58986eaec",
+  "audit/results/lock-stress-node24.json": "f859a96c5c0c57134ac8e1bcb67ab08ad93bf5e6e2ea6d8e93f3c3aca73e64de",
+  "audit/results/lock-stress-phase4a-base-12.json": "8beda7eab48b9148de32ba723062d7921186161dcb646c1ee6267446f45b8342",
+  "audit/results/lock-stress-phase4a-base-3.json": "4c21892c6989042cc5608374f77eb1f01a8f70b30b24fc628a1462713e03a85d",
+  "audit/results/lock-stress.json": "d88420b8aa992a6795de3caf5342bd7f8c0ff04e6dd51ec155595cd820fe1c01",
+  "audit/results/math.json": "bd376fca1b83c6199e462ab400f34034741ede6a4fd6117e1c24dd31867ee986",
+  "audit/results/phase4a1-red-baseline.txt": "cf92d4bfad5730e79b180e472b07a04dba9199eac89b1ccc1116a1f4f4bc2f30",
   "audit/results/rng-vectors.json": "2baf946eeecd03bc23772c66673c205da630fa2a205d18c7c58f98fe4570b27b",
-  "audit/results/rng.json": "a04d3b9885bf1dad76b86116080b4d28a31425137ddc1721f6fbcea681b8abcf",
+  "audit/results/rng.json": "436749294a50c5c6594d613503572525f081763291edc124853e2dfb65a1a2ab",
   "audit/results/simulation-raw.json": "4b30b40d4982b49fe3af070d86a634046a8162f87fa89699cfb305be8717c927",
-  "audit/results/simulation.json": "ec247f7bebd2f7c889d3cc5af89131d3b00b0cc329af66c43d1c06f81da17867",
-  "audit/results/storage.json": "7116d96aa63d25b5ad40477e928ef57da1872ec3fbac923e7a7a61088f01d775",
-  "audit/results/system.json": "46119da7c721628023bacd685bfab51744587b2c4faa19d6ff619427cb9b9fab",
-  "audit/run-all.mjs": "d903ffb649cfcd4dd134c9b9582e0992e601b2f574eaae4a745040c8dd3dd9cd",
+  "audit/results/simulation.json": "6fc9c305eeb8f0b669f2b1b5ceb753ee946a3ad201153a740f57cf2d6cb8fd97",
+  "audit/results/storage.json": "400bab6f59e47ee9d075a0ab50beec42db445aa279f6eaeb46661aaf2b0957aa",
+  "audit/results/system.json": "62e08c0fc3f0d24d93c985621c047dee11b7f30cdeed2b27a7899ee4a8987191",
+  "audit/run-all.mjs": "9e120d3ae0f906fbde85c504ca16efa6b6dd7e7d92905387d9350d94cb9615d9",
   "audit/simulate.mjs": "c177c0c7b4416279151b771c138ec5e39333cd64070c0b22bee5adc08d233b88",
+  "audit/stress-lock.mjs": "e94dbf343eb57792e946d4fada88c16f228c7368f60f6d8b8ca4b062d6055b83",
   "audit/tests/adapters.test.js": "03591712bfc2fe392629415419af2c2412e6ef3c795077319e749581031a0e52",
   "audit/tests/known-defects.test.js": "ab9fcb3c5cff69d7519b32869a4281298c930ead87ee9ffb0cfe0e16e5bdff8c",
   "audit/tests/math.test.js": "1e6601988072f9fe6c8f466d260ae82c0226045a2aece43da2fdc9613597648b",
-  "audit/tests/phase4a.test.js": "bbf3aa4a8e9e129a479534e66b25476efe72f04c87bc3b351801181a58fd1c80",
+  "audit/tests/phase4a.test.js": "41abd63b67a73903d50f184d042d6bbda59d5bc83147abc846afc6c99ba70504",
+  "audit/tests/phase4a1.test.js": "6c94814ddb5f1e33970f105fd314e42272a68a1982ec65b1af4d30040ad16143",
   "audit/tests/reliability.test.js": "39452f80e3acbce7a8ab533ac9aba8436346c946f3b3be74c20152c05b9b46c0",
   "audit/tests/remediation.test.js": "813fd005ca52c436069258d84a6a20d6a7893cfcd3da19ec8c2e5a1b86c98f8e",
   "audit/tests/restart.test.js": "c1da4b760461131a056f10a03357d1d14d019a58be246cbae311a2c16762520a",
@@ -237,6 +257,6 @@
   "audit/validate-claims.mjs": "432870ac5b5837d856bbd41dce050bcfd283022e41e526493321cc477e6ed615",
   "audit/validate-math.mjs": "ca1184f0a4c311bb85a5d0f909ca26df7dd8887c7f1da9332750de5cde874691",
   "audit/validate-rng.mjs": "cbeeab6ae4e649cc1fef9358101ceecba3c0ec93209c847e79a1c5861067457e",
-  "audit/validate-system.mjs": "b97f8a91c7990a0f1efa58051f0f75c6ae942558c329fbbef117af1ef24404e3"
+  "audit/validate-system.mjs": "73f105fbd4103968a5b3051c3c66273d6363a2030b4f2566b7e194a4d7de6ab3"
  }
 }

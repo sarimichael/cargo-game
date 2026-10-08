@@ -140,55 +140,50 @@ test('F07: a second Store in the same process cannot write; after release the ne
   s2.release(); assert.equal(fs.existsSync(lockFile(dir)), false);
 });
 
-test('F07: stale locks are recovered (dead PID, our own PID from an earlier process, old unreadable file); live or remote owners are refused', async t => {
+// Phase 4A.1 corrected these semantics (CARGO_PHASE4A1_CORRECTION_REPORT.md, findings R1–R3). Phase 4A recovered
+// a lock carrying this process's own PID and any unreadable lock older than 10 s; both are now refused, because
+// neither proves the owner has gone. The race test that relied on owners holding for 800 ms is replaced by the
+// barrier-synchronized races in phase4a1.test.js.
+const bootId = (() => { try { return fs.readFileSync('/proc/sys/kernel/random/boot_id', 'utf8').trim(); } catch { return null; } })();
+const pidNs = (() => { try { return fs.readlinkSync('/proc/self/ns/pid'); } catch { return null; } })();
+const v2 = (pid, token, extra = {}) => ({ version: 2, pid, hostname: os.hostname(), bootId, pidNs, token, startedAt: new Date().toISOString(), ...extra });
+const TOKEN = n => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
+
+test('F07 (as corrected in 4A.1): only a lock whose owner has confirmed terminated is recovered; everything uncertain is refused', async t => {
   const dir = tempDir(); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
-  const host = os.hostname();
-  for (const owner of [{ pid: await deadPid(), hostname: host, token: 'dead' }, { pid: process.pid, hostname: host, token: 'earlier-incarnation' }]) {
-    writeLock(dir, owner); const s = new Store(dir).acquire();
-    assert.notEqual(JSON.parse(fs.readFileSync(lockFile(dir), 'utf8')).token, owner.token); s.release();
-  }
-  fs.writeFileSync(lockFile(dir), ''); const old = new Date(Date.now() - 60000); fs.utimesSync(lockFile(dir), old, old);
-  new Store(dir).acquire().release();
-  // Refused: a live process on this host (this test runner's parent), another host, or a fresh unreadable file.
-  for (const owner of [{ pid: process.ppid, hostname: host, token: 'live' }, { pid: 1, hostname: 'another-host.example', token: 'remote' }]) {
+  writeLock(dir, v2(await deadPid(), TOKEN(1))); // a process on this machine that has exited (and left no endpoint)
+  const s = await new Store(dir).acquire();
+  assert.notEqual(JSON.parse(fs.readFileSync(lockFile(dir), 'utf8')).token, TOKEN(1)); s.release();
+  const refused = [
+    v2(process.pid, TOKEN(2)),                                                  // this process's PID, unknown token (R1, R3)
+    v2(process.ppid, TOKEN(3)),                                                 // a live process
+    v2(1, TOKEN(4), { hostname: 'another-host.example', bootId: bootId ? 'other-boot' : null }), // another machine
+    { pid: await deadPid(), hostname: os.hostname(), token: 'phase-4a-format' }, // written by Phase 4A: fail closed
+  ];
+  for (const owner of refused) {
     writeLock(dir, owner);
-    assert.throws(() => new Store(dir).acquire(), e => e.code === 'DATA_DIRECTORY_LOCKED' && e.message.includes(lockFile(dir)));
+    await assert.rejects(new Store(dir).acquire(), e => e.code === 'DATA_DIRECTORY_LOCKED' && e.message.includes(lockFile(dir)), JSON.stringify(owner));
     assert.equal(JSON.parse(fs.readFileSync(lockFile(dir), 'utf8')).token, owner.token); // never removed
   }
-  fs.writeFileSync(lockFile(dir), '');
-  assert.throws(() => new Store(dir).acquire(), e => e.code === 'DATA_DIRECTORY_LOCKED');
+  for (const content of ['', '{"pid":']) { // unreadable, however old
+    fs.writeFileSync(lockFile(dir), content); const old = new Date(Date.now() - 3600000); fs.utimesSync(lockFile(dir), old, old);
+    await assert.rejects(new Store(dir).acquire(), e => e.code === 'DATA_DIRECTORY_LOCKED');
+    assert.equal(fs.readFileSync(lockFile(dir), 'utf8'), content);
+  }
   fs.rmSync(lockFile(dir));
 });
 
 test('F07: release never deletes another owner\'s lock, and a store that lost its lock refuses to write', t => {
   const dir = tempDir(); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   const s = new Store(dir); s.transaction(st => { st.sessions.x = { n: 1 }; });
-  const foreign = { pid: process.ppid, hostname: os.hostname(), token: 'someone-else' };
+  const foreign = v2(process.ppid, TOKEN(9));
   writeLock(dir, foreign); // simulate the lock having been taken over
   const before = fs.readFileSync(path.join(dir, 'state.json'), 'utf8');
-  assert.throws(() => s.transaction(st => { st.sessions.x.n = 2; }), e => e.code === 'DATA_DIRECTORY_LOCKED');
+  assert.throws(() => s.transaction(st => { st.sessions.x.n = 2; }), e => e.code === 'OWNERSHIP_LOST');
   assert.equal(fs.readFileSync(path.join(dir, 'state.json'), 'utf8'), before);
   s.release();
-  assert.equal(JSON.parse(fs.readFileSync(lockFile(dir), 'utf8')).token, 'someone-else');
+  assert.equal(JSON.parse(fs.readFileSync(lockFile(dir), 'utf8')).token, TOKEN(9));
   fs.rmSync(lockFile(dir));
-});
-
-test('F07: when six processes race to recover one stale lock, exactly one becomes the owner', { timeout: 90000 }, async t => {
-  const dir = tempDir(); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
-  for (let round = 0; round < 3; round++) {
-    writeLock(dir, { pid: await deadPid(), hostname: os.hostname(), token: 'stale-' + round });
-    const script = `import { Store } from ${JSON.stringify(path.join(root, 'server/store.js'))};
-      try { const s = new Store(${JSON.stringify(dir)}).acquire(); console.log('OWNER'); setTimeout(() => { s.release(); }, 800); }
-      catch (e) { console.log(e.code === 'DATA_DIRECTORY_LOCKED' ? 'REFUSED' : 'ERROR ' + e.message); }`;
-    const results = await Promise.all(Array.from({ length: 6 }, () => new Promise(resolve => {
-      const p = spawn(process.execPath, ['--input-type=module', '-e', script]); let out = ''; children.push(p);
-      p.stdout.on('data', d => { out += d; }); p.stderr.on('data', d => { out += d; }); p.on('exit', () => resolve(out.trim()));
-    })));
-    assert.equal(results.filter(r => r === 'OWNER').length, 1, JSON.stringify(results));
-    assert.equal(results.filter(r => r === 'REFUSED').length, 5, JSON.stringify(results));
-    assert.equal(fs.existsSync(lockFile(dir)), false); // the owner released on exit
-    assert.deepEqual(fs.readdirSync(dir).filter(f => f.startsWith('state.lock')), []); // no debris
-  }
 });
 
 // ---------------------------------------------------------------- real server processes

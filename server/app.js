@@ -88,6 +88,8 @@ export function createApp(store) {
       });
       send(res,200,result);
     } catch (error) {
+      // This process no longer owns the save folder: serve nothing from it (no stale balances or voyages).
+      if (error.code === 'OWNERSHIP_LOST') return send(res,503,{ error:'Cargo stopped because it no longer owns its save folder. Restart Cargo.',code:'SERVER_UNAVAILABLE' });
       if (!(error instanceof GameError)) console.error('Cargo request failed:',error.message);
       send(res,error.status || 500,{ error:error instanceof GameError ? error.message : 'The game could not save this action. Try again.',code:error.code || 'SERVER_ERROR' });
     }

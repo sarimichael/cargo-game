@@ -1,0 +1,30 @@
+# Phase 4A.1 red baseline: audit/tests/phase4a1.test.js run against the unmodified Phase 4A code (a786d99), Node v24.21.0, 2026-10-07
+# Run 1 — all 16 tests (race tallies are per-round owner counts; 'lost' = an owner whose lock was taken while it held it):
+✖ R2: 3 processes racing to recover a crashed owner's lock — exactly one owner, never lost while held (15 rounds) (13095.589322ms)
+ℹ {"owners":[1,1,1,1,1,1,1,2,1,1,1,1,1,1,1],"lost":1,"errors":[]}
+✔ R2: 12 processes racing to recover a crashed owner's lock — exactly one owner, never lost while held (6 rounds) (5288.821302ms)
+ℹ {"owners":[1,1,1,1,1,1],"lost":0,"errors":[]}
+✔ R2: a live owner and 12 simultaneous starters — all starters refused, the owner never loses its lock (832.605961ms)
+ℹ tests 16
+ℹ pass 5
+ℹ fail 11
+# Run 2 — non-race tests with a sync/async-compatible wrapper, so failures reflect behaviour rather than API shape:
+✖ R3: a worker thread in the same process cannot take the lock, before or after the owner is listening
+✖ R1: a lock carrying this process's PID but an unknown token is never taken over
+✔ R1: a lock whose PID belongs to an unrelated live process (PID reuse) is refused, never removed
+✖ R1: servers in separate PID namespaces sharing the folder are refused; the owner keeps writing
+✖ R1: an owner that crashed inside a PID namespace is recovered by a later start on the host
+✔ termination: after SIGKILL the next start recovers automatically and acknowledged data is intact
+✔ release never deletes another owner's lock
+✖ fail closed: an unreadable or truncated lock is refused regardless of its age, with manual instructions
+✖ fail closed: a recovery left unfinished by a crash blocks startup with a clear manual-recovery message
+✖ R4: a server that loses ownership stops serving state (503, no stale reads), exits, and keeps acknowledged data
+✖ R4: an in-process Store that lost ownership refuses reads and writes
+✖ defence in depth: each owner writes through its own temporary file; leftovers are removed on acquisition
+✔ P3-01 property: the depth limit matches true JSON depth for random documents; malformed input is always 400
+ℹ tests 13
+ℹ pass 4
+ℹ fail 9
+# Browser — audit/browser-check.mjs recovery edge-case scenario with the Phase 4A client (public/app.js at a786d99):
+✖ desktop-recovery-edge-cases: after closing the "Saved session not found" dialog there is no control to reopen it (R8) — page.click('#reopen-recovery') timed out after 30 s
+#   (R6 read-failure and R7 focus-during-start were reproduced in the Phase 4A review; the scenario stops at the first missing control.)

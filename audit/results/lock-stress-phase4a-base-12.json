@@ -1,0 +1,32 @@
+{
+ "meta": {
+  "script": "audit/stress-lock.mjs",
+  "node": "v24.21.0",
+  "platform": "linux-x64",
+  "cpus": 4,
+  "rounds": 40,
+  "contenders": 12,
+  "seconds": 32,
+  "generatedAt": "2026-10-08T00:09:48.816Z",
+  "codeUnderTest": "Phase 4A base a786d99 (server/lock.js before correction), same harness"
+ },
+ "pass": false,
+ "tally": {
+  "crashRecovery": {
+   "rounds": 20,
+   "ownersPerRound": {
+    "1": 19,
+    "2": 1
+   },
+   "lostWhileHeld": 1,
+   "errors": []
+  },
+  "liveOwner": {
+   "rounds": 20,
+   "wronglyAcquired": 0,
+   "ownerLost": 0,
+   "errors": []
+  },
+  "debris": []
+ }
+}

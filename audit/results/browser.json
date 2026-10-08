@@ -3,7 +3,7 @@
   "script": "audit/browser-check.mjs",
   "node": "v24.21.0",
   "chromium": "141.0.7390.37",
-  "generatedAt": "2026-10-07T22:54:29.177Z",
+  "generatedAt": "2026-10-08T00:23:39.969Z",
   "reducedMotion": true
  },
  "pass": true,
@@ -59,7 +59,7 @@
    "dialog": {
     "title": "Saved session not found",
     "text": "This browser has a saved Cargo demo session, but the server can no longer find it. It may have been removed from the server's storage.Nothing has been changed and no new session has been created. A new demo session starts with a fresh play-money balance; earlier voyages cannot be restored.Start a new demo sessionTry again",
-    "status": "Saved session not found · choose an option to continue",
+    "status": "Saved session not found · Choose an option",
     "balance": "—"
    },
    "sessionsBefore": 2,
@@ -79,7 +79,7 @@
    "dialog": {
     "title": "Saved session not found",
     "text": "This browser has a saved Cargo demo session, but the server can no longer find it. It may have been removed from the server's storage.Nothing has been changed and no new session has been created. A new demo session starts with a fresh play-money balance; earlier voyages cannot be restored.Start a new demo sessionTry again",
-    "status": "Saved session not found · choose an option to continue",
+    "status": "Saved session not found · Choose an option",
     "balance": "—"
    },
    "sessionsBefore": 3,
@@ -87,6 +87,202 @@
    "afterRetry": 3,
    "afterExplicitStart": 4,
    "cookieReplacedOnlyByExplicitStart": true,
+   "layout": {
+    "scrollWidth": 390,
+    "innerWidth": 390
+   },
+   "consoleProblems": [],
+   "ok": true
+  },
+  {
+   "view": "desktop-recovery-edge-cases",
+   "sessionsBefore": 4,
+   "checks": {
+    "afterClose": {
+     "title": "Saved session not found",
+     "open": false,
+     "dialogs": 0,
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     }
+    },
+    "afterFocusWhileClosed": {
+     "title": "Saved session not found",
+     "open": false,
+     "dialogs": 0,
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "extraGets": 0
+    },
+    "reopened": {
+     "title": "Saved session not found",
+     "open": true,
+     "dialogs": 1,
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     }
+    },
+    "networkFailure": {
+     "title": "Saved session not found",
+     "open": true,
+     "dialogs": 1,
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "toast": "Could not reach the game server, so your saved session was not checked. Try again in a moment."
+    },
+    "pending": {
+     "title": "Saved session not found",
+     "open": true,
+     "dialogs": 1,
+     "status": "Starting a new demo session…",
+     "reopen": false,
+     "start": {
+      "disabled": true,
+      "text": "Starting…"
+     },
+     "extraGets": 0,
+     "posts": 1
+    },
+    "readFailed": {
+     "title": "New demo session started",
+     "open": true,
+     "dialogs": 1,
+     "status": "New session started but not loaded · Load it",
+     "reopen": true,
+     "start": null,
+     "sessions": 5
+    },
+    "readFailedClosed": {
+     "title": "New demo session started",
+     "open": false,
+     "dialogs": 0,
+     "status": "New session started but not loaded · Load it",
+     "reopen": true,
+     "start": null
+    },
+    "loaded": {
+     "title": "New demo session started",
+     "open": false,
+     "dialogs": 0,
+     "status": "Your voyage is saved",
+     "reopen": false,
+     "start": null,
+     "posts": 1,
+     "sessions": 5
+    }
+   },
+   "layout": {
+    "scrollWidth": 1440,
+    "innerWidth": 1440
+   },
+   "consoleProblems": [],
+   "ok": true
+  },
+  {
+   "view": "phone-recovery-edge-cases",
+   "sessionsBefore": 5,
+   "checks": {
+    "afterClose": {
+     "title": "Saved session not found",
+     "open": false,
+     "dialogs": 0,
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     }
+    },
+    "afterFocusWhileClosed": {
+     "title": "Saved session not found",
+     "open": false,
+     "dialogs": 0,
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "extraGets": 0
+    },
+    "reopened": {
+     "title": "Saved session not found",
+     "open": true,
+     "dialogs": 1,
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     }
+    },
+    "networkFailure": {
+     "title": "Saved session not found",
+     "open": true,
+     "dialogs": 1,
+     "status": "Saved session not found · Choose an option",
+     "reopen": true,
+     "start": {
+      "disabled": false,
+      "text": "Start a new demo session"
+     },
+     "toast": "Could not reach the game server, so your saved session was not checked. Try again in a moment."
+    },
+    "pending": {
+     "title": "Saved session not found",
+     "open": true,
+     "dialogs": 1,
+     "status": "Starting a new demo session…",
+     "reopen": false,
+     "start": {
+      "disabled": true,
+      "text": "Starting…"
+     },
+     "extraGets": 0,
+     "posts": 1
+    },
+    "readFailed": {
+     "title": "New demo session started",
+     "open": true,
+     "dialogs": 1,
+     "status": "New session started but not loaded · Load it",
+     "reopen": true,
+     "start": null,
+     "sessions": 6
+    },
+    "readFailedClosed": {
+     "title": "New demo session started",
+     "open": false,
+     "dialogs": 0,
+     "status": "New session started but not loaded · Load it",
+     "reopen": true,
+     "start": null
+    },
+    "loaded": {
+     "title": "New demo session started",
+     "open": false,
+     "dialogs": 0,
+     "status": "Your voyage is saved",
+     "reopen": false,
+     "start": null,
+     "posts": 1,
+     "sessions": 6
+    }
+   },
    "layout": {
     "scrollWidth": 390,
     "innerWidth": 390

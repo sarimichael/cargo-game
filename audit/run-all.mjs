@@ -2,7 +2,7 @@
 //
 // Usage:
 //   node audit/run-all.mjs            # everything except re-simulating (re-analyses existing simulation-raw.json)
-//   node audit/run-all.mjs --quick    # also skips the ~40 s F03 capacity run
+//   node audit/run-all.mjs --quick    # also skips the ~40 s F03 capacity run and the F07 lock stress run
 //   node audit/run-all.mjs --simulate # also re-runs the 4,000,000-round simulation (~20 min on 4 cores)
 //
 // Writes audit/results/manifest.json: Node/Git identity, exit codes, durations and
@@ -22,6 +22,7 @@ const AUDITED_COMMIT = '25d5181fbd82abbd22aaea4b32f546e94f9c3602';
 const INTENDED_CHANGES = ['server/app.js', 'server/worker.js', 'server/protocol.js', 'public/math.js', 'public/fairness.js', 'docs/API.md', 'docs/FAIRNESS.md', 'README.md',
   // Phase 4A (CARGO_PHASE4A_REMEDIATION_REPORT.md): F07 folder lock, P3-02 client recovery, documentation.
   'server/lock.js', 'server/store.js', 'server/index.js', 'public/app.js', 'docs/INTEGRATION.md'];
+// Phase 4A.1 (CARGO_PHASE4A1_CORRECTION_REPORT.md) changed only files already listed above.
 const MUST_BE_IDENTICAL = ['server/fairness.js', 'server/game.js', 'public/collision.js', 'db/schema.ts', '.openai/hosting.json'];
 // Payout tables, settlement engine, RNG, proof verifier and collision mapping must also be unchanged
 // since the Phase 4A base commit (they were last changed, deliberately, in phase 2).
@@ -52,6 +53,7 @@ run('RNG structure', ['audit/validate-rng.mjs']);
 if (fs.existsSync(path.join(root, 'audit/results/simulation-raw.json'))) run('Simulation statistics', ['audit/analyze-simulation.mjs']);
 run('System / adversarial', ['audit/validate-system.mjs', ...(quick ? ['--skip-capacity'] : [])]);
 if (!quick) run('Storage growth and request cost (F03)', ['audit/measure-storage.mjs']);
+if (!quick) run('Save-folder lock stress (F07)', ['audit/stress-lock.mjs', '--rounds', '12']);
 run('Audit regression tests', ['--test', ...fs.readdirSync(path.join(root, 'audit/tests')).filter(f => f.endsWith('.test.js')).map(f => 'audit/tests/' + f)]);
 // Optional real-browser check: runs only when Playwright can be resolved (PLAYWRIGHT_MODULE or a normal install).
 const playwright = process.env.PLAYWRIGHT_MODULE || (() => { try { return createRequire(import.meta.url).resolve('playwright'); } catch { return null; } })();

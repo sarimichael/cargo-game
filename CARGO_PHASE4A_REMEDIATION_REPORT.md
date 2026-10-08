@@ -3,13 +3,29 @@
 **Date:** 7 October 2026
 **Branch:** `claude/cargo-phase4a-reliability-fixes`. Local commit only; not pushed, merged or deployed.
 
+> **Correction notice (Phase 4A.1, 8 October 2026, branch `claude/cargo-phase4a1-corrections`).** An independent review of
+> this phase found that the F07 claims below were broader than the evidence supported. The text is kept as originally
+> written for the record; the corrections are marked **[4A.1]** inline. In summary:
+> - **R1** A live owner's lock could be taken by a server in another PID namespace (e.g. a second container on the same
+>   host, both PID 1), because "own PID with an unknown token" was treated as proof that the owner had gone.
+> - **R2** Concurrent stale-lock recovery could produce two owners: the rename-aside/restore step could move a newly
+>   created lock away. The 6-process race test passed only because owners held for 800 ms; coverage showed the restore
+>   branch never ran. A barrier-synchronized 3-process race reproduced two owners in 1 of 15 rounds.
+> - **R3** A worker thread in the same process could take the lock (the "held tokens" set was per isolate).
+> - **R4** A server that lost ownership kept serving its in-memory balances and voyages (stale reads); only writes were fenced.
+> - **P3-02 edge cases R6–R8:** a failed read after a successful start left no working control, a focus change during a
+>   pending start rebuilt the dialog and re-enabled its button, and closing the dialog left no way to reopen it.
+>
+> F07 was therefore **not FIXED** as stated here. See `CARGO_PHASE4A1_CORRECTION_REPORT.md` for the reproductions,
+> the corrected design and its tested scope.
+
 ## 1. Executive summary
 
 Phase 4A fixes three reliability defects identified in Phase 3. Each fix is backed by tests that failed on the base commit and pass now.
 
 | ID | Defect | Status |
 | --- | --- | --- |
-| **F07** | Two local server processes on one save folder silently erased each other's data | **FIXED** on a single machine. Windows and power-loss behaviour are **UNVERIFIED** (§7) |
+| **F07** | Two local server processes on one save folder silently erased each other's data | **FIXED** on a single machine. Windows and power-loss behaviour are **UNVERIFIED** (§7) — **[4A.1] overstated: R1–R4 above; corrected status in the 4A.1 report** |
 | **P3-02** | A missing session was silently replaced by a new funded wallet | **FIXED** (both adapters plus browser client) |
 | **P3-01** | Deeply nested JSON returned 500 instead of 400 | **FIXED** (both adapters) |
 
@@ -30,7 +46,7 @@ One further defect was **introduced and fixed during this phase, before any comm
 
 ## 3. Root causes and exact changes
 
-### 3.1 F07: local store ownership (FIXED)
+### 3.1 F07: local store ownership (FIXED — [4A.1] overstated, see correction notice)
 
 - **Root cause.** `Store` loaded `state.json` once at construction and later overwrote the whole file from its in-memory copy, with no lock and no detection of another writer. Phase 3 showed a second process erasing an acknowledged wager.
 - **Changes.**
@@ -57,7 +73,7 @@ One further defect was **introduced and fixed during this phase, before any comm
   - refusal of a live owner, a remote host and a fresh unreadable lock, without deleting their lock files;
   - release never deletes a foreign lock;
   - a store that lost its lock refuses to write and leaves `state.json` byte-identical;
-  - **six processes racing for one stale lock produce exactly one owner** (3 races per run, 5 stress runs: 15 of 15);
+  - **six processes racing for one stale lock produce exactly one owner** (3 races per run, 5 stress runs: 15 of 15); **[4A.1] this test did not exercise contention (owners held for a fixed 800 ms; the restore branch never ran)**;
   - two real servers started simultaneously: exactly one runs, the other exits 1 with "already running … state.lock", and the runner's wager survives;
   - after SIGTERM or SIGINT the lock is removed; after SIGKILL the next start recovers automatically and the data is intact;
   - the Phase 3 restart and SIGKILL tests still pass.
@@ -145,8 +161,8 @@ The new Worker code returned `startSession()` without `await` inside its `try` b
 | Windows behaviour of the lock | **UNVERIFIED** | Uses only cross-platform Node APIs (`fs.linkSync` on NTFS, `wx` fallback, `process.kill(pid, 0)`), and Windows emulates `SIGHUP` when a console window closes. No Windows run was possible here |
 | Power-loss durability | **UNVERIFIED** | No `fsync` of `state.json` or its directory. Only process crashes (SIGKILL) were tested |
 | Shared or network folders | **MITIGATED** | A lock from another host is refused, never recovered automatically. NFS/SMB link and rename semantics were not tested |
-| PID reuse | **MITIGATED** | If a crashed owner's PID is reused by an unrelated live process, startup refuses (fail-safe) with instructions to delete `state.lock`. Own-PID reuse (containers) is recovered automatically |
-| Fencing window | **MITIGATED** | The ownership check runs immediately before each write; a takeover in the microseconds between check and rename is not prevented. Takeover only happens when the owner's PID is dead |
+| PID reuse | **MITIGATED** | If a crashed owner's PID is reused by an unrelated live process, startup refuses (fail-safe) with instructions to delete `state.lock`. Own-PID reuse (containers) is recovered automatically — **[4A.1] this own-PID rule was unsafe (R1): it also took live locks across PID namespaces and from worker threads** |
+| Fencing window | **MITIGATED** | The ownership check runs immediately before each write; a takeover in the microseconds between check and rename is not prevented. Takeover only happens when the owner's PID is dead — **[4A.1] not true: R1–R3 allowed takeover of a live owner, and reads were not fenced (R4)** |
 | Client cache | **MITIGATED** | A browser still running the pre-4A `app.js` would show "Could not connect" (no wallet is created) until reloaded. The local server sends `Cache-Control: no-cache`; hosted asset caching was not inspected |
 | F11, F03 root, F09 expiry | **DEFERRED** | Out of scope by instruction; characterisation tests still reproduce them |
 | F01, F02, F04, F05 closure, F06 | **DEFERRED** | Financial or economic decisions |

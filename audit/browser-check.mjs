@@ -81,6 +81,59 @@ try {
     results.push({ view: view.name, dialog, sessionsBefore: before, afterLoad, afterRetry, afterExplicitStart: sessionsOnDisk(), cookieReplacedOnlyByExplicitStart: cookie !== 'ab'.repeat(32), layout, consoleProblems: problems, ok });
     await context.close();
   }
+  // P3-02 edge cases corrected in phase 4A.1 (review findings R6–R8): a pending start survives focus changes, a failed
+  // follow-up read leaves a working control, closing the dialog never strands the player, a network failure is not
+  // reported as a missing session, and nothing is ever created without an explicit click.
+  for (const view of [{ name: 'desktop-recovery-edge-cases', viewport: { width: 1440, height: 900 } }, { name: 'phone-recovery-edge-cases', viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }]) {
+    const context = await browser.newContext({ viewport: view.viewport, isMobile: view.isMobile, hasTouch: view.hasTouch, reducedMotion: 'reduce' });
+    await context.addCookies([{ name: 'cargo_session', value: 'cd'.repeat(32), url }]);
+    const page = await context.newPage(), problems = [], requests = { get: 0, post: 0 }, checks = {};
+    page.on('console', m => { if (['error', 'warning'].includes(m.type()) && !/Failed to load resource: (the server responded with a status of 404|net::ERR_FAILED)/.test(m.text())) problems.push(m.type() + ': ' + m.text()); });
+    page.on('pageerror', e => problems.push('pageerror: ' + e.message));
+    let releasePost, failGets = 0; const postHeld = new Promise(r => { releasePost = r; });
+    await page.route('**/api/session', async route => {
+      if (route.request().method() === 'POST') { requests.post++; await postHeld; return route.continue(); }
+      requests.get++; if (failGets > 0) { failGets--; return route.abort('failed'); } return route.continue();
+    });
+    const state = () => page.evaluate(() => ({ title: document.getElementById('modal-title').textContent, open: document.getElementById('modal').open, dialogs: document.querySelectorAll('dialog[open]').length,
+      status: document.getElementById('save-status').textContent, reopen: !!document.getElementById('reopen-recovery'), start: document.getElementById('start-new-session') && { disabled: document.getElementById('start-new-session').disabled, text: document.getElementById('start-new-session').textContent } }));
+    const before = sessionsOnDisk();
+    await page.goto(url); await page.waitForSelector('#start-new-session');
+    // R8: closing the dialog leaves a control; a focus change does not reopen it or create anything.
+    await page.click('#close-modal'); checks.afterClose = await state();
+    const getsBefore = requests.get; await page.evaluate(() => { document.dispatchEvent(new Event('visibilitychange')); window.dispatchEvent(new Event('focus')); }); await page.waitForTimeout(400);
+    checks.afterFocusWhileClosed = { ...(await state()), extraGets: requests.get - getsBefore };
+    await page.click('#reopen-recovery'); checks.reopened = await state();
+    // Network failure while checking is reported as such, not as a missing session; nothing is created.
+    failGets = 1; await page.click('#retry-session'); await page.waitForSelector('.toast.error'); await page.waitForSelector('#retry-session:not([disabled])');
+    checks.networkFailure = { ...(await state()), toast: await page.textContent('.toast') };
+    // R7: while the explicit start is pending, focus changes neither rebuild the dialog nor re-enable the button.
+    await page.click('#start-new-session'); await page.waitForFunction(() => document.getElementById('start-new-session')?.disabled);
+    const getsPending = requests.get;
+    for (let i = 0; i < 3; i++) { await page.evaluate(() => { document.dispatchEvent(new Event('visibilitychange')); window.dispatchEvent(new Event('focus')); }); await page.waitForTimeout(150); }
+    await page.click('#start-new-session', { force: true, timeout: 1000 }).catch(() => {});
+    checks.pending = { ...(await state()), extraGets: requests.get - getsPending, posts: requests.post };
+    // R6: the session is created but the follow-up read fails: a working "load" control remains, and it never re-creates.
+    failGets = 1; releasePost(); await page.waitForSelector('#load-new-session');
+    checks.readFailed = { ...(await state()), sessions: sessionsOnDisk() };
+    await page.click('#close-modal'); checks.readFailedClosed = await state();
+    await page.click('#reopen-recovery'); await page.waitForSelector('#load-new-session');
+    await page.click('#load-new-session'); await page.waitForFunction(() => /1,000\.00/.test(document.getElementById('balance').textContent));
+    checks.loaded = { ...(await state()), posts: requests.post, sessions: sessionsOnDisk() };
+    const layout = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth }));
+    await page.screenshot({ path: path.join(os.tmpdir(), `cargo-${view.name}.png`) });
+    const c = checks, ok = !c.afterClose.open && c.afterClose.reopen && /not found/i.test(c.afterClose.status)
+      && !c.afterFocusWhileClosed.open && c.afterFocusWhileClosed.extraGets === 0
+      && c.reopened.open && c.reopened.title === 'Saved session not found'
+      && c.networkFailure.title === 'Saved session not found' && /could not reach/i.test(c.networkFailure.toast) && c.networkFailure.start && !c.networkFailure.start.disabled
+      && c.pending.dialogs === 1 && c.pending.start?.disabled && c.pending.start?.text === 'Starting…' && c.pending.extraGets === 0 && c.pending.posts === 1
+      && c.readFailed.title === 'New demo session started' && c.readFailed.sessions === before + 1
+      && !c.readFailedClosed.open && c.readFailedClosed.reopen && /not loaded/i.test(c.readFailedClosed.status)
+      && !c.loaded.open && c.loaded.posts === 1 && c.loaded.sessions === before + 1 && /saved/i.test(c.loaded.status)
+      && layout.scrollWidth <= layout.innerWidth && problems.length === 0;
+    results.push({ view: view.name, sessionsBefore: before, checks, layout, consoleProblems: problems, ok });
+    await context.close();
+  }
 } finally { await browser.close(); server.kill(); fs.rmSync(dataDir, { recursive: true, force: true }); }
 const out = { meta: { script: 'audit/browser-check.mjs', node: process.version, chromium: browser.version(), generatedAt: new Date().toISOString(), reducedMotion: true }, pass: results.every(r => r.ok), results };
 fs.writeFileSync(outFile, JSON.stringify(out, null, 1));

@@ -220,7 +220,7 @@ await check('S12', 'safety', 'Storage failures before/after commit: no partial e
     { const a = await localAdapter(); try {
       const c = a.client(), s = await startSession(c), before = JSON.stringify(a.store.state), disk = fs.readFileSync(a.directory + '/state.json', 'utf8');
       const original = fs.writeFileSync; let armed = true;
-      fs.writeFileSync = function (file, ...rest) { if (armed && String(file).endsWith('state.json.tmp')) { armed = false; throw new Error('injected disk failure'); } return original.call(this, file, ...rest); };
+      fs.writeFileSync = function (file, ...rest) { if (armed && /state\.json(\.[0-9a-f]{12})?\.tmp$/.test(String(file))) { armed = false; throw new Error('injected disk failure'); } return original.call(this, file, ...rest); };
       const body = { difficulty: 'easy', stakeCents: 3000, clientSeed: 'f', expectedSeedHash: s.session.nextSeedHash, revision: 0, actionId: aid('fi') };
       let first; try { first = await c.post('/api/rounds', body); } finally { fs.writeFileSync = original; }
       const unchanged = JSON.stringify(a.store.state) === before && fs.readFileSync(a.directory + '/state.json', 'utf8') === disk;
