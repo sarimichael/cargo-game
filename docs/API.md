@@ -35,7 +35,7 @@ Different action IDs with the same stale revision cannot both succeed. On `STALE
 
 Public round fields include `id`, `difficulty`, `stakeCents`, `step`, `status`, `multiplier100`, `nextRisk`, `maxStops`, `returnedCents`, `netCents`, `containers`, `events` and `proof`. `status` is `active` or `settled`. Container status is `onboard`, `collected` or `lost`.
 
-While active, `proof` contains the commitment hash, client seed and nonce. Only settled rounds reveal `serverSeed` and all three hazard decks.
+While active, `proof` contains the commitment hash, client seed, nonce and `paytable`, the payout table ID fixed when the bet was accepted (see [FAIRNESS.md](FAIRNESS.md)). Only settled rounds reveal `serverSeed` and all three hazard decks.
 
 Errors return `{ "error": "readable message", "code": "ERROR_CODE" }`. Invalid fields are 400; expired session 401; forbidden origin/host 403; missing routes/rounds 404; invalid state or revision 409; oversized request 413; wrong content type 415. Unexpected save errors are 500 and leave the in-memory state unchanged.
 

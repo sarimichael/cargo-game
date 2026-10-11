@@ -74,6 +74,6 @@ The build produces `dist/client/` and `dist/server/`. Hosted dependencies are no
 
 ## Project status
 
-This is a play-money prototype. Operator wallet integration, authenticated casino launches and production certification remain separate work; see [INTEGRATION.md](docs/INTEGRATION.md). The payout ladder was checked on 6 October 2026 against [Stake's official Chicken chart](https://stake.com/blog/how-to-play-chicken-on-stake). Cargo's artwork and implementation belong to this project; the game is not affiliated with Stake and uses its own randomness implementation.
+This is a play-money prototype. Operator wallet integration, authenticated casino launches and production certification remain separate work; see [INTEGRATION.md](docs/INTEGRATION.md). New bets use a 96.8% payout ladder, `round(0.968 / survival, 2)`. The earlier 98% ladder, checked on 6 October 2026 against [Stake's official Chicken chart](https://stake.com/blog/how-to-play-chicken-on-stake), is kept for rounds accepted before the change; see [FAIRNESS.md](docs/FAIRNESS.md). Cargo's artwork and implementation belong to this project; the game is not affiliated with Stake and uses its own randomness implementation.
 
 Keep this repository private. Do not commit runtime wallets, access tokens, database exports or unrevealed server seeds.

@@ -1,10 +1,13 @@
-import { CONTAINERS, MODES, randomMessage, splitStake, payout, multiplier } from './math.js';
+import { CONTAINERS, MODES, PAYTABLES, LEGACY_PAYTABLE, randomMessage, splitStake, payout, multiplier } from './math.js';
 
 const hex = bytes => Array.from(new Uint8Array(bytes), b => b.toString(16).padStart(2,'0')).join('');
 const decode = value => Uint8Array.from(value.match(/.{2}/g), s => parseInt(s,16));
 export async function verifyRound(round) {
   try {
     if (round.status !== 'settled' || !/^[a-f0-9]{64}$/.test(round.proof.serverSeed || '')) return { valid:false, message:'The server seed is revealed after every container is collected or lost.' };
+    // Proofs exported before payout tables were versioned have no table ID.
+    const paytable = round.proof.paytable ?? LEGACY_PAYTABLE;
+    if (!Object.hasOwn(PAYTABLES, paytable)) throw new Error('The payout table is not recognized.');
     const seed = decode(round.proof.serverSeed);
     const hash = hex(await crypto.subtle.digest('SHA-256',seed));
     if (hash !== round.proof.serverSeedHash) throw new Error('Server seed does not match its commitment.');
@@ -41,7 +44,7 @@ export async function verifyRound(round) {
         if (event.step!==step||step<1||!Object.keys(event.credits).length) throw new Error('Collection event is inconsistent.');
         for (const [id,amount] of Object.entries(event.credits)) {
           const c=cargo.find(c=>c.id===id);
-          if (!c||c.status!=='onboard'||amount!==payout(c.stakeCents,multiplier(round.difficulty,step))) throw new Error('A payout is inconsistent.');
+          if (!c||c.status!=='onboard'||amount!==payout(c.stakeCents,multiplier(round.difficulty,step,paytable))) throw new Error('A payout is inconsistent.');
           c.status='collected';c.payoutCents=amount;c.collectedAt=step;total+=amount;
         }
       } else throw new Error('Unknown event.');

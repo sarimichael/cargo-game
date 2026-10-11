@@ -36,9 +36,20 @@ Cumulative survival through `s` stops is:
 
 `choose(20 − s, h) / choose(20, h)`
 
-The shared payout table matches the requested two-decimal Chicken ladder. It follows `round(0.98 / survival, 2)`; use the integer hundredths in `public/math.js` as the authoritative table.
+New bets use payout table `rtp-96.8`, which follows `round(0.968 / survival, 2)` with exact half-up rounding. Use the integer hundredths in `public/math.js` as the authoritative table.
 
-The 98% factor is nominal **before multiplier rounding and cent rounding**. The rounded table changes the return at particular stops; do not label every checkpoint as exactly 98%. For a container stake in cents `w` and a multiplier in hundredths `m`, its payout in cents is `floor((w × m + 50) / 100)` (nearest cent, half up). A payout includes its original stake.
+The 96.8% factor is nominal **before multiplier rounding and cent rounding**. The rounded table changes the return at particular stops; do not label every checkpoint as exactly 96.8%. With whole-dollar container stakes, collecting all cargo at one fixed stop returns between 96.60% and 97.20% depending on the stop. Choosing the best stop and a stake whose cents round favorably raises the maximum to 97.570093% (Easy, $1.07 per container, collected at stop 2); no stake or strategy reaches 100%.
+
+### Payout table versions
+
+Each round stores the payout table that was current when its bet was accepted, and settlement, the public multiplier and verification all use that table. The ID is reported as `proof.paytable`. Published tables are never edited; a new return target is a new table ID.
+
+| Table | Formula | Used by |
+|---|---|---|
+| `rtp-96.8` | `round(0.968 / survival, 2)` | Every round accepted from this version onward |
+| `rtp-98` | `round(0.98 / survival, 2)` (matches the two-decimal Chicken ladder) | Rounds saved before table versioning, including any still at sea during the upgrade; these continue and verify at the original multipliers |
+
+A round or exported proof without a table ID is an `rtp-98` round. For a container stake in cents `w` and a multiplier in hundredths `m`, its payout in cents is `floor((w × m + 50) / 100)` (nearest cent, half up). A payout includes its original stake.
 
 A total bet splits evenly in cents; remainder cents are assigned to A, then B. The game debits the whole bet once. Each collection credits its container once. Lost cargo pays zero. Collecting is allowed after stop one; the final port requires collecting the remaining cargo to settle.
 

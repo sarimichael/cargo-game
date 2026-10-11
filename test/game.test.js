@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { MODES, RULES, splitStake, payout, nextRisk } from '../public/math.js';
+import { MODES, PAYTABLES, RULES, splitStake, payout, multiplier, nextRisk } from '../public/math.js';
 import { createSession, beginRound, advanceRound, collectRound, resetWallet, snapshot } from '../server/game.js';
 import { hazardDeck, seedHash } from '../server/fairness.js';
 import { verifyRound } from '../public/fairness.js';
@@ -8,12 +8,15 @@ import { verifyRound } from '../public/fairness.js';
 const seed='0123456789abcdef'.repeat(4),fresh='fedcba9876543210'.repeat(4);
 function start(mode='easy',amount=3000,serverSeed=seed){const s=createSession('test',serverSeed);const r=beginRound(s,{difficulty:mode,stakeCents:amount,clientSeed:'cargo-test',expectedSeedHash:seedHash(serverSeed)},fresh);return [s,r];}
 function choose(n,k){let x=1;for(let i=1;i<=k;i++)x=x*(n-k+i)/i;return Math.round(x);}
-test('every payout matches the requested rounded 98%-model ladder and increasing risk',()=>{
- const counts=[19,17,15,10],first=[103,115,131,196],last=[1960,111720,1519392,18106088];
- Object.values(MODES).forEach((m,index)=>{
-  assert.equal(m.payouts.length,counts[index]);assert.equal(m.payouts[0],first[index]);assert.equal(m.payouts.at(-1),last[index]);
-  m.payouts.forEach((v,i)=>{const survival=choose(19-i,m.hazards)/choose(20,m.hazards);assert.equal(v,Math.round(98/survival));if(i)assert(v>m.payouts[i-1]);});
+test('every payout matches its rounded RTP-model ladder and increasing risk',()=>{
+ const counts=[19,17,15,10],first={'rtp-98':[103,115,131,196],'rtp-96.8':[102,114,129,194]},last={'rtp-98':[1960,111720,1519392,18106088],'rtp-96.8':[1936,110352,1500787,17884381]};
+ assert.equal(RULES.paytable,'rtp-96.8');assert.deepEqual(Object.keys(PAYTABLES),['rtp-98','rtp-96.8']);
+ for(const [id,tenths] of [['rtp-98',980],['rtp-96.8',968]])Object.entries(MODES).forEach(([mode,m],index)=>{
+  const table=PAYTABLES[id][mode];assert.equal(table.length,counts[index]);assert.equal(table[0],first[id][index]);assert.equal(table.at(-1),last[id][index]);
+  // Exact half-up rounding of (tenths/10)% / survival, in hundredths.
+  table.forEach((v,i)=>{const q=tenths*choose(20,m.hazards),d=10*choose(19-i,m.hazards);assert.equal(v,Math.floor((2*q+d)/(2*d)));if(i)assert(v>table[i-1]);});
  });
+ Object.keys(MODES).forEach(mode=>assert.equal(MODES[mode].payouts,PAYTABLES['rtp-96.8'][mode]));
  assert.equal(nextRisk('easy',0),.05);assert.equal(nextRisk('easy',18),.5);assert.equal(nextRisk('easy',19),0);
 });
 test('cent splits conserve the full bet and payouts round half up',()=>{for(let n=300;n<400;n++){const parts=splitStake(n);assert.equal(parts.reduce((a,b)=>a+b),n);assert(Math.max(...parts)-Math.min(...parts)<=1);}assert.equal(payout(101,150),152);assert.equal(payout(100,131),131);});
@@ -29,13 +32,13 @@ test('invalid amounts, modes, seeds and concurrent rounds cannot debit a bet',()
 });
 test('cannot collect before stop one, refill while active, or mutate a foreign round',()=>{const [s,r]=start();assert.throws(()=>collectRound(s,r.id,'A'));assert.throws(()=>resetWallet(s));assert.throws(()=>advanceRound(s,'other'));assert.throws(()=>collectRound(s,r.id,'X'));assert.equal(s.balanceCents,97000);});
 test('secured cargo stays paid when other cargo is lost; repeated collection is rejected',()=>{
- const [s,r]=start();r.hazards={A:[20],B:[2],C:[3]};advanceRound(s,r.id);collectRound(s,r.id,'A');assert.equal(s.balanceCents,98030);advanceRound(s,r.id);advanceRound(s,r.id);assert.equal(r.status,'settled');assert.equal(r.containers[0].payoutCents,1030);assert.equal(s.balanceCents,98030);
+ const [s,r]=start();r.hazards={A:[20],B:[2],C:[3]};advanceRound(s,r.id);collectRound(s,r.id,'A');assert.equal(s.balanceCents,98020);advanceRound(s,r.id);advanceRound(s,r.id);assert.equal(r.status,'settled');assert.equal(r.containers[0].payoutCents,1020);assert.equal(s.balanceCents,98020);
  assert.throws(()=>collectRound(s,r.id,'A'));assert.throws(()=>advanceRound(s,r.id));assert.equal(s.ledger.length,2);assert.equal(s.ledger.map(x=>x.amountCents).reduce((a,b)=>a+b)+100000,s.balanceCents);
 });
 test('final stop prevents extra risk and collecting all reconciles exact large payouts',()=>{
  const [s,r]=start('expert',3001);r.hazards={A:[11,12,13,14,15,16,17,18,19,20],B:[1,2,3,4,5,6,7,8,9,10],C:[11,12,13,14,15,16,17,18,19,20]};
  for(let i=0;i<10;i++)advanceRound(s,r.id);assert.throws(()=>advanceRound(s,r.id));collectRound(s,r.id,'all');
- const expected=payout(1001,18106088)+payout(1000,18106088);assert.equal(r.status,'settled');assert.equal(s.balanceCents,100000-3001+expected);assert.equal(new Set(s.ledger.map(x=>x.id)).size,s.ledger.length);
+ const expected=payout(1001,17884381)+payout(1000,17884381);assert.equal(r.status,'settled');assert.equal(s.balanceCents,100000-3001+expected);assert.equal(new Set(s.ledger.map(x=>x.id)).size,s.ledger.length);
 });
 test('all-lost outcome settles automatically without a payout',()=>{const [s,r]=start();r.hazards={A:[1],B:[1],C:[1]};advanceRound(s,r.id);assert.equal(r.status,'settled');assert.equal(s.balanceCents,97000);assert.equal(snapshot(s).history[0].returnedCents,0);});
 test('independent browser verifier reproduces a complete round and rejects tampering',async()=>{
@@ -47,4 +50,19 @@ test('independent browser verifier reproduces a complete round and rejects tampe
 test('hazard decks are repeatable, unique, bounded and vary with seed, nonce and container',()=>{
  const a=hazardDeck(seed,'cargo-test',0,'A',10);assert.equal(a.length,10);assert.equal(new Set(a).size,10);assert(a.every(n=>n>=1&&n<=20));assert.deepEqual(a,hazardDeck(seed,'cargo-test',0,'A',10));
  assert.notDeepEqual(a,hazardDeck(seed,'cargo-test',0,'B',10));assert.notDeepEqual(a,hazardDeck(seed,'cargo-test',1,'A',10));assert.notDeepEqual(a,hazardDeck(fresh,'cargo-test',0,'A',10));
+});
+test('rounds keep the payout table accepted with the bet; saved rounds without one keep the 98% table',async()=>{
+ // Real seeded decks so the proofs verify; this seed's stop 1 is safe for every container.
+ const play=(legacy)=>{const [s,r]=start();if(legacy)delete r.paytable;assert(Object.values(r.hazards).every(h=>h[0]>1));advanceRound(s,r.id);return [s,r];};
+ const [s,r]=play(false);assert.equal(r.paytable,'rtp-96.8');assert.equal(snapshot(s).round.multiplier100,102);collectRound(s,r.id,'all');
+ assert.deepEqual(r.containers.map(c=>c.payoutCents),[1020,1020,1020]);assert.equal(s.balanceCents,97000+3060);
+ const current=snapshot(s).round;assert.equal(current.proof.paytable,'rtp-96.8');assert.equal((await verifyRound(current)).valid,true);
+ const relabeled=structuredClone(current);relabeled.proof.paytable='rtp-98';assert.equal((await verifyRound(relabeled)).valid,false);
+ const unknown=structuredClone(current);unknown.proof.paytable='rtp-200';assert.equal((await verifyRound(unknown)).valid,false);
+ // A round accepted before versioning and resumed after the upgrade still settles at the original 1.03x.
+ const [legacySession,legacy]=play(true);assert.equal(snapshot(legacySession).round.multiplier100,103);collectRound(legacySession,legacy.id,'all');
+ assert.deepEqual(legacy.containers.map(c=>c.payoutCents),[1030,1030,1030]);assert.equal(legacySession.balanceCents,97000+3090);
+ const legacyProof=snapshot(legacySession).round;assert.equal(legacyProof.proof.paytable,'rtp-98');assert.equal((await verifyRound(legacyProof)).valid,true);
+ delete legacyProof.proof.paytable;assert.equal((await verifyRound(legacyProof)).valid,true);
+ assert.equal(multiplier('easy',1),102);assert.equal(multiplier('easy',1,'rtp-98'),103);assert.throws(()=>multiplier('easy',1,'rtp-200'));
 });

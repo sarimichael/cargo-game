@@ -1,5 +1,15 @@
 # Build verification — 7 October 2026
 
+## 96.8% payout table — 11 October 2026
+
+New bets use payout table `rtp-96.8` (`round(0.968 / survival, 2)`); each round stores its table, and rounds saved without one keep the original `rtp-98` table. All 13 backend test groups, the hosted API check and the collision checks passed on Node.js 22.22.0 (the project targets Node.js 24 or newer).
+
+- Exact optimal-stopping analysis over every container stake from $1.00 to $1,000.00: fixed-stop RTP for whole-dollar stakes is 96.60–97.20%; the best achievable RTP is 97.570093% (Easy, $1.07 per container, stop 2). No stake or strategy reaches 100%.
+- 300,000-round simulations through the engine with fresh random seeds matched theory: Hard at stop 5 returned 96.87% (theory 96.85%); the best strategy returned 97.59% (theory 97.57%).
+- In Chromium, a new round showed and paid 1.02× at Easy stop 1. A round placed before a simulated upgrade showed 1.03× after the restart and settled at $30.90 on a $30.00 bet. The 390-pixel phone layout had no horizontal overflow, and no console warnings or errors appeared.
+
+The hosted site is unchanged until this version is deployed.
+
 ## GitHub source package
 
 The latest private hosted interface and the local Node server have been combined into one repository. All 12 backend test groups passed on Node.js 24.19.0. Hosted API checks and collision classification checks passed, and a clean `npm ci --ignore-scripts` followed by the hosted build succeeded.

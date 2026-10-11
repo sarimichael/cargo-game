@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { MODES, RULES, CONTAINERS, splitStake, multiplier, payout, nextRisk } from '../public/math.js';
+import { MODES, RULES, CONTAINERS, LEGACY_PAYTABLE, splitStake, multiplier, payout, nextRisk } from '../public/math.js';
 import { hazardDeck, newSeed, seedHash } from './fairness.js';
 
 export class GameError extends Error {
@@ -16,6 +16,8 @@ function entry(session, id, kind, amountCents, roundId) {
   session.balanceCents = balance;
   session.ledger.push({ id, kind, amountCents, balanceCents: balance, roundId, at: new Date().toISOString() });
 }
+// Rounds saved before payout tables were versioned settle with the original table.
+const paytableOf = round => round.paytable ?? LEGACY_PAYTABLE;
 export function currentRound(session) { return session.currentRoundId ? session.rounds[session.currentRoundId] : null; }
 function activeRound(session, id) {
   const round = session.rounds[id];
@@ -38,7 +40,7 @@ export function beginRound(session, body, freshSeed = newSeed()) {
   requireThat(expectedSeedHash === seedHash(session.nextSeed), 'The seed commitment changed. Refresh and try again.', 409, 'STALE_SEED');
   const id = randomUUID(), stakes = splitStake(stakeCents), serverSeed = session.nextSeed, nonce = session.nonce++;
   const round = { id, difficulty, stakeCents, step: 0, status: 'active', startedAt: new Date().toISOString(), finishedAt: null,
-    serverSeed, serverSeedHash: seedHash(serverSeed), clientSeed, nonce, algorithm: 'cargo-v1',
+    serverSeed, serverSeedHash: seedHash(serverSeed), clientSeed, nonce, algorithm: 'cargo-v1', paytable: RULES.paytable,
     containers: CONTAINERS.map((containerId, i) => ({ id: containerId, stakeCents: stakes[i], status: 'onboard', payoutCents: 0, collectedAt: null, lostAt: null })),
     hazards: Object.fromEntries(CONTAINERS.map(c => [c, hazardDeck(serverSeed, clientSeed, nonce, c, MODES[difficulty].hazards)])),
     events: [{ kind: 'bet', stakeCents, at: new Date().toISOString() }] };
@@ -66,7 +68,7 @@ export function collectRound(session, id, containerId) {
   requireThat(selected.length > 0, 'This cargo has already been collected or lost.', 409);
   const credits = {};
   for (const c of selected) {
-    c.payoutCents = payout(c.stakeCents, multiplier(round.difficulty, round.step));
+    c.payoutCents = payout(c.stakeCents, multiplier(round.difficulty, round.step, paytableOf(round)));
     c.status = 'collected'; c.collectedAt = round.step; credits[c.id] = c.payoutCents;
     entry(session, id + ':collect:' + c.id, 'collect', c.payoutCents, id);
   }
@@ -79,12 +81,12 @@ export function resetWallet(session) {
 }
 export function publicRound(round) {
   if (!round) return null;
-  const returnedCents = round.containers.reduce((n, c) => n + c.payoutCents, 0), m = multiplier(round.difficulty, round.step);
+  const returnedCents = round.containers.reduce((n, c) => n + c.payoutCents, 0), m = multiplier(round.difficulty, round.step, paytableOf(round));
   const result = { id: round.id, difficulty: round.difficulty, stakeCents: round.stakeCents, step: round.step, status: round.status,
     startedAt: round.startedAt, finishedAt: round.finishedAt, multiplier100: m, nextRisk: nextRisk(round.difficulty, round.step),
     maxStops: MODES[round.difficulty].payouts.length, returnedCents, netCents: returnedCents - round.stakeCents,
     containers: round.containers.map(c => ({ ...c, valueCents: c.status === 'onboard' ? payout(c.stakeCents, m) : c.payoutCents })),
-    proof: { algorithm: round.algorithm, serverSeedHash: round.serverSeedHash, clientSeed: round.clientSeed, nonce: round.nonce }, events: structuredClone(round.events) };
+    proof: { algorithm: round.algorithm, paytable: paytableOf(round), serverSeedHash: round.serverSeedHash, clientSeed: round.clientSeed, nonce: round.nonce }, events: structuredClone(round.events) };
   if (round.status === 'settled') { result.proof.serverSeed = round.serverSeed; result.proof.hazards = structuredClone(round.hazards); }
   return result;
 }
