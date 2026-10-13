@@ -17,7 +17,7 @@
     <p id="bet-help" class="helper">3 containers · $10.00 each</p>
     <div class="section-label"><span>Difficulty</span><span id="mode-hint">CHOOSE YOUR SEAS</span></div>
     <div id="difficulty" class="difficulty-grid" role="group" aria-label="Difficulty"></div>
-    <div class="risk-card"><div class="eyebrow" id="risk-label">FIRST STOP RISK</div><div class="risk-line"><strong id="risk-percent">5.0%</strong><span id="risk-description">loss chance per cargo</span></div><div class="risk-meter"><span id="risk-fill"></span></div></div>
+    <div class="risk-card"><div class="eyebrow" id="risk-label">FIRST STOP RISK</div><div class="risk-line"><strong id="risk-percent">—</strong><span id="risk-description">loss chance per cargo</span></div><div class="risk-meter"><span id="risk-fill"></span></div></div>
     <div class="figures"><div><span>Secured payout</span><strong id="secured">$0.00</strong></div><div><span>On board value</span><strong id="onboard">$30.00</strong></div></div>
     <button id="sail-button" class="primary">Set sail · $30.00</button>
     <button id="collect-all" class="secondary" hidden>Collect all remaining cargo</button>
@@ -27,7 +27,7 @@
    <section class="voyage" aria-label="Voyage and containers">
     <div class="scene panel" id="scene">
      <canvas id="ocean" aria-label="Animated cargo ship sailing between ports"></canvas>
-     <div class="scene-heading"><span class="scene-badge" id="stage-badge">READY AT THE HARBOR</span><h1 id="stage-title">Choose the seas you want to sail.</h1><p id="stage-description">Each stop brings more risk and a higher multiplier.</p></div>
+     <div class="scene-heading"><span class="scene-badge" id="stage-badge">READY AT THE HARBOR</span><h1 id="stage-title">Choose the seas you want to sail.</h1><p id="stage-description">Each stop brings a higher multiplier and its own loss chance.</p></div>
      <div class="current-multiplier" id="current-multiplier" hidden><span class="eyebrow">CURRENT MULTIPLIER</span><strong id="current-value">1.00×</strong><span id="current-stop">DEPARTURE</span></div>
      <div class="next-stop"><div class="next-heading"><span id="next-title">EASY ROUTE</span><span id="stop-count">19 stops</span></div><strong id="next-value">19.60×</strong><span id="next-caption">Final stop multiplier</span></div>
      <div class="result-overlay" id="result-overlay" hidden><span class="scene-badge" id="result-label">VOYAGE SETTLED</span><strong id="result-value">$0.00</strong><span class="eyebrow">TOTAL RETURNED</span><div id="result-net">Net result</div><button class="text-button" id="verify-result">Verify this round →</button></div>

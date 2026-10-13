@@ -37,3 +37,4 @@
  .scene.shipwreck .scene-event{top:132px;left:50%;font-size:10px;max-width:90%;padding:6px 9px}
 }
 
+.cargo-header .cargo-risk{margin:3px 0 0;font-size:10px;letter-spacing:.3px;color:var(--muted)}

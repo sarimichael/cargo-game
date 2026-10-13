@@ -1,0 +1,482 @@
+[
+ {
+  "id": "a8e38fd1-0def-4fc5-975b-a7328c41b061",
+  "difficulty": "easy",
+  "stakeCents": 3001,
+  "step": 6,
+  "status": "settled",
+  "startedAt": "2026-10-13T06:17:35.899Z",
+  "finishedAt": "2026-10-13T06:17:35.901Z",
+  "multiplier100": 140,
+  "nextRisk": 0.07142857142857142,
+  "maxStops": 19,
+  "returnedCents": 2491,
+  "netCents": -510,
+  "containers": [
+   {
+    "id": "A",
+    "stakeCents": 1001,
+    "status": "collected",
+    "payoutCents": 1091,
+    "collectedAt": 2,
+    "lostAt": null,
+    "valueCents": 1091
+   },
+   {
+    "id": "B",
+    "stakeCents": 1000,
+    "status": "collected",
+    "payoutCents": 1400,
+    "collectedAt": 6,
+    "lostAt": null,
+    "valueCents": 1400
+   },
+   {
+    "id": "C",
+    "stakeCents": 1000,
+    "status": "lost",
+    "payoutCents": 0,
+    "collectedAt": null,
+    "lostAt": 2,
+    "valueCents": 0
+   }
+  ],
+  "proof": {
+   "algorithm": "cargo-v1",
+   "serverSeedHash": "5ac77939ddc66494c8ce4496dd021214d2976198b600ba182e0b0c735b829628",
+   "clientSeed": "historical-easy",
+   "nonce": 0,
+   "serverSeed": "5139d6984525d000000000000000000000000000000000000000000000000000",
+   "hazards": {
+    "A": [
+     4
+    ],
+    "B": [
+     20
+    ],
+    "C": [
+     2
+    ]
+   }
+  },
+  "events": [
+   {
+    "kind": "bet",
+    "stakeCents": 3001,
+    "at": "2026-10-13T06:17:35.901Z"
+   },
+   {
+    "kind": "sail",
+    "step": 1,
+    "lost": [],
+    "survived": [
+     "A",
+     "B",
+     "C"
+    ],
+    "at": "2026-10-13T06:17:35.901Z"
+   },
+   {
+    "kind": "sail",
+    "step": 2,
+    "lost": [
+     "C"
+    ],
+    "survived": [
+     "A",
+     "B"
+    ],
+    "at": "2026-10-13T06:17:35.901Z"
+   },
+   {
+    "kind": "collect",
+    "step": 2,
+    "credits": {
+     "A": 1091
+    },
+    "at": "2026-10-13T06:17:35.901Z"
+   },
+   {
+    "kind": "sail",
+    "step": 3,
+    "lost": [],
+    "survived": [
+     "B"
+    ],
+    "at": "2026-10-13T06:17:35.901Z"
+   },
+   {
+    "kind": "sail",
+    "step": 4,
+    "lost": [],
+    "survived": [
+     "B"
+    ],
+    "at": "2026-10-13T06:17:35.901Z"
+   },
+   {
+    "kind": "sail",
+    "step": 5,
+    "lost": [],
+    "survived": [
+     "B"
+    ],
+    "at": "2026-10-13T06:17:35.901Z"
+   },
+   {
+    "kind": "sail",
+    "step": 6,
+    "lost": [],
+    "survived": [
+     "B"
+    ],
+    "at": "2026-10-13T06:17:35.901Z"
+   },
+   {
+    "kind": "collect",
+    "step": 6,
+    "credits": {
+     "B": 1400
+    },
+    "at": "2026-10-13T06:17:35.901Z"
+   }
+  ]
+ },
+ {
+  "id": "f14efb09-085a-4bb7-bd57-5fd5be703d7a",
+  "difficulty": "medium",
+  "stakeCents": 30000,
+  "step": 5,
+  "status": "settled",
+  "startedAt": "2026-10-13T06:17:35.902Z",
+  "finishedAt": "2026-10-13T06:17:35.902Z",
+  "multiplier100": 246,
+  "nextRisk": 0.2,
+  "maxStops": 17,
+  "returnedCents": 0,
+  "netCents": -30000,
+  "containers": [
+   {
+    "id": "A",
+    "stakeCents": 10000,
+    "status": "lost",
+    "payoutCents": 0,
+    "collectedAt": null,
+    "lostAt": 1,
+    "valueCents": 0
+   },
+   {
+    "id": "B",
+    "stakeCents": 10000,
+    "status": "lost",
+    "payoutCents": 0,
+    "collectedAt": null,
+    "lostAt": 1,
+    "valueCents": 0
+   },
+   {
+    "id": "C",
+    "stakeCents": 10000,
+    "status": "lost",
+    "payoutCents": 0,
+    "collectedAt": null,
+    "lostAt": 5,
+    "valueCents": 0
+   }
+  ],
+  "proof": {
+   "algorithm": "cargo-v1",
+   "serverSeedHash": "0dbfb5c1a26aa6e439d5ec2886ba36def92670e02d44732013703c03d678b867",
+   "clientSeed": "historical-medium",
+   "nonce": 0,
+   "serverSeed": "d5495dd6984525d0000000000000000000000000000000000000000000000000",
+   "hazards": {
+    "A": [
+     1,
+     11,
+     20
+    ],
+    "B": [
+     1,
+     4,
+     11
+    ],
+    "C": [
+     5,
+     7,
+     14
+    ]
+   }
+  },
+  "events": [
+   {
+    "kind": "bet",
+    "stakeCents": 30000,
+    "at": "2026-10-13T06:17:35.902Z"
+   },
+   {
+    "kind": "sail",
+    "step": 1,
+    "lost": [
+     "A",
+     "B"
+    ],
+    "survived": [
+     "C"
+    ],
+    "at": "2026-10-13T06:17:35.902Z"
+   },
+   {
+    "kind": "sail",
+    "step": 2,
+    "lost": [],
+    "survived": [
+     "C"
+    ],
+    "at": "2026-10-13T06:17:35.902Z"
+   },
+   {
+    "kind": "sail",
+    "step": 3,
+    "lost": [],
+    "survived": [
+     "C"
+    ],
+    "at": "2026-10-13T06:17:35.902Z"
+   },
+   {
+    "kind": "sail",
+    "step": 4,
+    "lost": [],
+    "survived": [
+     "C"
+    ],
+    "at": "2026-10-13T06:17:35.902Z"
+   },
+   {
+    "kind": "sail",
+    "step": 5,
+    "lost": [
+     "C"
+    ],
+    "survived": [],
+    "at": "2026-10-13T06:17:35.902Z"
+   }
+  ]
+ },
+ {
+  "id": "52d06381-c51a-4de3-9b35-6dd449eea472",
+  "difficulty": "hard",
+  "stakeCents": 302,
+  "step": 2,
+  "status": "settled",
+  "startedAt": "2026-10-13T06:17:35.903Z",
+  "finishedAt": "2026-10-13T06:17:35.903Z",
+  "multiplier100": 177,
+  "nextRisk": 0.2777777777777778,
+  "maxStops": 15,
+  "returnedCents": 179,
+  "netCents": -123,
+  "containers": [
+   {
+    "id": "A",
+    "stakeCents": 101,
+    "status": "lost",
+    "payoutCents": 0,
+    "collectedAt": null,
+    "lostAt": 1,
+    "valueCents": 0
+   },
+   {
+    "id": "B",
+    "stakeCents": 101,
+    "status": "collected",
+    "payoutCents": 179,
+    "collectedAt": 2,
+    "lostAt": null,
+    "valueCents": 179
+   },
+   {
+    "id": "C",
+    "stakeCents": 100,
+    "status": "lost",
+    "payoutCents": 0,
+    "collectedAt": null,
+    "lostAt": 1,
+    "valueCents": 0
+   }
+  ],
+  "proof": {
+   "algorithm": "cargo-v1",
+   "serverSeedHash": "0ea61d270f106c01c15064057917fbc9d7caa25b44db006638623748e153c6d6",
+   "clientSeed": "historical-hard",
+   "nonce": 0,
+   "serverSeed": "8124d6984525d000000000000000000000000000000000000000000000000000",
+   "hazards": {
+    "A": [
+     1,
+     9,
+     14,
+     16,
+     20
+    ],
+    "B": [
+     3,
+     5,
+     10,
+     11,
+     19
+    ],
+    "C": [
+     1,
+     2,
+     3,
+     8,
+     18
+    ]
+   }
+  },
+  "events": [
+   {
+    "kind": "bet",
+    "stakeCents": 302,
+    "at": "2026-10-13T06:17:35.903Z"
+   },
+   {
+    "kind": "sail",
+    "step": 1,
+    "lost": [
+     "A",
+     "C"
+    ],
+    "survived": [
+     "B"
+    ],
+    "at": "2026-10-13T06:17:35.903Z"
+   },
+   {
+    "kind": "sail",
+    "step": 2,
+    "lost": [],
+    "survived": [
+     "B"
+    ],
+    "at": "2026-10-13T06:17:35.903Z"
+   },
+   {
+    "kind": "collect",
+    "step": 2,
+    "credits": {
+     "B": 179
+    },
+    "at": "2026-10-13T06:17:35.903Z"
+   }
+  ]
+ },
+ {
+  "id": "392dba6a-22d6-4c29-947a-95f5307371e1",
+  "difficulty": "expert",
+  "stakeCents": 100000,
+  "step": 1,
+  "status": "settled",
+  "startedAt": "2026-10-13T06:17:35.903Z",
+  "finishedAt": "2026-10-13T06:17:35.904Z",
+  "multiplier100": 196,
+  "nextRisk": 0.5263157894736842,
+  "maxStops": 10,
+  "returnedCents": 0,
+  "netCents": -100000,
+  "containers": [
+   {
+    "id": "A",
+    "stakeCents": 33334,
+    "status": "lost",
+    "payoutCents": 0,
+    "collectedAt": null,
+    "lostAt": 1,
+    "valueCents": 0
+   },
+   {
+    "id": "B",
+    "stakeCents": 33333,
+    "status": "lost",
+    "payoutCents": 0,
+    "collectedAt": null,
+    "lostAt": 1,
+    "valueCents": 0
+   },
+   {
+    "id": "C",
+    "stakeCents": 33333,
+    "status": "lost",
+    "payoutCents": 0,
+    "collectedAt": null,
+    "lostAt": 1,
+    "valueCents": 0
+   }
+  ],
+  "proof": {
+   "algorithm": "cargo-v1",
+   "serverSeedHash": "ab1c2cf13795a269ebda1bfe8d80c0ccf76048e405db40ec4b36811baf64accc",
+   "clientSeed": "historical-expert",
+   "nonce": 0,
+   "serverSeed": "580524d6984525d0000000000000000000000000000000000000000000000000",
+   "hazards": {
+    "A": [
+     1,
+     2,
+     3,
+     6,
+     9,
+     12,
+     14,
+     15,
+     16,
+     17
+    ],
+    "B": [
+     1,
+     4,
+     6,
+     7,
+     9,
+     10,
+     11,
+     12,
+     15,
+     20
+    ],
+    "C": [
+     1,
+     8,
+     9,
+     10,
+     13,
+     14,
+     16,
+     17,
+     19,
+     20
+    ]
+   }
+  },
+  "events": [
+   {
+    "kind": "bet",
+    "stakeCents": 100000,
+    "at": "2026-10-13T06:17:35.904Z"
+   },
+   {
+    "kind": "sail",
+    "step": 1,
+    "lost": [
+     "A",
+     "B",
+     "C"
+    ],
+    "survived": [],
+    "at": "2026-10-13T06:17:35.904Z"
+   }
+  ]
+ }
+]

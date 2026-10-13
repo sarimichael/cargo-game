@@ -35,7 +35,14 @@ Different action IDs with the same stale revision cannot both succeed. On `STALE
 
 Public round fields include `id`, `difficulty`, `stakeCents`, `step`, `status`, `multiplier100`, `nextRisk`, `maxStops`, `returnedCents`, `netCents`, `containers`, `events` and `proof`. `status` is `active` or `settled`. Container status is `onboard`, `collected` or `lost`.
 
-While active, `proof` contains the commitment hash, client seed and nonce. Only settled rounds reveal `serverSeed` and all three hazard decks.
+Odds depend on each container's stake under `cargo-v2` (see [FAIRNESS.md](FAIRNESS.md)). Each container therefore reports its own next-stop odds:
+
+- `nextSurvival`: `[numerator, denominator]`, the exact integer probability of surviving the next stop. It is `null` once the container is collected or lost, at the final port, and in settled rounds.
+- `nextRisk`: the matching loss chance as a number, or `null`.
+
+The round-level `nextRisk` is one shared value only when every container still at risk has identical exact odds. It is `null` when their odds differ, and `0` when no container is at risk. Clients must show per-container risk whenever it is `null`.
+
+While active, `proof` contains the commitment hash, client seed, nonce, `algorithm` (`cargo-v2` for new bets, `cargo-v1` for legacy rounds) and `paytable` (`ladder-v1`). These rules are fixed when the bet is accepted. Only settled rounds reveal `serverSeed` and `hazards`, each container's route: for `cargo-v2`, `[]` or the single stop where it was lost; for `cargo-v1`, its hazard deck.
 
 Errors return `{ "error": "readable message", "code": "ERROR_CODE" }`. Invalid fields are 400; expired session 401; forbidden origin/host 403; missing routes/rounds 404; invalid state or revision 409; oversized request 413; wrong content type 415. Unexpected save errors are 500 and leave the in-memory state unchanged.
 

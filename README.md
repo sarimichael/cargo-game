@@ -20,17 +20,17 @@ The local server listens only on your computer. It creates `data/state.json` to 
 
 1. Choose a total bet and a difficulty: Easy, Medium, Hard or Expert.
 2. Press **Set sail** to load three containers with an equal share of the bet.
-3. Sail to the next stop. Higher stops increase the multiplier and the chance of losing each uncollected container.
+3. Sail to the next stop. Higher stops increase the multiplier. Each stop shows every uncollected container's own loss chance before you sail.
 4. Collect A, B or C independently, or collect all remaining cargo. Collected payouts stay secured.
 5. A voyage ends when every container is collected or lost. At the final port, collect the remaining cargo.
 
 Easy has 19 stops, Medium 17, Hard 15 and Expert 10. All 61 multipliers are included. The starting play balance is $1,000.00. The total bet ranges from $3.00 to $3,000.00, subject to the wallet balance. Amounts use integer cents; leftover split cents go to A, then B.
 
-Each container follows an independent hazard deck. Risk shown in the interface is per uncollected container. If all three containers are eventually lost, the ship hits an iceberg; if a loss leaves any cargo onboard or collected, it hits smaller floating debris. These animations display the settled server result and do not change the odds or payouts. Reduced-motion preferences are respected.
+Every way of collecting has the same expected return: exactly 96.8% of each container's stake (3.2% house edge). Collecting early or late, or reacting to another container's loss, cannot change it. To achieve this while keeping every published multiplier and the cent rounding, the odds come from the exact cent payouts. They depend slightly on each container's stake and do not always rise from one stop to the next; the first stop is riskier than before. Each container follows an independent route. Risk shown in the interface is per uncollected container. [FAIRNESS.md](docs/FAIRNESS.md) has the rules, proofs and gameplay changes. If all three containers are eventually lost, the ship hits an iceberg; if a loss leaves any cargo onboard or collected, it hits smaller floating debris. These animations display the settled server result and do not change the odds or payouts. Reduced-motion preferences are respected.
 
 ## Fairness and reliability
 
-The server controls outcomes, debits, payouts and progression. Each voyage uses a pre-bet server seed commitment, a client seed, a nonce and three deterministic hazard decks. Settled voyages reveal their seed and can be checked independently in the game's Fairness panel or with:
+The server controls outcomes, debits, payouts and progression. Each voyage uses a pre-bet server seed commitment, a client seed, a nonce and three deterministic container routes. It keeps the rules version it was accepted under, so voyages and proofs from before an update keep their original rules. Settled voyages reveal their seed and can be checked independently in the game's Fairness panel or with:
 
 ```sh
 node tools/verify-round.mjs path/to/exported-round.json
@@ -44,9 +44,10 @@ Repeated actions cannot pay twice. Session revisions reject competing mutations.
 npm test
 npm run test:hosted
 npm run test:collisions
+npm run test:rtp
 ```
 
-The local API tests cover accounting, invalid actions, retries, races, persisted sessions and independent proof verification. Hosted checks exercise the Worker with a local SQLite-backed database. Collision checks cover partial, simultaneous and cumulative losses, secured cargo and reduced motion.
+The local API tests cover accounting, invalid actions, retries, races, persisted sessions and independent proof verification. Hosted checks exercise the Worker with a local SQLite-backed database. Collision checks cover partial, simultaneous and cumulative losses, secured cargo and reduced motion. The RTP check exactly verifies the 96.8% return for every container stake, total wager, mode and stopping rule.
 
 To install the pinned build tools and build the hosted version:
 
@@ -64,16 +65,16 @@ The build produces `dist/client/` and `dist/server/`. Hosted dependencies are no
 | `public/` | Responsive interface, ship animation, obstacle artwork, shared math and browser proof checker |
 | `public/collision.js` | Pure classification and timing for visual collisions |
 | `server/game.js` | Shared authoritative game engine and accounting |
-| `server/fairness.js` | Seed commitments and deterministic hazard decks |
+| `server/fairness.js` | Seed commitments, calibrated cargo-v2 routes and legacy cargo-v1 hazard decks |
 | `server/app.js`, `server/index.js`, `server/store.js` | Local HTTP API and saved wallets |
 | `server/worker.js` | Hosted API adapter with D1 transactions and sessions |
 | `db/`, `drizzle/` | Hosted database schema and migrations |
-| `build/` | Hosted build and verification tools |
+| `build/` | Hosted build and verification tools, including the exact RTP check |
 | `test/`, `tools/`, `docs/` | Tests, independent verifier and handover documentation |
 | `.openai/hosting.json` | Existing Sites project identity and bindings; contains no credential |
 
 ## Project status
 
-This is a play-money prototype. Operator wallet integration, authenticated casino launches and production certification remain separate work; see [INTEGRATION.md](docs/INTEGRATION.md). The payout ladder was checked on 6 October 2026 against [Stake's official Chicken chart](https://stake.com/blog/how-to-play-chicken-on-stake). Cargo's artwork and implementation belong to this project; the game is not affiliated with Stake and uses its own randomness implementation.
+This is a play-money prototype. Operator wallet integration, authenticated casino launches and production certification remain separate work; see [INTEGRATION.md](docs/INTEGRATION.md). The payout ladder was checked on 6 October 2026 against [Stake's official Chicken chart](https://stake.com/blog/how-to-play-chicken-on-stake) and is unchanged; Cargo's odds differ from Chicken's to give a 96.8% return. Cargo's artwork and implementation belong to this project; the game is not affiliated with Stake and uses its own randomness implementation.
 
 Keep this repository private. Do not commit runtime wallets, access tokens, database exports or unrevealed server seeds.

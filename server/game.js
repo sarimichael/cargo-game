@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import { MODES, RULES, CONTAINERS, splitStake, multiplier, payout, nextRisk } from '../public/math.js';
-import { hazardDeck, newSeed, seedHash } from './fairness.js';
+import { MODES, RULES, CONTAINERS, LEGACY_PAYTABLE, splitStake, multiplier, payout, survivalOdds } from '../public/math.js';
+import { calibratedRoute, newSeed, seedHash } from './fairness.js';
 
 export class GameError extends Error {
   constructor(message, status = 400, code = 'INVALID_ACTION') { super(message); this.status = status; this.code = code; }
@@ -16,6 +16,8 @@ function entry(session, id, kind, amountCents, roundId) {
   session.balanceCents = balance;
   session.ledger.push({ id, kind, amountCents, balanceCents: balance, roundId, at: new Date().toISOString() });
 }
+// Rounds saved before payout tables were pinned use the original ladder, which is still the current one.
+const paytableOf = round => round.paytable ?? LEGACY_PAYTABLE;
 export function currentRound(session) { return session.currentRoundId ? session.rounds[session.currentRoundId] : null; }
 function activeRound(session, id) {
   const round = session.rounds[id];
@@ -38,9 +40,10 @@ export function beginRound(session, body, freshSeed = newSeed()) {
   requireThat(expectedSeedHash === seedHash(session.nextSeed), 'The seed commitment changed. Refresh and try again.', 409, 'STALE_SEED');
   const id = randomUUID(), stakes = splitStake(stakeCents), serverSeed = session.nextSeed, nonce = session.nonce++;
   const round = { id, difficulty, stakeCents, step: 0, status: 'active', startedAt: new Date().toISOString(), finishedAt: null,
-    serverSeed, serverSeedHash: seedHash(serverSeed), clientSeed, nonce, algorithm: 'cargo-v1',
+    serverSeed, serverSeedHash: seedHash(serverSeed), clientSeed, nonce, algorithm: RULES.algorithm, paytable: RULES.paytable,
     containers: CONTAINERS.map((containerId, i) => ({ id: containerId, stakeCents: stakes[i], status: 'onboard', payoutCents: 0, collectedAt: null, lostAt: null })),
-    hazards: Object.fromEntries(CONTAINERS.map(c => [c, hazardDeck(serverSeed, clientSeed, nonce, c, MODES[difficulty].hazards)])),
+    // Hazards are the stops at which each container is lost; they stay hidden until settlement.
+    hazards: Object.fromEntries(CONTAINERS.map((c, i) => [c, calibratedRoute(serverSeed, clientSeed, nonce, c, difficulty, stakes[i], RULES.paytable)])),
     events: [{ kind: 'bet', stakeCents, at: new Date().toISOString() }] };
   entry(session, id + ':bet', 'bet', -stakeCents, id);
   session.rounds[id] = round; session.currentRoundId = id; session.clientSeed = clientSeed; session.nextSeed = freshSeed;
@@ -66,7 +69,7 @@ export function collectRound(session, id, containerId) {
   requireThat(selected.length > 0, 'This cargo has already been collected or lost.', 409);
   const credits = {};
   for (const c of selected) {
-    c.payoutCents = payout(c.stakeCents, multiplier(round.difficulty, round.step));
+    c.payoutCents = payout(c.stakeCents, multiplier(round.difficulty, round.step, paytableOf(round)));
     c.status = 'collected'; c.collectedAt = round.step; credits[c.id] = c.payoutCents;
     entry(session, id + ':collect:' + c.id, 'collect', c.payoutCents, id);
   }
@@ -77,14 +80,25 @@ export function resetWallet(session) {
   requireThat(currentRound(session)?.status !== 'active', 'Finish your current voyage before refilling.', 409);
   entry(session, randomUUID(), 'refill', RULES.startingBalanceCents - session.balanceCents, null);
 }
+// Exact survival odds for the next stop of each container still on board, or null.
+function nextOdds(round, c) {
+  if (round.status !== 'active' || c.status !== 'onboard' || round.step >= MODES[round.difficulty].payouts.length) return null;
+  return survivalOdds(round.algorithm, round.difficulty, c.stakeCents, round.step + 1, paytableOf(round));
+}
 export function publicRound(round) {
   if (!round) return null;
-  const returnedCents = round.containers.reduce((n, c) => n + c.payoutCents, 0), m = multiplier(round.difficulty, round.step);
+  const returnedCents = round.containers.reduce((n, c) => n + c.payoutCents, 0), paytable = paytableOf(round), m = multiplier(round.difficulty, round.step, paytable);
+  const containers = round.containers.map(c => {
+    const odds = nextOdds(round, c);
+    return { ...c, valueCents: c.status === 'onboard' ? payout(c.stakeCents, m) : c.payoutCents,
+      nextSurvival: odds, nextRisk: odds && (odds[1] - odds[0]) / odds[1] };
+  });
+  // One round-level risk only when every container still at risk has identical exact odds; otherwise null.
+  const open = containers.filter(c => c.nextSurvival), same = open.every(c => BigInt(c.nextSurvival[0]) * BigInt(open[0].nextSurvival[1]) === BigInt(open[0].nextSurvival[0]) * BigInt(c.nextSurvival[1]));
   const result = { id: round.id, difficulty: round.difficulty, stakeCents: round.stakeCents, step: round.step, status: round.status,
-    startedAt: round.startedAt, finishedAt: round.finishedAt, multiplier100: m, nextRisk: nextRisk(round.difficulty, round.step),
-    maxStops: MODES[round.difficulty].payouts.length, returnedCents, netCents: returnedCents - round.stakeCents,
-    containers: round.containers.map(c => ({ ...c, valueCents: c.status === 'onboard' ? payout(c.stakeCents, m) : c.payoutCents })),
-    proof: { algorithm: round.algorithm, serverSeedHash: round.serverSeedHash, clientSeed: round.clientSeed, nonce: round.nonce }, events: structuredClone(round.events) };
+    startedAt: round.startedAt, finishedAt: round.finishedAt, multiplier100: m, nextRisk: !open.length ? 0 : same ? open[0].nextRisk : null,
+    maxStops: MODES[round.difficulty].payouts.length, returnedCents, netCents: returnedCents - round.stakeCents, containers,
+    proof: { algorithm: round.algorithm, paytable, serverSeedHash: round.serverSeedHash, clientSeed: round.clientSeed, nonce: round.nonce }, events: structuredClone(round.events) };
   if (round.status === 'settled') { result.proof.serverSeed = round.serverSeed; result.proof.hazards = structuredClone(round.hazards); }
   return result;
 }
