@@ -16,7 +16,7 @@ Keep the repository private and preserve the hosted site's existing private audi
 
 ## Verification
 
-Run `npm test` for game or API changes. Run `npm run test:hosted` when modifying the hosted adapter, schema or shared engine. Run `npm run test:collisions` for collision behavior or visual result mapping. Run `npm ci` and `npm run build` for a hosted release. Verify changed UI in a real browser, including phone layout when relevant. Do not repeat unrelated checks after they pass unless a new change warrants it.
+Run `npm test` for game or API changes. Run `npm run test:hosted` when modifying the hosted adapter, schema or shared engine. Run `npm run test:collisions` for collision behavior or visual result mapping. Run `npm run test:rtp` when changing payouts, odds, stake rules or randomness. Run `npm ci` and `npm run build` for a hosted release. Verify changed UI in a real browser, including phone layout when relevant. Do not repeat unrelated checks after they pass unless a new change warrants it.
 
 ## GitHub changes
 

@@ -9,7 +9,8 @@
     "start": "node server/index.js",
     "test": "node --test test/*.test.js",
     "test:hosted": "node build/check-worker.mjs",
-    "test:collisions": "node build/check-collision.mjs"
+    "test:collisions": "node build/check-collision.mjs",
+    "test:rtp": "node build/check-rtp.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2"
